@@ -279,7 +279,7 @@
              * @private
              */
             function _disconnect() {
-                if (_request.enableProtocol) {
+                if (_request.enableProtocol && !_request.firstMessage) {
                     var query = "X-Atmosphere-Transport=close&X-Atmosphere-tracking-id=" + _request.uuid;
                     var url = _request.url.replace(/([?&])_=[^&]*/, query);
                     url = url + (url === _request.url ? (/\?/.test(_request.url) ? "&" : "?") + query : "");
