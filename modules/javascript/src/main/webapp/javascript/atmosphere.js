@@ -270,7 +270,7 @@
                     _invokeClose(true);
                     _disconnect();
                     _clearState();
-                    _reconnect(ajaxRequest, rq, true);
+                    _reconnect(ajaxRequest, rq, 0);
                 }
             };
 
@@ -872,7 +872,7 @@
                                 //_readHeaders(_jqxhr, rq);
 
                                 if (!rq.executeCallbackBeforeReconnect) {
-                                    _reconnect(_jqxhr, rq);
+                                    _reconnect(_jqxhr, rq, 0);
                                 }
 
                                 if (msg != null && typeof msg != 'string') {
@@ -889,7 +889,7 @@
                                 }
 
                                 if (rq.executeCallbackBeforeReconnect) {
-                                    _reconnect(_jqxhr, rq);
+                                    _reconnect(_jqxhr, rq, 0);
                                 }
                             } else {
                                 atmosphere.util.log(_request.logLevel, ["JSONP reconnect maximum try reached " + _request.requestCount]);
@@ -1512,7 +1512,7 @@
                     rq.lastIndex = 0;
                     if (rq.reconnect && _requestCount++ < rq.maxReconnectOnClose) {
                         _open('re-connecting', request.transport, request);
-                        _reconnect(ajaxRequest, rq, true);
+                        _reconnect(ajaxRequest, rq, request.reconnectInterval);
                     } else {
                         _onError(0, "maxReconnectOnClose reached");
                     }
@@ -1684,14 +1684,15 @@
                                 _response.state = "messagePublished";
                             }
 
-                            if (!rq.executeCallbackBeforeReconnect) {
-                                _reconnect(ajaxRequest, rq, false);
+                            var isAllowedToReconnect = request.transport != 'streaming';
+                            if (isAllowedToReconnect && !rq.executeCallbackBeforeReconnect) {
+                                _reconnect(ajaxRequest, rq, 0);
                             }
 
                             if (_response.responseBody.length != 0 && !skipCallbackInvocation) _invokeCallback();
 
-                            if (rq.executeCallbackBeforeReconnect) {
-                                _reconnect(ajaxRequest, rq, false);
+                            if (isAllowedToReconnect && rq.executeCallbackBeforeReconnect) {
+                                _reconnect(ajaxRequest, rq, 0);
                             }
 
                             _verifyStreamingLength(ajaxRequest, rq);
@@ -1700,7 +1701,6 @@
 
                     try {
                         ajaxRequest.send(rq.data);
-
 
                         if (rq.suspend) {
                             rq.id = setTimeout(function () {
@@ -1785,27 +1785,18 @@
                 });
             }
 
-            function _reconnect(ajaxRequest, request, force) {
-                if (force || request.transport != 'streaming') {
-                    if (request.reconnect || (request.suspend && _subscribed)) {
-                        var status = 0;
-                        if (ajaxRequest && ajaxRequest.readyState != 0) {
-                            status = ajaxRequest.status > 1000 ? 0 : ajaxRequest.status;
-                        }
-                        _response.status = status == 0 ? 204 : status;
-                        _response.reason = status == 0 ? "Server resumed the connection or down." : "OK";
-
-                        var reconnectInterval = (request.connectTimeout == -1) ? 0 : request.connectTimeout;
-
-                        // Reconnect immedialtely
-                        if (!force) {
-                            request.id = setTimeout(function () {
-                                _executeRequest(request);
-                            }, reconnectInterval);
-                        } else {
-                            _executeRequest(request);
-                        }
+            function _reconnect(ajaxRequest, request, reconnectInterval) {
+                if (request.reconnect || (request.suspend && _subscribed)) {
+                    var status = 0;
+                    if (ajaxRequest && ajaxRequest.readyState != 0) {
+                        status = ajaxRequest.status > 1000 ? 0 : ajaxRequest.status;
                     }
+                    _response.status = status == 0 ? 204 : status;
+                    _response.reason = status == 0 ? "Server resumed the connection or down." : "OK";
+
+                    request.id = setTimeout(function () {
+                        _executeRequest(request);
+                    }, reconnectInterval);
                 }
             }
 

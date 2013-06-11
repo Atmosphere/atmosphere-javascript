@@ -749,7 +749,7 @@ jQuery.atmosphere = function () {
                     error: function (jqXHR, textStatus, errorThrown) {
                         _response.error = true;
                         if (jqXHR.status < 300) {
-                            _reconnect(_jqxhr, rq);
+                            _reconnect(_jqxhr, rq, 0);
                         } else {
                             _onError(jqXHR.status, errorThrown);
                         }
@@ -761,7 +761,7 @@ jQuery.atmosphere = function () {
                                 _readHeaders(_jqxhr, rq);
 
                                 if (!rq.executeCallbackBeforeReconnect) {
-                                    _reconnect(_jqxhr, rq);
+                                    _reconnect(_jqxhr, rq, 0);
                                 }
 
                                 var msg = json.message;
@@ -779,7 +779,7 @@ jQuery.atmosphere = function () {
                                 }
 
                                 if (rq.executeCallbackBeforeReconnect) {
-                                    _reconnect(_jqxhr, rq);
+                                    _reconnect(_jqxhr, rq, 0);
                                 }
                             } else {
                                 jQuery.atmosphere.log(_request.logLevel, ["JSONP reconnect maximum try reached " + _request.requestCount]);
@@ -839,7 +839,7 @@ jQuery.atmosphere = function () {
                         if (rq.reconnect) {
                             if (rq.maxRequest == -1 || rq.requestCount++ < rq.maxRequest) {
                                 if (!rq.executeCallbackBeforeReconnect) {
-                                    _reconnect(_jqxhr, rq);
+                                    _reconnect(_jqxhr, rq, 0);
                                 }
                                 var skipCallbackInvocation = _trackMessageSize(data, rq, _response);
                                 if (!skipCallbackInvocation) {
@@ -847,7 +847,7 @@ jQuery.atmosphere = function () {
                                 }
 
                                 if (rq.executeCallbackBeforeReconnect) {
-                                    _reconnect(_jqxhr, rq);
+                                    _reconnect(_jqxhr, rq, 0);
                                 }
                             } else {
                                 jQuery.atmosphere.log(_request.logLevel, ["AJAX reconnect maximum try reached " + _request.requestCount]);
@@ -1469,7 +1469,7 @@ jQuery.atmosphere = function () {
                     rq.lastIndex = 0;
                     if (rq.reconnect && _requestCount++ < rq.maxReconnectOnClose) {
                         _open('re-connecting', request.transport, request);
-                        _reconnect(ajaxRequest, rq, true);
+                        _reconnect(ajaxRequest, rq, request.reconnectInterval);
                     } else {
                         _onError(0, "maxReconnectOnClose reached");
                     }
@@ -1639,14 +1639,15 @@ jQuery.atmosphere = function () {
                                 _response.state = "messagePublished";
                             }
 
-                            if (!rq.executeCallbackBeforeReconnect) {
-                                _reconnect(ajaxRequest, rq, false);
+                            var isAllowedToReconnect = request.transport != 'streaming';
+                            if (isAllowedToReconnect && !rq.executeCallbackBeforeReconnect) {
+                                _reconnect(ajaxRequest, rq, 0);
                             }
 
                             if (_response.responseBody.length != 0 && !skipCallbackInvocation) _invokeCallback();
 
-                            if (rq.executeCallbackBeforeReconnect) {
-                                _reconnect(ajaxRequest, rq, false);
+                            if (isAllowedToReconnect && rq.executeCallbackBeforeReconnect) {
+                                _reconnect(ajaxRequest, rq, 0);
                             }
 
                             _verifyStreamingLength(ajaxRequest, rq);
@@ -1735,26 +1736,20 @@ jQuery.atmosphere = function () {
             }
 
             function _reconnect(ajaxRequest, request, force) {
-                if (force || request.transport != 'streaming') {
-                    if (request.reconnect || (request.suspend && _subscribed)) {
-                        var status = 0;
-                        if (ajaxRequest.readyState != 0) {
-                            status  = ajaxRequest.status > 1000 ? 0 : ajaxRequest.status;
-                        }
-                        _response.status = status == 0 ? 204 : status;
-                        _response.reason = status == 0 ? "Server resumed the connection or down." : "OK";
-
-                        var reconnectInterval = (request.connectTimeout == -1) ? 0 : request.connectTimeout;
-
-                        // Reconnect immedialtely
-                        if (!force) {
-                            request.id = setTimeout(function () {
-                                _executeRequest(request);
-                            }, reconnectInterval);
-                        } else {
-                            _executeRequest(request);
-                        }
+                if (request.reconnect || (request.suspend && _subscribed)) {
+                    var status = 0;
+                    if (ajaxRequest.readyState != 0) {
+                        status = ajaxRequest.status > 1000 ? 0 : ajaxRequest.status;
                     }
+                    _response.status = status == 0 ? 204 : status;
+                    _response.reason = status == 0 ? "Server resumed the connection or down." : "OK";
+
+                    var reconnectInterval = (request.connectTimeout == -1) ? 0 : request.connectTimeout;
+
+                    // Reconnect immedialtely
+                    request.id = setTimeout(function () {
+                        _executeRequest(request);
+                    }, reconnectInterval);
                 }
             }
 
@@ -2396,7 +2391,7 @@ jQuery.atmosphere = function () {
                     _invokeClose(true);
                     _disconnect();
                     _clearState();
-                    _reconnect(ajaxRequest, rq, true);
+                    _reconnect(ajaxRequest, rq, 0);
                 }
             }
 
