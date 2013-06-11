@@ -34,6 +34,10 @@ jQuery.atmosphere = function () {
         jQuery.atmosphere.unsubscribe();
     });
 
+    jQuery(window).bind("offline", function () {
+        jQuery.atmosphere.unsubscribe();
+    });
+
     // Prevent ESC to kill the connection from Firefox.
     jQuery(window).keypress(function (e) {
         if (e.keyCode == 27) {
