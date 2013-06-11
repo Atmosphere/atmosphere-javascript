@@ -1167,7 +1167,7 @@ jQuery.atmosphere = function () {
 
                     _invokeClose(webSocketOpened);
 
-                    _response.state == 'closed'
+                    _response.state = 'closed'
 
                     if (_abordingConnection) {
                         jQuery.atmosphere.log(_request.logLevel, ["Websocket closed normally"]);
