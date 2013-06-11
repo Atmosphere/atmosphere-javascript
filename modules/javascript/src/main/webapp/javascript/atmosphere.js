@@ -1001,6 +1001,7 @@
                 }
 
                 _sse.onopen = function (event) {
+                    _timeout(_request);
                     if (_request.logLevel == 'debug') {
                         atmosphere.util.debug("SSE successfully opened");
                     }
@@ -1021,12 +1022,7 @@
                 };
 
                 _sse.onmessage = function (message) {
-                    clearTimeout(_request.id);
-                    _request.id = setTimeout(function () {
-                        _invokeClose(true);
-                        _disconnect();
-                        _clearState();
-                    }, _request.timeout);
+                    _timeout(_request);
 
                     if (message.origin && message.origin != window.location.protocol + "//" + window.location.host) {
                         atmosphere.util.log(_request.logLevel, ["Origin was not " + window.location.protocol + "//" + window.location.host]);
@@ -1095,8 +1091,6 @@
                 }
 
                 var location = _buildWebSocketUrl(_request.url);
-                var closed = false;
-
                 if (_request.logLevel == 'debug') {
                     atmosphere.util.debug("Invoking executeWebSocket");
                     atmosphere.util.debug("Using URL: " + location);
@@ -1135,6 +1129,8 @@
                 }
 
                 _websocket.onopen = function (message) {
+                    _timeout(_request);
+
                     if (_request.logLevel == 'debug') {
                         atmosphere.util.debug("Websocket successfully opened");
                     }
@@ -1157,14 +1153,7 @@
                 };
 
                 _websocket.onmessage = function (message) {
-
-                    clearTimeout(_request.id);
-                    _request.id = setTimeout(function () {
-                        closed = true;
-                        _invokeClose(true);
-                        _clearState();
-                        _disconnect();
-                    }, _request.timeout);
+                    _timeout(_request);
 
                     _response.state = 'messageReceived';
                     _response.status = 200;
@@ -1192,8 +1181,8 @@
                 };
 
                 _websocket.onclose = function (message) {
-                    if (closed) return
                     clearTimeout(_request.id);
+                    if (_response.state == 'closed') return
 
                     var reason = message.reason;
                     if (reason === "") {
@@ -1231,7 +1220,7 @@
 
                     _invokeClose(webSocketOpened);
 
-                    closed = true;
+                    _response.state = 'closed';
 
                     if (_abordingConnection) {
                         atmosphere.util.log(_request.logLevel, ["Websocket closed normally"]);
@@ -1273,6 +1262,17 @@
                     _triggerOpen(request);
                 }
                 return b;
+            }
+
+            function _timeout(_request) {
+                clearTimeout(_request.id);
+                if (_request.transport != 'polling') {
+                    _request.id = setTimeout(function () {
+                        _invokeClose(true);
+                        _clearState();
+                        _disconnect();
+                    }, _request.timeout);
+                }
             }
 
             function _onError(code, reason) {
@@ -1583,13 +1583,15 @@
                         } else if (rq.transport == 'long-polling' && ajaxRequest.readyState === 4) {
                             update = true;
                         }
-                        clearTimeout(rq.id);
+                        _timeout(_request);
 
                         if ((!rq.enableProtocol || !request.firstMessage) && rq.transport != 'polling' && ajaxRequest.readyState == 2) {
                             _triggerOpen(rq);
                         }
 
                         if (update) {
+
+
                             // MSIE 9 and lower status can be higher than 1000, Chrome can be 0
                             var status = 0;
                             if (ajaxRequest.readyState != 0) {
@@ -1604,14 +1606,6 @@
                                 return;
                             }
                             var responseText = ajaxRequest.responseText;
-
-                            rq.id = setTimeout(function () {
-                                // Prevent onerror callback to be called
-                                _response.errorHandled = true;
-                                _invokeClose(true);
-                                _disconnect();
-                                _clearState();
-                            }, rq.timeout);
 
                             if (atmosphere.util.trim(responseText).length == 0 && rq.transport == 'long-polling') {
                                 // For browser that aren't support onabort
@@ -1647,6 +1641,7 @@
                                             } catch (e) {
                                                 _response.status = 404;
                                             }
+                                            _timeout(_request);
 
                                             _response.state = "messageReceived";
                                             var message = ajaxRequest.responseText.substring(rq.lastIndex);
@@ -1701,17 +1696,6 @@
 
                     try {
                         ajaxRequest.send(rq.data);
-
-                        if (rq.suspend) {
-                            rq.id = setTimeout(function () {
-                                if (_subscribed) {
-                                    setTimeout(function () {
-                                        _clearState();
-                                        _executeRequest(rq);
-                                    }, rq.reconnectInterval)
-                                }
-                            }, rq.timeout);
-                        }
                         _subscribed = true;
                     } catch (e) {
                         atmosphere.util.log(rq.logLevel, ["Unable to connect to " + rq.url]);
@@ -2022,6 +2006,8 @@
                                 stop = atmosphere.util.iterate(function () {
                                     var text = readResponse();
                                     if (text.length > rq.lastIndex) {
+                                        _timeout(_request);
+
                                         _response.status = 200;
                                         _response.error = null;
 
