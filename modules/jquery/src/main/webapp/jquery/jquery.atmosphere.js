@@ -1712,7 +1712,7 @@ jQuery.atmosphere = function () {
                 });
             }
 
-            function _reconnect(ajaxRequest, request, force) {
+            function _reconnect(ajaxRequest, request, reconnectInterval) {
                 if (request.reconnect || (request.suspend && _subscribed)) {
                     var status = 0;
                     if (ajaxRequest.readyState != 0) {
@@ -1720,8 +1720,6 @@ jQuery.atmosphere = function () {
                     }
                     _response.status = status == 0 ? 204 : status;
                     _response.reason = status == 0 ? "Server resumed the connection or down." : "OK";
-
-                    var reconnectInterval = (request.connectTimeout == -1) ? 0 : request.connectTimeout;
 
                     // Reconnect immedialtely
                     request.id = setTimeout(function () {
