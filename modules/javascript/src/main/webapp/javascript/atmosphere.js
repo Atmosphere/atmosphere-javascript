@@ -823,7 +823,6 @@
                 }
 
 
-
                 _jqxhr = { open: function () {
                     var callback = "atmosphere" + (++guid);
 
@@ -845,7 +844,7 @@
                         var head = document.head || document.getElementsByTagName("head")[0] || document.documentElement;
 
                         var script = document.createElement("script");
-                        script.src =  url + "&jsonpTransport=" + callback;
+                        script.src = url + "&jsonpTransport=" + callback;
                         script.clean = function () {
                             script.clean = script.onerror = script.onload = script.onreadystatechange = null;
                             if (script.parentNode) {
@@ -897,7 +896,7 @@
                             }
                         }
                     };
-                    setTimeout(function() {
+                    setTimeout(function () {
                         poll();
                     }, 50);
                 },
@@ -1810,7 +1809,7 @@
 
                 var reconnect = function () {
                     if (rq.transport == "long-polling"
-                            && (rq.reconnect && (rq.maxRequest == -1 || rq.requestCount++ < rq.maxRequest))) {
+                        && (rq.reconnect && (rq.maxRequest == -1 || rq.requestCount++ < rq.maxRequest))) {
                         xdr.status = 200;
                         _ieXDR(rq);
                     }
@@ -1840,9 +1839,9 @@
                     if (rq.transport != 'polling') {
                         _clearState();
                         if (_requestCount++ < rq.maxReconnectOnClose) {
-                           rq.id = setTimeout(function () {
-                               _open('re-connecting', request.transport, request);
-                               _ieXDR(rq);
+                            rq.id = setTimeout(function () {
+                                _open('re-connecting', request.transport, request);
+                                _ieXDR(rq);
                             }, rq.reconnectInterval);
                         } else {
                             _onError(0, "maxReconnectOnClose reached");
@@ -2533,16 +2532,16 @@
         },
 
         isArray: function (array) {
-            return toString.call(array) === "[object Array]";
+            return Object.prototype.toString.call(array) === "[object Array]";
         },
 
         isBinary: function (data) {
-            var string = toString.call(data);
+            var string = Object.prototype.toString.call(data);
             return string === "[object Blob]" || string === "[object ArrayBuffer]";
         },
 
         isFunction: function (fn) {
-            return toString.call(fn) === "[object Function]";
+            return Object.prototype.toString.call(fn) === "[object Function]";
         },
 
         getAbsoluteURL: function (url) {
@@ -2592,7 +2591,7 @@
                             buildParams(prefix + "[" + (typeof v === "object" ? i : "") + "]", v);
                         }
                     });
-                } else if (toString.call(obj) === "[object Object]") {
+                } else if (Object.prototype.toString.call(obj) === "[object Object]") {
                     for (name in obj) {
                         buildParams(prefix + "[" + name + "]", obj[name]);
                     }
@@ -2809,7 +2808,7 @@
                                 return "null";
                             }
 
-                            switch (toString.call(value)) {
+                            switch (Object.prototype.toString.call(value)) {
                                 case "[object Date]":
                                     return isFinite(value.valueOf()) ?
                                         '"' + value.getUTCFullYear() + "-" + f(value.getUTCMonth() + 1) + "-" + f(value.getUTCDate()) +
