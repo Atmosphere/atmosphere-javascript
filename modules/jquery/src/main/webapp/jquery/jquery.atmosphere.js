@@ -1246,29 +1246,31 @@ jQuery.atmosphere = function () {
                 if (message.length == 0) return true;
 
                 if (request.trackMessageLength) {
-                    // If we have found partial message, prepend them.
-                    if (response.partialMessage.length != 0) {
-                        message = response.partialMessage + message;
-                    }
+                    // prepend partialMessage if any
+                    message = response.partialMessage + message;
 
                     var messages = [];
-                    var messageLength = 0;
                     var messageStart = message.indexOf(request.messageDelimiter);
                     while (messageStart != -1) {
-                        messageLength = jQuery.trim(message.substring(messageLength, messageStart));
-                        message = message.substring(messageStart + request.messageDelimiter.length, message.length);
-
-                        if (message.length == 0 || message.length < messageLength) break;
-
-                        messageStart = message.indexOf(request.messageDelimiter);
-                        messages.push(message.substring(0, messageLength));
+                        var str = jQuery.trim(message.substring(0, messageStart));
+                        var messageLength = parseInt(str);
+                        if (isNaN(messageLength))
+                            throw 'message length "'+str+'" is not a number';
+                        messageStart += request.messageDelimiter.length;
+                        if (messageStart + messageLength > message.length) {
+                            // message not complete, so there is no trailing messageDelimiter
+                            messageStart = -1;
+                        } else {
+                            // message complete, so add it
+                            messages.push(message.substring(messageStart, messageStart + messageLength));
+                            // remove consumed characters
+                            message = message.substring(messageStart + messageLength, message.length);
+                            messageStart = message.indexOf(request.messageDelimiter);
+                        }
                     }
 
-                    if (messages.length == 0 || (messageStart != -1 && message.length != 0 && messageLength != message.length)) {
-                        response.partialMessage = messageLength + request.messageDelimiter + message;
-                    } else {
-                        response.partialMessage = "";
-                    }
+                    /* keep any remaining data */
+                    response.partialMessage = message;
 
                     if (messages.length != 0) {
                         response.responseBody = messages.join(request.messageDelimiter);
