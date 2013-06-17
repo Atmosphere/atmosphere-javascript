@@ -1253,7 +1253,7 @@ jQuery.atmosphere = function () {
                     var messageStart = message.indexOf(request.messageDelimiter);
                     while (messageStart != -1) {
                         var str = jQuery.trim(message.substring(0, messageStart));
-                        var messageLength = parseInt(str);
+                        var messageLength = parseInt(str, 10);
                         if (isNaN(messageLength))
                             throw 'message length "'+str+'" is not a number';
                         messageStart += request.messageDelimiter.length;
