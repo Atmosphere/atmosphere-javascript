@@ -1779,6 +1779,7 @@
                     _response.status = status == 0 ? 204 : status;
                     _response.reason = status == 0 ? "Server resumed the connection or down." : "OK";
 
+                    clearTimeout(request.id);
                     request.id = setTimeout(function () {
                         _executeRequest(request);
                     }, reconnectInterval);

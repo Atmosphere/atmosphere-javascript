@@ -1724,6 +1724,7 @@ jQuery.atmosphere = function () {
                     _response.reason = status == 0 ? "Server resumed the connection or down." : "OK";
 
                     // Reconnect immedialtely
+                    clearTimeout(request.id);
                     request.id = setTimeout(function () {
                         _executeRequest(request);
                     }, reconnectInterval);
