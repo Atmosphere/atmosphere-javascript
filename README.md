@@ -11,8 +11,8 @@ Atmosphere transparently supports WebSockets, Server Side Events (SSE), Long-Pol
 ### To bootstap the client using Maven, add the following dependency:
 ```xml
      <dependency>
-         <groupId>org.atmosphere</groupId>
-         <artifactId>atmosphere-client-{jquery|javascript}</artifactId>
+         <groupId>org.atmosphere.client</groupId>
+         <artifactId>{jquery|javascript}</artifactId>
          <version>2.0.0.RC2</version>
       </dependency>
 ```
