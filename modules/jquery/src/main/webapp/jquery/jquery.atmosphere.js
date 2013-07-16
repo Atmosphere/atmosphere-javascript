@@ -980,7 +980,7 @@ jQuery.atmosphere = function () {
 
                 _sse.onmessage = function (message) {
                     _timeout(_request);
-                    if (message.origin != window.location.protocol + "//" + window.location.host) {
+                    if (!_request.enableXDR && message.origin != window.location.protocol + "//" + window.location.host) {
                         jQuery.atmosphere.log(_request.logLevel, ["Origin was not " + window.location.protocol + "//" + window.location.host]);
                         return;
                     }
