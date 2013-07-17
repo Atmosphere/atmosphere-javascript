@@ -1023,7 +1023,7 @@
                 _sse.onmessage = function (message) {
                     _timeout(_request);
 
-                    if (message.origin && message.origin != window.location.protocol + "//" + window.location.host) {
+                    if (!_request.enableXDR && message.origin && message.origin != window.location.protocol + "//" + window.location.host) {
                         atmosphere.util.log(_request.logLevel, ["Origin was not " + window.location.protocol + "//" + window.location.host]);
                         return;
                     }
