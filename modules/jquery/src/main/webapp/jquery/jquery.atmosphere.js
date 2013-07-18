@@ -1,4 +1,3 @@
-/*jshint noarg:true, noempty:true, eqeqeq:true, evil:true, laxbreak:true, undef:true, browser:true, jquery:true, indent:false, maxerr:50, eqnull:true */
 /**
  * Copyright 2012 Jeanfrancois Arcand
  *
@@ -2813,3 +2812,4 @@ jQuery.atmosphere = function () {
     };
 
 }(jQuery));
+/*jshint noarg:true, noempty:true, eqeqeq:true, evil:true, laxbreak:true, undef:true, browser:true, jquery:true, indent:false, maxerr:50, eqnull:true */
