@@ -1,4 +1,4 @@
-/*jshint eqnull:true, noarg:true, noempty:true, eqeqeq:true, evil:true, laxbreak:true, undef:true, browser:true, indent:4, maxerr:50 */
+/*jshint eqnull:true, noarg:true, noempty:true, eqeqeq:true, evil:true, laxbreak:true, undef:true, browser:true, indent:false, maxerr:50 */
 /**
  * Copyright 2012 Jeanfrancois Arcand
  *
