@@ -1306,7 +1306,7 @@
 				
 				if (request.trackMessageLength) {
 					// prepend partialMessage if any
-                    message = response.partialMessage + message.replace(/(\r\n|\n|\r)/gm,"");
+					message = response.partialMessage + message.replace(/(\r\n|\n|\r)/gm, "");
 					
 					var messages = [];
 					var messageStart = message.indexOf(request.messageDelimiter);
