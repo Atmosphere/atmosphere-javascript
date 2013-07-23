@@ -1832,12 +1832,7 @@
 					lastIndex += message.length;
 					
 					if (transport !== 'polling') {
-						rq.id = setTimeout(function() {
-							_requestCount = rq.maxReconnectOnClose;
-							_invokeClose(true);
-							_disconnect();
-							_clearState();
-						}, rq.timeout);
+                        _timeout(rq);
 						
 						var skipCallbackInvocation = _trackMessageSize(message, rq, _response);
 						

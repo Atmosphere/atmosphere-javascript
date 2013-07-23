@@ -1220,7 +1220,7 @@ jQuery.atmosphere = function() {
 			
 			function _timeout(_request) {
 				clearTimeout(_request.id);
-				if (if (_request.timeout > 0 && _request.transport !== 'polling') {
+				if (_request.timeout > 0 && _request.transport !== 'polling') {
 					_request.id = setTimeout(function() {
 						_invokeClose(true);
 						_clearState();
@@ -1780,12 +1780,7 @@ jQuery.atmosphere = function() {
 					lastIndex += message.length;
 					
 					if (transport !== 'polling') {
-						rq.id = setTimeout(function() {
-							_requestCount = rq.maxReconnectOnClose;
-							_invokeClose(true);
-							_disconnect();
-							_clearState();
-						}, rq.timeout);
+                        _timeout(rq);
 						
 						var skipCallbackInvocation = _trackMessageSize(message, rq, _response);
 						
