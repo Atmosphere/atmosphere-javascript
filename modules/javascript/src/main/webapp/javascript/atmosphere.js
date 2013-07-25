@@ -294,6 +294,10 @@
 			}
 			
 			function _clearState() {
+                if (_request.id) {
+                    clearTimeout(_request.id);
+                }
+
 				if (_ieStream != null) {
 					_ieStream.close();
 					_ieStream = null;

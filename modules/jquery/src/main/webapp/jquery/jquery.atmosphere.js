@@ -2379,11 +2379,15 @@ jQuery.atmosphere = function() {
 				_response.status = 408;
 				_invokeCallback();
 				_disconnect();
-				
+
 				_clearState();
 			}
 			
 			function _clearState() {
+                if (_request.id) {
+                    clearTimeout(_request.id);
+                }
+
 				if (_ieStream != null) {
 					_ieStream.close();
 					_ieStream = null;
@@ -2406,6 +2410,7 @@ jQuery.atmosphere = function() {
 					_sse.close();
 					_sse = null;
 				}
+
 				_clearStorage();
 			}
 			
