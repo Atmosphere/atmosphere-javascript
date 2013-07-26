@@ -1255,7 +1255,7 @@ jQuery.atmosphere = function() {
 				
 				if (request.trackMessageLength) {
 					// prepend partialMessage if any
-					message = response.partialMessage;
+					message = response.partialMessage + message;
 					
 					var messages = [];
 					var messageStart = message.indexOf(request.messageDelimiter);
