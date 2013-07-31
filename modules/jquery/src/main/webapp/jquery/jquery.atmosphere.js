@@ -1255,8 +1255,8 @@ jQuery.atmosphere = function() {
 				
 				if (request.trackMessageLength) {
 					// prepend partialMessage if any
-					message = response.partialMessage + message;
-					
+                    message = response.partialMessage + message.replace(/(\r\n|\n|\r)/gm,"").replace(/^\s+|\s+$/g,"");
+
 					var messages = [];
 					var messageStart = message.indexOf(request.messageDelimiter);
 					while (messageStart !== -1) {
