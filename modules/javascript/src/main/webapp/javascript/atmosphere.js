@@ -1257,7 +1257,7 @@
 			function _handleProtocol(request, message) {
 				// The first messages is always the uuid.
 				var b = true;
-				if (atmosphere.util.trim(message) !== 0 && request.enableProtocol && request.firstMessage) {
+				if (atmosphere.util.trim(message).length !== 0 && request.enableProtocol && request.firstMessage) {
 					request.firstMessage = false;
 					var messages = message.split(request.messageDelimiter);
 					var pos = messages.length === 2 ? 0 : 1;
