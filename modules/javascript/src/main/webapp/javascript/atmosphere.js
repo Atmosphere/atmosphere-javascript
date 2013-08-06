@@ -1701,7 +1701,7 @@
 				
 				if (create) {
 					ajaxRequest.open(request.method, url, request.async);
-					if (request.connectTimeout > -1) {
+					if (request.connectTimeout > 0) {
 						request.id = setTimeout(function() {
 							if (request.requestCount === 0) {
 								_clearState();
@@ -1871,7 +1871,7 @@
 							xdr.send(rq.data);
 						}
 						
-						if (rq.connectTimeout > -1) {
+						if (rq.connectTimeout > 0) {
 							rq.id = setTimeout(function() {
 								if (rq.requestCount === 0) {
 									_clearState();

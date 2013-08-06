@@ -1643,7 +1643,7 @@ jQuery.atmosphere = function() {
 				
 				if (create) {
 					ajaxRequest.open(request.method, url, true);
-					if (request.connectTimeout > -1) {
+					if (request.connectTimeout > 0) {
 						request.id = setTimeout(function() {
 							if (request.requestCount === 0) {
 								_clearState();
@@ -1815,7 +1815,7 @@ jQuery.atmosphere = function() {
 							xdr.send(rq.data);
 						}
 						
-						if (rq.connectTimeout > -1) {
+						if (rq.connectTimeout > 0) {
 							rq.id = setTimeout(function() {
 								if (rq.requestCount === 0) {
 									_clearState();
@@ -2350,7 +2350,7 @@ jQuery.atmosphere = function() {
 					var url = _request.url.replace(/([?&])_=[^&]*/, query);
 					url = url + (url === _request.url ? (/\?/.test(_request.url) ? "&" : "?") + query : "");
 					
-					if (_request.connectTimeout > -1) {
+					if (_request.connectTimeout > 0) {
 						jQuery.ajax({
 							url: url,
 							async: false,
