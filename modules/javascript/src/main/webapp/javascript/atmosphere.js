@@ -1542,9 +1542,7 @@
 						var skipCallbackInvocation = false;
 						var update = false;
 						
-						// Opera doesn't call onerror if the server disconnect.
-						if (atmosphere.util.browser.opera && rq.transport === 'streaming' && rq.readyState > 2 && ajaxRequest.readyState === 4) {
-							
+						if (rq.transport === 'streaming' && rq.readyState > 2 && ajaxRequest.readyState === 4) {
 							_clearState();
 							reconnectF();
 							return;
