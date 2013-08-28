@@ -288,12 +288,14 @@
 				_response.state = 'unsubscribe';
 				_response.responseBody = "";
 				_response.status = 408;
+                _response.partialMessage = "";
 				_invokeCallback();
 				_disconnect();
 				_clearState();
 			}
 			
 			function _clearState() {
+                _response.partialMessage = "";
                 if (_request.id) {
                     clearTimeout(_request.id);
                 }
@@ -1560,22 +1562,22 @@
 						if ((!rq.enableProtocol || !request.firstMessage) && rq.transport !== 'polling' && ajaxRequest.readyState === 2) {
 							_triggerOpen(rq);
 						}
-						
+
+                        // MSIE 9 and lower status can be higher than 1000, Chrome can be 0
+                        var status = 0;
+                        if (ajaxRequest.readyState !== 0) {
+                            status = ajaxRequest.status > 1000 ? 0 : ajaxRequest.status;
+                        }
+
+                        if (status >= 300 || status === 0) {
+                            // Prevent onerror callback to be called
+                            _response.errorHandled = true;
+                            _clearState();
+                            reconnectF();
+                            return;
+                        }
+
 						if (update) {
-							
-							// MSIE 9 and lower status can be higher than 1000, Chrome can be 0
-							var status = 0;
-							if (ajaxRequest.readyState !== 0) {
-								status = ajaxRequest.status > 1000 ? 0 : ajaxRequest.status;
-							}
-							
-							if (status >= 300 || status === 0) {
-								// Prevent onerror callback to be called
-								_response.errorHandled = true;
-								_clearState();
-								reconnectF();
-								return;
-							}
 							var responseText = ajaxRequest.responseText;
 							
 							if (atmosphere.util.trim(responseText).length === 0 && rq.transport === 'long-polling') {
