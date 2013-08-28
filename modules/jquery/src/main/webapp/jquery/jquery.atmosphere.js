@@ -1504,22 +1504,24 @@ jQuery.atmosphere = function() {
 							update = true;
 						}
 						_timeout(_request);
-						
-						if ((!rq.enableProtocol || !request.firstMessage) && rq.transport !== 'polling' && ajaxRequest.readyState === 2) {
-							_triggerOpen(rq);
-						}
-                        // MSIE 9 and lower status can be higher than 1000, Chrome can be 0
-                        var status = 0;
-                        if (ajaxRequest.readyState !== 0) {
-                            status = ajaxRequest.status > 1000 ? 0 : ajaxRequest.status;
-                        }
 
-                        if (status >= 300 || status === 0) {
-                            // Prevent onerror callback to be called
-                            _response.errorHandled = true;
-                            _clearState();
-                            reconnectF();
-                            return;
+                        if (rq.transport !== 'polling') {
+                            if ((!rq.enableProtocol || !request.firstMessage) && ajaxRequest.readyState === 2) {
+                                _triggerOpen(rq);
+                            }
+                            // MSIE 9 and lower status can be higher than 1000, Chrome can be 0
+                            var status = 0;
+                            if (ajaxRequest.readyState !== 0) {
+                                status = ajaxRequest.status > 1000 ? 0 : ajaxRequest.status;
+                            }
+
+                            if (status >= 300 || status === 0) {
+                                // Prevent onerror callback to be called
+                                _response.errorHandled = true;
+                                _clearState();
+                                reconnectF();
+                                return;
+                            }
                         }
 
 						if (update) {
