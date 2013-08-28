@@ -1202,7 +1202,7 @@ jQuery.atmosphere = function() {
 			function _handleProtocol(request, message) {
 				// The first messages is always the uuid.
 				var b = true;
-				if (jQuery.trim(message) !== 0 && request.enableProtocol && request.firstMessage) {
+				if (jQuery.trim(message).length !== 0 && request.enableProtocol && request.firstMessage) {
 					request.firstMessage = false;
 					var messages = message.split(request.messageDelimiter);
 					var pos = messages.length === 2 ? 0 : 1;
