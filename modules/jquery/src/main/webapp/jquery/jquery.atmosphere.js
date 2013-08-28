@@ -2375,7 +2375,6 @@ jQuery.atmosphere = function() {
 				_response.state = 'unsubscribe';
 				_response.responseBody = "";
 				_response.status = 408;
-                _response.partialMessage = "";
 				_invokeCallback();
 				_disconnect();
 
@@ -2383,7 +2382,6 @@ jQuery.atmosphere = function() {
 			}
 			
 			function _clearState() {
-                _response.partialMessage = "";
                 if (_request.id) {
                     clearTimeout(_request.id);
                 }
