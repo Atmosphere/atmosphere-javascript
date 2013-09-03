@@ -1010,9 +1010,13 @@ jQuery.atmosphere = function() {
 					} else if (_request.reconnect && (_response.transport === 'sse')) {
 						if (_requestCount++ < _request.maxReconnectOnClose) {
 							_open('re-connecting', _request.transport, _request);
-							_request.id = setTimeout(function() {
-								_executeSSE(true);
-							}, _request.reconnectInterval);
+                            if (_request.reconnectInterval > 0) {
+                                _request.id = setTimeout(function() {
+                                    _executeSSE(true);
+                                }, _request.reconnectInterval);
+                            } else {
+                                _executeSSE(true);
+                            }
 							_response.responseBody = "";
 							_response.messages = [];
 						} else {
@@ -1177,11 +1181,17 @@ jQuery.atmosphere = function() {
 						_clearState();
 						if (_requestCount++ < _request.maxReconnectOnClose) {
 							_open('re-connecting', _request.transport, _request);
-							_request.id = setTimeout(function() {
-								_response.responseBody = "";
-								_response.messages = [];
-								_executeWebSocket(true);
-							}, _request.reconnectInterval);
+                            if (_request.reconnectInterval > 0) {
+                                _request.id = setTimeout(function() {
+                                    _response.responseBody = "";
+                                    _response.messages = [];
+                                    _executeWebSocket(true);
+                                }, _request.reconnectInterval);
+                            } else {
+                                _response.responseBody = "";
+                                _response.messages = [];
+                                _executeWebSocket(true);
+                            }
 						} else {
 							jQuery.atmosphere.log(_request.logLevel, ["Websocket reconnect maximum try reached " + _request.requestCount]);
 							jQuery.atmosphere.warn("Websocket error, reason: " + message.reason);
@@ -1316,9 +1326,13 @@ jQuery.atmosphere = function() {
 					_request.method = _request.fallbackMethod;
 					_response.transport = _request.fallbackTransport;
 					_request.fallbackTransport = 'none';
-					_request.id = setTimeout(function() {
-						_execute();
-					}, reconnectInterval);
+                    if (reconnectInterval > 0) {
+                        _request.id = setTimeout(function() {
+                            _execute();
+                        }, reconnectInterval);
+                    } else {
+                        _execute();
+                    }
 				} else {
 					_onError(500, "Unable to reconnect with fallback transport");
 				}
@@ -1697,9 +1711,13 @@ jQuery.atmosphere = function() {
 					
 					// Reconnect immedialtely
 					clearTimeout(request.id);
-					request.id = setTimeout(function() {
-						_executeRequest(request);
-					}, reconnectInterval);
+                    if (reconnectInterval > 0) {
+                        request.id = setTimeout(function() {
+                            _executeRequest(request);
+                        }, reconnectInterval);
+                    } else {
+                        _executeRequest(request);
+                    }
 				}
 			}
 			
@@ -1759,10 +1777,15 @@ jQuery.atmosphere = function() {
 					if (rq.transport !== 'polling') {
 						_clearState();
 						if (_requestCount++ < rq.maxReconnectOnClose) {
-							rq.id = setTimeout(function() {
-								_open('re-connecting', request.transport, request);
-								_ieXDR(rq);
-							}, rq.reconnectInterval);
+                            if (rq.reconnectInterval > 0) {
+                                rq.id = setTimeout(function() {
+                                    _open('re-connecting', request.transport, request);
+                                    _ieXDR(rq);
+                                }, rq.reconnectInterval);
+                            } else {
+                                _open('re-connecting', request.transport, request);
+                        		_ieXDR(rq);
+                            }
 						} else {
 							_onError(0, "maxReconnectOnClose reached");
 						}
@@ -1950,9 +1973,13 @@ jQuery.atmosphere = function() {
 									if (cdoc.readyState === "complete") {
 										_invokeClose(true);
 										_open('re-connecting', rq.transport, rq);
-										rq.id = setTimeout(function() {
-											_ieStreaming(rq);
-										}, rq.reconnectInterval);
+                                        if (rq.reconnectInterval > 0) {
+                                            rq.id = setTimeout(function() {
+                                                _ieStreaming(rq);
+                                            }, rq.reconnectInterval);
+                                        } else {
+                                            _ieStreaming(rq);
+                                        }
 										return false;
 									}
 								}, null);
@@ -1962,9 +1989,13 @@ jQuery.atmosphere = function() {
 								_response.error = true;
 								_open('re-connecting', rq.transport, rq);
 								if (_requestCount++ < rq.maxReconnectOnClose) {
-									rq.id = setTimeout(function() {
-										_ieStreaming(rq);
-									}, rq.reconnectInterval);
+                                    if (rq.reconnectInterval > 0) {
+                                        rq.id = setTimeout(function() {
+                                            _ieStreaming(rq);
+                                        }, rq.reconnectInterval);
+                                    } else {
+                                        _ieStreaming(rq);
+                                    }
 								} else {
 									_onError(0, "maxReconnectOnClose reached");
 								}
