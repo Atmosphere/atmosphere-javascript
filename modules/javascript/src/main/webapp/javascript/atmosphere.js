@@ -1153,12 +1153,14 @@
 					}
 					
 					webSocketOpened = true;
-					_websocket.webSocketOpened = webSocketOpened;
-					
-					if (_request.method === 'POST') {
-						_response.state = "messageReceived";
-						_websocket.send(_request.data);
-					}
+                    if (_websocket != null) {
+                        _websocket.webSocketOpened = webSocketOpened;
+
+                        if (_request.method === 'POST') {
+                            _response.state = "messageReceived";
+                            _websocket.send(_request.data);
+                        }
+                    }
 				};
 				
 				_websocket.onmessage = function(message) {
