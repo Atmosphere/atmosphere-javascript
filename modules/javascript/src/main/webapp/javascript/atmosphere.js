@@ -451,8 +451,7 @@
 						return {
 							init: function() {
 								set("children", get("children").concat([guid]));
-								atmosphere.util.on("storage.socket", function(event) {
-									event = event.originalEvent;
+								atmosphere.util.on("storage", function(event) {
 									if (event.key === name && event.newValue) {
 										listener(event.newValue);
 									}
@@ -643,8 +642,7 @@
 						return {
 							init: function() {
 								// Handles the storage event
-								atmosphere.util.on("storage.socket", function(event) {
-									event = event.originalEvent;
+								atmosphere.util.on("storage", function(event) {
 									// When a deletion, newValue initialized to null
 									if (event.key === name && event.newValue) {
 										listener(event.newValue);
