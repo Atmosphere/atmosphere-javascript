@@ -438,24 +438,27 @@
 			function _local(request) {
 				var trace, connector, orphan, name = "atmosphere-" + request.url, connectors = {
 					storage: function() {
+						function onstorage(event) {
+							if (event.key === name && event.newValue) {
+								listener(event.newValue);
+							}
+						}
 						if (!atmosphere.util.storage) {
 							return;
 						}
 						
-						var storage = window.localStorage, get = function(key) {
-							return atmosphere.util.parseJSON(storage.getItem(name + "-" + key));
-						}, set = function(key, value) {
-							storage.setItem(name + "-" + key, atmosphere.util.stringifyJSON(value));
-						};
+						var storage = window.localStorage, 
+							get = function(key) {
+								return atmosphere.util.parseJSON(storage.getItem(name + "-" + key));
+							}, 
+							set = function(key, value) {
+								storage.setItem(name + "-" + key, atmosphere.util.stringifyJSON(value));
+							};
 						
 						return {
 							init: function() {
 								set("children", get("children").concat([guid]));
-								atmosphere.util.on("storage", function(event) {
-									if (event.key === name && event.newValue) {
-										listener(event.newValue);
-									}
-								});
+								atmosphere.util.on(window, "storage", onstorage);
 								return get("opened");
 							},
 							signal: function(type, data) {
@@ -468,7 +471,7 @@
 							close: function() {
 								var children = get("children");
 								
-								atmosphere.util.off("storage.socket");
+								atmosphere.util.off(window, "storage", onstorage);
 								if (children) {
 									if (removeFromArray(children, request.id)) {
 										set("children", children);
@@ -633,6 +636,12 @@
 					// Powered by the storage event and the localStorage
 					// http://www.w3.org/TR/webstorage/#event-storage
 					storage: function() {
+						function onstorage(event) {
+							// When a deletion, newValue initialized to null
+							if (event.key === name && event.newValue) {
+								listener(event.newValue);
+							}
+						}
 						if (!atmosphere.util.storage) {
 							return;
 						}
@@ -642,12 +651,7 @@
 						return {
 							init: function() {
 								// Handles the storage event
-								atmosphere.util.on("storage", function(event) {
-									// When a deletion, newValue initialized to null
-									if (event.key === name && event.newValue) {
-										listener(event.newValue);
-									}
-								});
+								atmosphere.util.on(window, "storage", onstorage);
 							},
 							signal: function(type, data) {
 								storage.setItem(name, atmosphere.util.stringifyJSON({
@@ -663,7 +667,7 @@
 								storage.setItem(name + "-" + key, atmosphere.util.stringifyJSON(value));
 							},
 							close: function() {
-								atmosphere.util.off("storage.socket");
+								atmosphere.util.off(window, "storage", onstorage);
 								storage.removeItem(name);
 								storage.removeItem(name + "-opened");
 								storage.removeItem(name + "-children");
