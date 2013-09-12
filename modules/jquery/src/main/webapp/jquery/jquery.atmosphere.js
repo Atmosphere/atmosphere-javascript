@@ -54,7 +54,7 @@ jQuery.atmosphere = function() {
 	};
 	
 	return {
-		version: "2.0.0-jquery",
+		version: "2.0.2-jquery",
 		requests: [],
 		callbacks: [],
 		
