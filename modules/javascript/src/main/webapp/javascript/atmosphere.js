@@ -438,7 +438,7 @@
 			function _local(request) {
 				var trace, connector, orphan, name = "atmosphere-" + request.url, connectors = {
 					storage: function() {
-						if (!atmosphere.util.supportStorage()) {
+						if (!atmosphere.util.storage) {
 							return;
 						}
 						
@@ -634,7 +634,7 @@
 					// Powered by the storage event and the localStorage
 					// http://www.w3.org/TR/webstorage/#event-storage
 					storage: function() {
-						if (!atmosphere.util.supportStorage()) {
+						if (!atmosphere.util.storage) {
 							return;
 						}
 						
@@ -2609,20 +2609,7 @@
 			return s.join("&").replace(/%20/g, "+");
 		},
 		
-		supportStorage: function() {
-			var storage = window.localStorage;
-			if (storage) {
-				try {
-					storage.setItem("t", "t");
-					storage.removeItem("t");
-					// The storage event of Internet Explorer and Firefox 3 works strangely
-					return window.StorageEvent && !atmosphere.util.browser.msie
-						&& !(atmosphere.util.browser.mozilla && atmosphere.util.browser.version.split(".")[0] === "1");
-				} catch (e) {}
-			}
-			
-			return false;
-		},
+		storage: !!(window.localStorage && window.StorageEvent),
 		
 		iterate: function(fn, interval) {
 			var timeoutId;
