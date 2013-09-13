@@ -2220,6 +2220,11 @@ jQuery.atmosphere = function () {
                         data = msg;
                     }
 
+                    if (!_websocket.webSocketOpened) {
+                        jQuery.atmosphere.error("WebSocket not connected.");
+                        return;
+                    }
+
                     _websocket.send(data);
 
                 } catch (e) {

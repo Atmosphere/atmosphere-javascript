@@ -2277,6 +2277,11 @@
                         data = msg;
                     }
 
+                    if (!_websocket.webSocketOpened) {
+                        atmosphere.util.error("WebSocket not connected.");
+                        return;
+                    }
+
                     _websocket.send(data);
 
                 } catch (e) {
@@ -2372,7 +2377,7 @@
                         break;
                     case "closedByClient":
                         if (typeof (f.onClientTimeout) !== 'undefined')
-                            f.onClientTimeout(_request);
+                           f.onClientTimeout(_request);
                         break;
                     case "re-opening":
                         if (typeof (f.onReopen) !== 'undefined')
