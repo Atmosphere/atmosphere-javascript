@@ -1024,6 +1024,9 @@ jQuery.atmosphere = function () {
 
                 _sse.onerror = function (message) {
                     clearTimeout(_request.id);
+
+                    if (_response.state === 'closedByClient') return;
+
                     _invokeClose(sseOpened);
                     _clearState();
 
@@ -1192,8 +1195,14 @@ jQuery.atmosphere = function () {
                         }
                     }
 
-                    jQuery.atmosphere.warn("Websocket closed, reason: " + reason);
-                    jQuery.atmosphere.warn("Websocket closed, wasClean: " + message.wasClean);
+                    if (_request.logLevel === 'warn') {
+                        jQuery.atmosphere.warn("Websocket closed, reason: " + reason);
+                        jQuery.atmosphere.warn("Websocket closed, wasClean: " + message.wasClean);
+                    }
+
+                    if (_response.state === 'closedByClient') {
+                        return;
+                    }
 
                     _invokeClose(webSocketOpened);
 
@@ -1221,7 +1230,9 @@ jQuery.atmosphere = function () {
                             }
                         } else {
                             jQuery.atmosphere.log(_request.logLevel, ["Websocket reconnect maximum try reached " + _request.requestCount]);
-                            jQuery.atmosphere.warn("Websocket error, reason: " + message.reason);
+                            if (_request.logLevel === 'warn') {
+                                jQuery.atmosphere.warn("Websocket error, reason: " + message.reason);
+                            }
                             _onError(0, "maxReconnectOnClose reached");
                         }
                     }
@@ -1259,9 +1270,9 @@ jQuery.atmosphere = function () {
                 clearTimeout(_request.id);
                 if (_request.timeout > 0 && _request.transport !== 'polling') {
                     _request.id = setTimeout(function () {
+                        _onClientTimeout(_request);
                         _disconnect();
                         _clearState();
-                        _onClientTimeout(_request);
                     }, _request.timeout);
                 }
             }

@@ -1085,6 +1085,9 @@
 
                 _sse.onerror = function (message) {
                     clearTimeout(_request.id);
+
+                    if (_response.state === 'closedByClient') return;
+
                     _invokeClose(sseOpened);
                     _clearState();
 
@@ -1254,8 +1257,14 @@
                         }
                     }
 
-                    atmosphere.util.warn("Websocket closed, reason: " + reason);
-                    atmosphere.util.warn("Websocket closed, wasClean: " + message.wasClean);
+                    if (_request.logLevel === 'warn') {
+                        atmosphere.util.warn("Websocket closed, reason: " + reason);
+                        atmosphere.util.warn("Websocket closed, wasClean: " + message.wasClean);
+                    }
+
+                    if (_response.state === 'closedByClient') {
+                        return;
+                    }
 
                     _invokeClose(webSocketOpened);
 
@@ -1283,7 +1292,9 @@
                             }
                         } else {
                             atmosphere.util.log(_request.logLevel, ["Websocket reconnect maximum try reached " + _request.requestCount]);
-                            atmosphere.util.warn("Websocket error, reason: " + message.reason);
+                            if (_request.logLevel === 'warn') {
+                                atmosphere.util.warn("Websocket error, reason: " + message.reason);
+                            }
                             _onError(0, "maxReconnectOnClose reached");
                         }
                     }
@@ -1321,9 +1332,9 @@
                 clearTimeout(_request.id);
                 if (_request.timeout > 0 && _request.transport !== 'polling') {
                     _request.id = setTimeout(function () {
+                        _onClientTimeout(_request);
                         _disconnect();
                         _clearState();
-                        _onClientTimeout(_request);
                     }, _request.timeout);
                 }
             }
