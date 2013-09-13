@@ -57,6 +57,8 @@
         },
         onFailureToReconnect: function (request, response) {
         },
+        onClientTimeout: function(request){
+        },
 
         AtmosphereRequest: function (options) {
 
@@ -124,6 +126,8 @@
                 onLocalMessage: function (request) {
                 },
                 onFailureToReconnect: function (request, response) {
+                },
+                onClientTimeout: function(request){
                 }
             };
 
@@ -1320,8 +1324,17 @@
                         _invokeClose(true);
                         _disconnect();
                         _clearState();
+                        _onClientTimeout(_request);
                     }, _request.timeout);
                 }
+            }
+
+            function _onClientTimeout(_request) {
+                _response.state = 'closedByClient';
+                _response.responseBody = "";
+                _response.status = 408;
+                _response.messages = [];
+                _invokeCallback();
             }
 
             function _onError(code, reason) {
@@ -2346,6 +2359,10 @@
                     case "re-connecting":
                         if (typeof (f.onReconnect) !== 'undefined')
                             f.onReconnect(_request, response);
+                        break;
+                    case "closedByClient":
+                        if (typeof (f.onClientTimeout) !== 'undefined')
+                            f.onClientTimeout(_request);
                         break;
                     case "re-opening":
                         if (typeof (f.onReopen) !== 'undefined')
