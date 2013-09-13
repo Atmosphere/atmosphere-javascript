@@ -1259,7 +1259,6 @@ jQuery.atmosphere = function () {
                 clearTimeout(_request.id);
                 if (_request.timeout > 0 && _request.transport !== 'polling') {
                     _request.id = setTimeout(function () {
-                        _invokeClose(true);
                         _disconnect();
                         _clearState();
                         _onClientTimeout(_request);
