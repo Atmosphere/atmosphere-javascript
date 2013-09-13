@@ -2542,6 +2542,19 @@
 			return Object.prototype.toString.call(array) === "[object Array]";
 		},
 		
+		inArray: function(elem, array) {
+			if (!Array.prototype.indexOf) {
+				var len = array.length;
+				for (var i = 0; i < len; ++i) {
+					if (array[i] === elem) {
+						return i;
+					}
+				}
+				return -1;
+			}
+			return array.indexOf(elem);
+		},
+		
 		isBinary: function(data) {
 			var string = Object.prototype.toString.call(data);
 			return string === "[object Blob]" || string === "[object ArrayBuffer]";
