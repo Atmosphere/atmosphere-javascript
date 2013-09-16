@@ -1260,6 +1260,9 @@ jQuery.atmosphere = function () {
                     if (request.transport !== 'long-polling') {
                         _triggerOpen(request);
                     }
+                } else if (request.enableProtocol && request.firstMessage) {
+                    // In case we are getting some junk from IE
+                    b = false;
                 } else {
                     _triggerOpen(request);
                 }
