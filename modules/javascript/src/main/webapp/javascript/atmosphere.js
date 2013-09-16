@@ -1917,7 +1917,7 @@
 
                         var skipCallbackInvocation = _trackMessageSize(message, rq, _response);
 
-                        if (transport === 'long-polling' && atmosphere.util.trim(message) === 0)
+                        if (transport === 'long-polling' && atmosphere.util.trim(message).length === 0)
                             return;
 
                         if (rq.executeCallbackBeforeReconnect) {

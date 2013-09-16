@@ -1854,7 +1854,7 @@ jQuery.atmosphere = function () {
 
                         var skipCallbackInvocation = _trackMessageSize(message, rq, _response);
 
-                        if (transport === 'long-polling' && jQuery.trim(message) === 0)
+                        if (transport === 'long-polling' && jQuery.trim(message).length === 0)
                             return;
 
                         if (rq.executeCallbackBeforeReconnect) {
