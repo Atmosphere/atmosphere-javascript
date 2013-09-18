@@ -290,6 +290,14 @@
             function _disconnect() {
                 if (_request.enableProtocol && !_request.firstMessage) {
                     var query = "X-Atmosphere-Transport=close&X-Atmosphere-tracking-id=" + _request.uuid;
+
+                    atmosphere.util.each(_request.headers, function (name, value) {
+                        var h = atmosphere.util.isFunction(value) ? value.call(this, _request, _request, _response) : value;
+                        if (h != null) {
+                            query += "&" + encodeURIComponent(name) + "=" + encodeURIComponent(h);
+                        }
+                    });
+
                     var url = _request.url.replace(/([?&])_=[^&]*/, query);
                     url = url + (url === _request.url ? (/\?/.test(_request.url) ? "&" : "?") + query : "");
                     _request.attachHeadersAsQueryString = false;
