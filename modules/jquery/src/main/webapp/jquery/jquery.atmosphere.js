@@ -256,6 +256,9 @@ jQuery.atmosphere = function () {
             /** Trace time */
             var _traceTimer;
 
+            /** Key for connection sharing */
+            var _sharingKey;
+
             // Automatic call to subscribe
             _subscribe(options);
 
@@ -679,7 +682,7 @@ jQuery.atmosphere = function () {
                 };
 
                 function leaveTrace() {
-                    document.cookie = encodeURIComponent(name) + "=" +
+                    document.cookie = _sharingKey + "=" +
                         // Opera's JSON implementation ignores a number whose a last digit of 0 strangely
                         // but has no problem with a number whose a last digit of 9 + 1
                         encodeURIComponent(jQuery.stringifyJSON({
@@ -704,6 +707,7 @@ jQuery.atmosphere = function () {
                     storageService.set("opened", false);
                 }
                 // Leaves traces
+                _sharingKey = encodeURIComponent(name);
                 leaveTrace();
                 _traceTimer = setInterval(leaveTrace, 1000);
 
@@ -2520,7 +2524,7 @@ jQuery.atmosphere = function () {
                     // Clears trace timer
                     clearInterval(_traceTimer);
                     // Removes the trace
-                    document.cookie = encodeURIComponent("atmosphere-" + _request.url) + "=; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+                    document.cookie = _sharingKey + "=; expires=Thu, 01 Jan 1970 00:00:00 GMT";
                     // The heir is the parent unless unloading
                     _storageService.signal("close", {
                         reason: "",
