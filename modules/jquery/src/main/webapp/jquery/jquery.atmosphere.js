@@ -2671,6 +2671,15 @@ jQuery.atmosphere = function () {
                 return true;
             }
 
+            // KreaTV 4.1 -> 4.6
+            else if (jQuery.trim(navigator.userAgent).slice(0, 16) === "KreaTVWebKit/531") {
+                return true;
+            }
+            // KreaTV 3.8
+            else if (jQuery.trim(navigator.userAgent).slice(-7).toLowerCase() === "Kreatel") {
+                return true;
+            }
+
             // Force Android to use CORS as some version like 2.2.3 fail otherwise
             var ua = navigator.userAgent.toLowerCase();
             var isAndroid = ua.indexOf("android") > -1;
