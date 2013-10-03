@@ -2161,6 +2161,7 @@
                 rq.transport = "polling";
                 rq.method = "GET";
                 rq.async = false;
+                rq.withCredentials = false;
                 rq.reconnect = false;
                 rq.force = true;
                 rq.suspend = false;
@@ -2260,6 +2261,7 @@
                     logLevel: 'info',
                     requestCount: 0,
                     withCredentials: _request.withCredentials,
+                    async: _request.async,
                     transport: 'polling',
                     isOpen: true,
                     attachHeadersAsQueryString: true,
