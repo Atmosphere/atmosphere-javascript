@@ -2151,6 +2151,9 @@
                     _pushJsonp(message);
                 } else if (_websocket != null) {
                     _pushWebSocket(message);
+                } else {
+                    _onError(0, "No suspended connection available");
+                    atmosphere.util.error("No suspended connection available. Make sure atmosphere.subscribe has been called and request.onOpen invoked before invoking this method");
                 }
             }
 

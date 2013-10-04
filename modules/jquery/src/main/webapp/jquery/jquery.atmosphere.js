@@ -1662,8 +1662,6 @@ jQuery.atmosphere = function () {
 
                             if (rq.suspend) {
                                 _response.state = _response.status === 0 ? "closed" : "messageReceived";
-                            } else {
-                                _response.state = "messagePublished";
                             }
 
                             var isAllowedToReconnect = request.transport !== 'streaming';
@@ -2090,6 +2088,9 @@ jQuery.atmosphere = function () {
                     _pushJsonp(message);
                 } else if (_websocket != null) {
                     _pushWebSocket(message);
+                } else {
+                    _onError(0, "No suspended connection available");
+                    jQuery.atmosphere.error("No suspended connection available. Make sure atmosphere.subscribe has been called and request.onOpen invoked before invoking this method");
                 }
             }
 
