@@ -1589,7 +1589,7 @@ jQuery.atmosphere = function () {
                                 reconnectF();
                                 return;
                             }
-                        } else {
+                        } else if (ajaxRequest.readyState === 4) {
                             update = true;
                         }
 
