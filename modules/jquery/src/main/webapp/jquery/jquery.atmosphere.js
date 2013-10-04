@@ -1662,6 +1662,8 @@ jQuery.atmosphere = function () {
 
                             if (rq.suspend) {
                                 _response.state = _response.status === 0 ? "closed" : "messageReceived";
+                            } else {
+                                _response.state = "messagePublished";
                             }
 
                             var isAllowedToReconnect = request.transport !== 'streaming';
