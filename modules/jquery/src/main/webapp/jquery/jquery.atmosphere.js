@@ -54,7 +54,7 @@ jQuery.atmosphere = function () {
     };
 
     return {
-        version: "2.0.3-jquery",
+        version: "2.0.4-jquery",
         requests: [],
         callbacks: [],
 
@@ -1589,6 +1589,8 @@ jQuery.atmosphere = function () {
                                 reconnectF();
                                 return;
                             }
+                        } else {
+                            update = true;
                         }
 
                         if (update) {
@@ -1666,7 +1668,7 @@ jQuery.atmosphere = function () {
                                 _response.state = "messagePublished";
                             }
 
-                            var isAllowedToReconnect = request.transport !== 'streaming';
+                            var isAllowedToReconnect = request.transport !== 'streaming' && request.transport !== 'polling';;
                             if (isAllowedToReconnect && !rq.executeCallbackBeforeReconnect) {
                                 _reconnect(ajaxRequest, rq, 0);
                             }

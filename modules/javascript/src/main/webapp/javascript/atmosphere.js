@@ -28,7 +28,7 @@
 
     "use strict";
 
-    var version = "2.0.3-javascript",
+    var version = "2.0.4-javascript",
         atmosphere = {},
         guid,
         requests = [],
@@ -1657,6 +1657,8 @@
                                 reconnectF();
                                 return;
                             }
+                        } else {
+                            update = true;
                         }
 
                         if (update) {
@@ -1734,7 +1736,7 @@
                                 _response.state = "messagePublished";
                             }
 
-                            var isAllowedToReconnect = request.transport !== 'streaming';
+                            var isAllowedToReconnect = request.transport !== 'streaming' && request.transport !== 'polling';
                             if (isAllowedToReconnect && !rq.executeCallbackBeforeReconnect) {
                                 _reconnect(ajaxRequest, rq, 0);
                             }
