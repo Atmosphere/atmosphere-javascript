@@ -366,7 +366,7 @@
                     // Clears trace timer
                     clearInterval(_traceTimer);
                     // Removes the trace
-                    document.cookie = _sharingKey + "=; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+                    document.cookie = _sharingKey + "=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/";
                     // The heir is the parent unless unloading
                     _storageService.signal("close", {
                         reason: "",
@@ -795,7 +795,7 @@
                         encodeURIComponent(atmosphere.util.stringifyJSON({
                             ts: atmosphere.util.now() + 1,
                             heir: (storageService.get("children") || [])[0]
-                        }));
+                        })) + "; path=/";
                 }
 
                 // Chooses a storageService

@@ -688,7 +688,7 @@ jQuery.atmosphere = function () {
                         encodeURIComponent(jQuery.stringifyJSON({
                             ts: jQuery.now() + 1,
                             heir: (storageService.get("children") || [])[0]
-                        }));
+                        })) + "; path=/";
                 }
 
                 // Chooses a storageService
@@ -2529,7 +2529,7 @@ jQuery.atmosphere = function () {
                     // Clears trace timer
                     clearInterval(_traceTimer);
                     // Removes the trace
-                    document.cookie = _sharingKey + "=; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+                    document.cookie = _sharingKey + "=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/";
                     // The heir is the parent unless unloading
                     _storageService.signal("close", {
                         reason: "",
