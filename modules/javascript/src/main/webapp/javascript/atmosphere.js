@@ -33,6 +33,7 @@
         guid,
         requests = [],
         callbacks = [],
+        uuid = 0,
         hasOwn = Object.prototype.hasOwnProperty;
 
     atmosphere = {
@@ -147,8 +148,7 @@
                 error: null,
                 request: null,
                 partialMessage: "",
-                errorHandled: false,
-                id: 0
+                errorHandled: false
             };
 
             /**
@@ -449,6 +449,7 @@
                 _request.firstMessage = true;
                 _request.isOpen = false;
                 _request.ctime = atmosphere.util.now();
+                _request.uuid = uuid;
 
                 if (_request.transport !== 'websocket' && _request.transport !== 'sse') {
                     _executeRequest(_request);
@@ -1334,6 +1335,7 @@
                     if (request.transport !== 'long-polling') {
                         _triggerOpen(request);
                     }
+                    uuid = request.uuid;
                 } else if (request.enableProtocol && request.firstMessage) {
                     // In case we are getting some junk from IE
                     b = false;

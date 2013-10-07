@@ -55,6 +55,7 @@ jQuery.atmosphere = function () {
 
     return {
         version: "2.0.4-jquery",
+        uuid : 0,
         requests: [],
         callbacks: [],
 
@@ -165,8 +166,7 @@ jQuery.atmosphere = function () {
                 error: null,
                 request: null,
                 partialMessage: "",
-                errorHandled: false,
-                id: 0
+                errorHandled: false
             };
 
             /**
@@ -358,6 +358,7 @@ jQuery.atmosphere = function () {
                 _request.firstMessage = true;
                 _request.isOpen = false;
                 _request.ctime = jQuery.now();
+                _request.uuid = jQuery.atmosphere.uuid;
 
                 if (_request.transport !== 'websocket' && _request.transport !== 'sse') {
                     _executeRequest(_request);
@@ -1264,6 +1265,8 @@ jQuery.atmosphere = function () {
                     if (request.transport !== 'long-polling') {
                         _triggerOpen(request);
                     }
+
+                    jQuery.atmosphere.uuid = request.uuid;
                 } else if (request.enableProtocol && request.firstMessage) {
                     // In case we are getting some junk from IE
                     b = false;
