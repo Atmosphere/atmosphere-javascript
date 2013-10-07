@@ -28,7 +28,7 @@
 
     "use strict";
 
-    var version = "2.0.4-javascript",
+    var version = "2.0.5-javascript",
         atmosphere = {},
         guid,
         requests = [],
@@ -303,11 +303,18 @@
 
                     var url = _request.url.replace(/([?&])_=[^&]*/, query);
                     url = url + (url === _request.url ? (/\?/.test(_request.url) ? "&" : "?") + query : "");
-                    _request.attachHeadersAsQueryString = false;
-                    _request.dropAtmosphereHeaders = true;
-                    _request.url = url;
-                    _request.transport = 'polling';
-                    _pushOnClose("", _request);
+
+
+                    var rq = {
+                        connected: false,
+                        headers: []
+                    };
+                    var closeR = new atmosphere.AtmosphereRequest(rq);
+                    closeR.attachHeadersAsQueryString = false;
+                    closeR.dropAtmosphereHeaders = true;
+                    closeR.url = url;
+                    closeR.transport = 'polling';
+                    _pushOnClose("", closeR);
                 }
             }
 
@@ -2734,6 +2741,7 @@
         },
 
         each: function (obj, callback, args) {
+            if (!obj) return;
             var value, i = 0, length = obj.length, isArray = atmosphere.util.isArray(obj);
 
             if (args) {
