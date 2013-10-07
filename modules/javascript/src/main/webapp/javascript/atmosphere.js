@@ -454,7 +454,7 @@
                 }
 
                 // Protocol
-                _request.firstMessage = uuid === '0' ? true : false;
+                _request.firstMessage = uuid == 0 ? true : false;
                 _request.isOpen = false;
                 _request.ctime = atmosphere.util.now();
                 _request.uuid = uuid;
