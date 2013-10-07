@@ -148,7 +148,8 @@
                 error: null,
                 request: null,
                 partialMessage: "",
-                errorHandled: false
+                errorHandled: false,
+                closedByClientTimeout: false
             };
 
             /**
@@ -453,10 +454,11 @@
                 }
 
                 // Protocol
-                _request.firstMessage = true;
+                _request.firstMessage = uuid !== '0' ? false : true;
                 _request.isOpen = false;
                 _request.ctime = atmosphere.util.now();
                 _request.uuid = uuid;
+                _response.closedByClientTimeout = false;
 
                 if (_request.transport !== 'websocket' && _request.transport !== 'sse') {
                     _executeRequest(_request);
@@ -1106,7 +1108,7 @@
                 _sse.onerror = function (message) {
                     clearTimeout(_request.id);
 
-                    if (_response.state === 'closedByClient') return;
+                    if (_response.closedByClientTimeout) return;
 
                     _invokeClose(sseOpened);
                     _clearState();
@@ -1282,7 +1284,7 @@
                         atmosphere.util.warn("Websocket closed, wasClean: " + message.wasClean);
                     }
 
-                    if (_response.state === 'closedByClient') {
+                    if (_response.closedByClientTimeout) {
                         return;
                     }
 
@@ -1364,6 +1366,7 @@
             }
 
             function _onClientTimeout(_request) {
+                _response.closedByClientTimeout = true;
                 _response.state = 'closedByClient';
                 _response.responseBody = "";
                 _response.status = 408;
