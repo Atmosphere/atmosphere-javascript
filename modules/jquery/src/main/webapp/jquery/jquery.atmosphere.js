@@ -356,7 +356,7 @@ jQuery.atmosphere = function () {
                 }
 
                 // Protocol
-                _request.firstMessage = jQuery.atmosphere.uuid !== '0' ? true : false;
+                _request.firstMessage = jQuery.atmosphere.uuid === '0' ? true : false;
                 _request.isOpen = false;
                 _request.ctime = jQuery.now();
                 _request.uuid = jQuery.atmosphere.uuid;
