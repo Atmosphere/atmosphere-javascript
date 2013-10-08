@@ -308,12 +308,12 @@
 
                     var rq = {
                         connected: false,
-                        headers: []
                     };
                     var closeR = new atmosphere.AtmosphereRequest(rq);
                     closeR.attachHeadersAsQueryString = false;
                     closeR.dropAtmosphereHeaders = true;
                     closeR.url = url;
+                    closeR.contentType = "text/plain";
                     closeR.transport = 'polling';
                     _pushOnClose("", closeR);
                 }
