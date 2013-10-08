@@ -101,7 +101,7 @@
                 messageDelimiter: '|',
                 connectTimeout: -1,
                 reconnectInterval: 0,
-                dropAtmosphereHeaders: true,
+                dropHeaders: true,
                 uuid: 0,
                 async: true,
                 shared: false,
@@ -307,11 +307,11 @@
 
 
                     var rq = {
-                        connected: false,
+                        connected: false
                     };
                     var closeR = new atmosphere.AtmosphereRequest(rq);
                     closeR.attachHeadersAsQueryString = false;
-                    closeR.dropAtmosphereHeaders = true;
+                    closeR.dropHeaders = true;
                     closeR.url = url;
                     closeR.contentType = "text/plain";
                     closeR.transport = 'polling';
@@ -1813,7 +1813,7 @@
                     }
                 }
 
-                if (!_request.dropAtmosphereHeaders) {
+                if (!_request.dropHeaders) {
                     ajaxRequest.setRequestHeader("X-Atmosphere-Framework", atmosphere.util.version);
                     ajaxRequest.setRequestHeader("X-Atmosphere-Transport", request.transport);
                     if (request.lastTimestamp != null) {
@@ -1826,18 +1826,18 @@
                         ajaxRequest.setRequestHeader("X-Atmosphere-TrackMessageSize", "true");
                     }
                     ajaxRequest.setRequestHeader("X-Atmosphere-tracking-id", request.uuid);
+
+                    atmosphere.util.each(request.headers, function (name, value) {
+                        var h = atmosphere.util.isFunction(value) ? value.call(this, ajaxRequest, request, create, _response) : value;
+                        if (h != null) {
+                            ajaxRequest.setRequestHeader(name, h);
+                        }
+                    });
                 }
 
                 if (request.contentType !== '') {
                     ajaxRequest.setRequestHeader("Content-Type", request.contentType);
                 }
-
-                atmosphere.util.each(request.headers, function (name, value) {
-                    var h = atmosphere.util.isFunction(value) ? value.call(this, ajaxRequest, request, create, _response) : value;
-                    if (h != null) {
-                        ajaxRequest.setRequestHeader(name, h);
-                    }
-                });
             }
 
             function _reconnect(ajaxRequest, request, reconnectInterval) {
@@ -2365,16 +2365,6 @@
                     var tempUUID = xdr.getResponseHeader('X-Atmosphere-tracking-id');
                     if (tempUUID && tempUUID != null) {
                         request.uuid = tempUUID.split(" ").pop();
-                    }
-
-                    // HOTFIX for firefox bug: https://bugzilla.mozilla.org/show_bug.cgi?id=608735
-                    if (request.headers) {
-                        atmosphere.util.each(_request.headers, function (name) {
-                            var v = xdr.getResponseHeader(name);
-                            if (v) {
-                                _response.headers[name] = v;
-                            }
-                        });
                     }
                 } catch (e) {
                 }

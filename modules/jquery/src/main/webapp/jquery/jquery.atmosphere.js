@@ -120,7 +120,7 @@ jQuery.atmosphere = function () {
                 messageDelimiter: '|',
                 connectTimeout: -1,
                 reconnectInterval: 0,
-                dropAtmosphereHeaders: true,
+                dropHeaders: true,
                 uuid: 0,
                 shared: false,
                 readResponsesHeaders: false,
@@ -1734,7 +1734,7 @@ jQuery.atmosphere = function () {
                     }
                 }
 
-                if (!_request.dropAtmosphereHeaders) {
+                if (!_request.dropHeaders) {
                     ajaxRequest.setRequestHeader("X-Atmosphere-Framework", jQuery.atmosphere.version);
                     ajaxRequest.setRequestHeader("X-Atmosphere-Transport", request.transport);
                     if (request.lastTimestamp != null) {
@@ -1747,18 +1747,18 @@ jQuery.atmosphere = function () {
                         ajaxRequest.setRequestHeader("X-Atmosphere-TrackMessageSize", "true");
                     }
                     ajaxRequest.setRequestHeader("X-Atmosphere-tracking-id", request.uuid);
+
+                    jQuery.each(request.headers, function (name, value) {
+                        var h = jQuery.isFunction(value) ? value.call(this, ajaxRequest, request, create, _response) : value;
+                        if (h != null) {
+                            ajaxRequest.setRequestHeader(name, h);
+                        }
+                    });
                 }
 
                 if (request.contentType !== '') {
                     ajaxRequest.setRequestHeader("Content-Type", request.contentType);
                 }
-
-                jQuery.each(request.headers, function (name, value) {
-                    var h = jQuery.isFunction(value) ? value.call(this, ajaxRequest, request, create, _response) : value;
-                    if (h != null) {
-                        ajaxRequest.setRequestHeader(name, h);
-                    }
-                });
             }
 
             function _reconnect(ajaxRequest, request, reconnectInterval) {
@@ -2292,16 +2292,6 @@ jQuery.atmosphere = function () {
                     var tempUUID = xdr.getResponseHeader('X-Atmosphere-tracking-id');
                     if (tempUUID && tempUUID != null) {
                         request.uuid = tempUUID.split(" ").pop();
-                    }
-
-                    // HOTFIX for firefox bug: https://bugzilla.mozilla.org/show_bug.cgi?id=608735
-                    if (request.headers) {
-                        jQuery.each(_request.headers, function (name) {
-                            var v = xdr.getResponseHeader(name);
-                            if (v) {
-                                _response.headers[name] = v;
-                            }
-                        });
                     }
                 } catch (e) {
                 }
