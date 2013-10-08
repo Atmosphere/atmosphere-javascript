@@ -2937,12 +2937,12 @@
                 return true;
             }
 
-            // KreaTV 4.1 -> 4.6
+            // KreaTV 4.1 -> 4.4
             else if (atmosphere.util.trim(navigator.userAgent).slice(0, 16) === "KreaTVWebKit/531") {
                 return true;
             }
             // KreaTV 3.8
-            else if (atmosphere.util.trim(navigator.userAgent).slice(-7).toLowerCase() === "Kreatel") {
+            else if (atmosphere.util.trim(navigator.userAgent).slice(-7).toLowerCase() === "kreatel") {
                 return true;
             }
 
