@@ -1602,7 +1602,7 @@ jQuery.atmosphere = function () {
                         if (update) {
                             var responseText = ajaxRequest.responseText;
 
-                            if (jQuery.trim(responseText.length).length === 0 && rq.transport === 'long-polling') {
+                            if (jQuery.trim(responseText).length === 0 && rq.transport === 'long-polling') {
                                 // For browser that aren't support onabort
                                 if (!ajaxRequest.hasData) {
                                     reconnectF();
