@@ -2229,7 +2229,7 @@ jQuery.atmosphere = function () {
              *
              */
             function _pushWebSocket(message) {
-                var msg = message instanceof ArrayBuffer || message instanceof Blob ? message : _getStringMessage(message);
+                var msg = jQuery.atmosphere.isBinary(message) ? message : _getStringMessage(message);
                 var data;
                 try {
                     if (_request.dispatchUrl != null) {
@@ -2783,6 +2783,12 @@ jQuery.atmosphere = function () {
 
         error: function () {
             jQuery.atmosphere.log('error', arguments);
+        },
+        
+        // TODO extract to utils or something
+        isBinary: function (data) {
+            var string = Object.prototype.toString.call(data);
+            return string === "[object Blob]" || string === "[object ArrayBuffer]";
         }
     };
 }();
