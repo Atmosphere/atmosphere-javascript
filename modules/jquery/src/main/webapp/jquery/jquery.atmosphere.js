@@ -1587,7 +1587,7 @@ jQuery.atmosphere = function () {
                             }
                             // MSIE 9 and lower status can be higher than 1000, Chrome can be 0
                             var status = 200;
-                            if (ajaxRequest.readyState > 1) {
+                            if (ajaxRequest.readyState === 4) {
                                 status = ajaxRequest.status > 1000 ? 0 : ajaxRequest.status;
                             }
 
@@ -2794,7 +2794,7 @@ jQuery.atmosphere = function () {
         error: function () {
             jQuery.atmosphere.log('error', arguments);
         },
-        
+
         // TODO extract to utils or something
         isBinary: function (data) {
             var string = Object.prototype.toString.call(data);
