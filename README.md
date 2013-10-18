@@ -16,6 +16,12 @@ Atmosphere transparently supports WebSockets, Server Side Events (SSE), Long-Pol
          <version>2.0.3</version>
       </dependency>
 ```
+
+Full API documentation can be read [here](https://github.com/Atmosphere/atmosphere/wiki/jQuery.atmosphere.js-atmosphere.js-API) and a lot of samples [here](https://github.com/Atmosphere/atmosphere-samples)
+
+2.0.x version has been certified to work with Atmosphere 1.0.x and 2.0.x.
+2.1.x version is certified to work with Atmosphere 2.x and also work with 1.0.x, but some API ha been deprecated.
+
 [![githalytics.com alpha](https://cruel-carlota.pagodabox.com/834d88e08fda4345fef8e361d9216aa7 "githalytics.com")](http://githalytics.com/Atmosphere/atmosphere-javascript.git)
 
 
