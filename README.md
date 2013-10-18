@@ -21,7 +21,7 @@ Full API documentation can be read [here](https://github.com/Atmosphere/atmosphe
 
 2.0.x version has been certified to work with Atmosphere 1.0.x and 2.0.x.
 
-2.1.x version is certified to work with Atmosphere 2.x and also work with 1.0.x, but some API ha been deprecated.
+2.1.x version is certified to work with Atmosphere 2.x and also work with 1.0.x, but some API has been deprecated so you may need to change your Atmosphere 1.0.x client code.
 
 [![githalytics.com alpha](https://cruel-carlota.pagodabox.com/834d88e08fda4345fef8e361d9216aa7 "githalytics.com")](http://githalytics.com/Atmosphere/atmosphere-javascript.git)
 
