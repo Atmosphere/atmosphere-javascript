@@ -1624,8 +1624,8 @@
                             if (!_response.status) {
                                 _response.status = 500;
                             }
-                            _clearState();
                             if (!_response.errorHandled) {
+                                _clearState();
                                 reconnectF();
                             }
                         };
@@ -1855,7 +1855,8 @@
 
                     clearTimeout(request.id);
                     if (reconnectInterval > 0) {
-                        request.id = setTimeout(function () {
+                        // For whatever reason, never cancel a reconnect timeout as it is mandatory to reconnect.
+                        setTimeout(function () {
                             _executeRequest(request);
                         }, reconnectInterval);
                     } else {
