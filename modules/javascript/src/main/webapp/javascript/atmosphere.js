@@ -1332,8 +1332,12 @@
             }
 
             function _handleProtocol(request, message) {
+
                 // The first messages is always the uuid.
                 var b = true;
+
+                if (request.transport === 'polling') return b;
+
                 if (atmosphere.util.trim(message).length !== 0 && request.enableProtocol && request.firstMessage) {
                     request.firstMessage = false;
                     var messages = message.split(request.messageDelimiter);
@@ -1393,7 +1397,7 @@
              * @param response
              */
             function _trackMessageSize(message, request, response) {
-                if (!_handleProtocol(_request, message))
+                if (!_handleProtocol(request, message))
                     return true;
                 if (message.length === 0)
                     return true;
@@ -2182,6 +2186,7 @@
                 rq.reconnect = false;
                 rq.force = true;
                 rq.suspend = false;
+                rq.timeout = 1000;
                 _executeRequest(rq);
             }
 
