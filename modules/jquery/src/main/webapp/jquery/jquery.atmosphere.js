@@ -1775,6 +1775,10 @@ jQuery.atmosphere = function () {
 
                     // Reconnect immedialtely
                     clearTimeout(request.id);
+                    if (request.reconnectId) {
+                        clearTimeout(request.reconnectId);
+                    }
+
                     if (reconnectInterval > 0) {
                         setTimeout(function () {
                             _request.reconnectId = _executeRequest(request);
