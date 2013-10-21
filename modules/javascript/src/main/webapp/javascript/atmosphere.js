@@ -1857,6 +1857,10 @@
                     _response.reason = status === 0 ? "Server resumed the connection or down." : "OK";
 
                     clearTimeout(request.id);
+                    if (request.reconnectId) {
+                        clearTimeout(request.reconnectId);
+                    }
+
                     if (reconnectInterval > 0) {
                         // For whatever reason, never cancel a reconnect timeout as it is mandatory to reconnect.
                         _request.reconnectId = setTimeout(function () {
