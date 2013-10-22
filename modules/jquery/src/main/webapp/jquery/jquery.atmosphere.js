@@ -2787,8 +2787,8 @@ jQuery.atmosphere = function () {
 
         // TODO extract to utils or something
         isBinary: function (data) {
-            var string = Object.prototype.toString.call(data);
-            return string === "[object Blob]" || string === "[object ArrayBuffer]";
+            // True if data is an instance of Blob, ArrayBuffer or ArrayBufferView 
+            return /^\[object\s(?:Blob|ArrayBuffer|.+Array)\]$/.test(Object.prototype.toString.call(data));
         }
     };
 }();
