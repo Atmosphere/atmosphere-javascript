@@ -920,7 +920,13 @@
                             };
                             script.onerror = function () {
                                 script.clean();
-                                _onError(0, "maxReconnectOnClose reached");
+                                rq.lastIndex = 0;
+                                if (rq.reconnect && _requestCount++ < rq.maxReconnectOnClose) {
+                                    _open('re-connecting', request.transport, request);
+                                    _reconnect(_jqxhr, rq, request.reconnectInterval);
+                                } else {
+                                    _onError(0, "maxReconnectOnClose reached");
+                                }
                             };
 
                             head.insertBefore(script, head.firstChild);
