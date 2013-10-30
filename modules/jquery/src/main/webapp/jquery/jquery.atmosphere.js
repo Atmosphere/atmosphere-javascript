@@ -1120,18 +1120,22 @@ jQuery.atmosphere = function () {
                         jQuery.atmosphere.debug("Websocket successfully opened");
                     }
 
+                    var reopening = webSocketOpened;
+
+                    webSocketOpened = true;
+                    if(_websocket != null) {
+                        _websocket.webSocketOpened = webSocketOpened;
+                    }
+
                     if (!_request.enableProtocol) {
-                        if (!webSocketOpened) {
-                            _open('opening', "websocket", _request);
-                        } else {
+                        if (reopening) {
                             _open('re-opening', "websocket", _request);
+                        } else {
+                            _open('opening', "websocket", _request);
                         }
                     }
 
-                    webSocketOpened = true;
                     if (_websocket != null) {
-                        _websocket.webSocketOpened = webSocketOpened;
-
                         if (_request.method === 'POST') {
                             _response.state = "messageReceived";
                             _websocket.send(_request.data);
@@ -2322,6 +2326,7 @@ jQuery.atmosphere = function () {
                             f.onError(response);
                         break;
                     case "opening":
+                        delete _request.closed;
                         if (typeof (f.onOpen) !== 'undefined')
                             f.onOpen(response);
                         break;
@@ -2338,6 +2343,7 @@ jQuery.atmosphere = function () {
                             f.onClientTimeout(_request);
                         break;
                     case "re-opening":
+                        delete _request.closed;
                         if (typeof (f.onReopen) !== 'undefined')
                             f.onReopen(_request, response);
                         break;
