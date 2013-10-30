@@ -2347,6 +2347,7 @@ jQuery.atmosphere = function () {
                             f.onError(response);
                         break;
                     case "opening":
+                        delete _request.closed;
                         if (typeof (f.onOpen) !== 'undefined')
                             f.onOpen(response);
                         break;
@@ -2363,6 +2364,7 @@ jQuery.atmosphere = function () {
                             f.onClientTimeout(_request);
                         break;
                     case "re-opening":
+                        delete _request.closed;
                         if (typeof (f.onReopen) !== 'undefined')
                             f.onReopen(_request, response);
                         break;
