@@ -787,8 +787,17 @@ jQuery.atmosphere = function () {
                     dataType: "jsonp",
                     error: function (jqXHR, textStatus, errorThrown) {
                         _response.error = true;
-                        if (jqXHR.status < 300) {
-                            _reconnect(_jqxhr, rq, 0);
+
+                        if (rq.openId) {
+                            clearTimeout(rq.openId);
+                        }
+
+                        if (rq.reconnect && _requestCount++ < rq.maxReconnectOnClose) {
+                            _open('re-connecting', rq.transport, rq);
+                            _reconnect(_jqxhr, rq, rq.reconnectInterval);
+                            rq.openId = setTimeout(function() {
+                                _triggerOpen(rq);
+                            }, rq.reconnectInterval + 1000);
                         } else {
                             _onError(jqXHR.status, errorThrown);
                         }
