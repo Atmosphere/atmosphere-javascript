@@ -921,9 +921,17 @@
                             script.onerror = function () {
                                 script.clean();
                                 rq.lastIndex = 0;
+
+                                if (rq.openId) {
+                                    clearTimeout(rq.openId);
+                                }
+
                                 if (rq.reconnect && _requestCount++ < rq.maxReconnectOnClose) {
-                                    _open('re-connecting', request.transport, request);
+                                    _open('re-connecting', rq.transport, rq);
                                     _reconnect(_jqxhr, rq, request.reconnectInterval);
+                                    rq.openId = setTimeout(function() {
+                                        _triggerOpen(rq);
+                                    }, rq.reconnectInterval + 1000);
                                 } else {
                                     _onError(0, "maxReconnectOnClose reached");
                                 }
