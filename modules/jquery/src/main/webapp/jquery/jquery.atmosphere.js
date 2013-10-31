@@ -1595,9 +1595,6 @@ jQuery.atmosphere = function () {
                         _timeout(_request);
 
                         if (rq.transport !== 'polling') {
-                            if ((!rq.enableProtocol || !request.firstMessage) && ajaxRequest.readyState === 2) {
-                                _triggerOpen(rq);
-                            }
                             // MSIE 9 and lower status can be higher than 1000, Chrome can be 0
                             var status = 200;
                             if (ajaxRequest.readyState === 4) {
@@ -1610,6 +1607,11 @@ jQuery.atmosphere = function () {
                                 _clearState();
                                 reconnectF();
                                 return;
+                            }
+                            
+                            // Firefox incorrectly send statechange 0->2 when a reconnect attempt fails. The above checks ensure that onopen is not called for these
+                            if ((!rq.enableProtocol || !request.firstMessage) && ajaxRequest.readyState === 2) {
+                                _triggerOpen(rq);
                             }
                         } else if (ajaxRequest.readyState === 4) {
                             update = true;
