@@ -1036,7 +1036,7 @@
 
                 _response.transport = "sse";
 
-                var location = _buildSSEUrl(_request.url);
+                var location = _buildSSEUrl();
 
                 if (_request.logLevel === 'debug') {
                     atmosphere.util.debug("Invoking executeSSE");
@@ -1110,10 +1110,10 @@
 
                     // https://github.com/remy/polyfills/blob/master/EventSource.js
                     // Since we polling.
-                    if (_sse.URL) {
+                   /* if (_sse.URL) {
                         _sse.interval = 100;
-                        _sse.URL = _buildSSEUrl(_request.url);
-                    }
+                        _sse.URL = _buildSSEUrl();
+                    } */
 
                     if (!skipCallbackInvocation) {
                         _invokeCallback();
