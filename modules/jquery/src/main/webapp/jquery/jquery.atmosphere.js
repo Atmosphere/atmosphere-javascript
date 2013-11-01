@@ -2489,17 +2489,19 @@ jQuery.atmosphere = function () {
                     var url = _request.url.replace(/([?&])_=[^&]*/, query);
                     url = url + (url === _request.url ? (/\?/.test(_request.url) ? "&" : "?") + query : "");
 
+                    var async = (jQuery.browser.msie && jQuery.browser.version < 10) ? true: false;
+
                     if (_request.connectTimeout > 0) {
                         jQuery.ajax({
                             url: url,
-                            async: false,
+                            async: async,
                             timeout: _request.connectTimeout,
                             cache: false
                         });
                     } else {
                         jQuery.ajax({
                             url: url,
-                            async: false,
+                            async: async,
                             cache: false
                         });
                     }
