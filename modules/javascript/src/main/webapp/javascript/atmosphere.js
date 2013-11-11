@@ -305,9 +305,8 @@
                     var url = _request.url.replace(/([?&])_=[^&]*/, query);
                     url = url + (url === _request.url ? (/\?/.test(_request.url) ? "&" : "?") + query : "");
 
-
                     var rq = {
-                        connected: false,
+                        connected: false
                     };
                     var closeR = new atmosphere.AtmosphereRequest(rq);
                     closeR.attachHeadersAsQueryString = false;
@@ -315,6 +314,7 @@
                     closeR.url = url;
                     closeR.contentType = "text/plain";
                     closeR.transport = 'polling';
+                    closeR.async = false;
                     _pushOnClose("", closeR);
                 }
             }
