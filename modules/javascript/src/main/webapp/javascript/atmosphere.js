@@ -1589,7 +1589,7 @@
                     return;
                 }
 
-                if (atmosphere.util.browser.msie && atmosphere.util.browser.version < 10) {
+                if (atmosphere.util.browser.msie && +atmosphere.util.browser.version.split(".")[0] < 10) {
                     if ((rq.transport === 'streaming')) {
                         if (rq.enableXDR && window.XDomainRequest) {
                             _ieXDR(rq);
@@ -2990,11 +2990,18 @@
                 /(webkit)[ \/]([\w.]+)/.exec(ua) ||
                 /(opera)(?:.*version|)[ \/]([\w.]+)/.exec(ua) ||
                 /(msie) ([\w.]+)/.exec(ua) ||
+                /(trident)(?:.*? rv:([\w.]+)|)/.exec(ua) ||
                 ua.indexOf("compatible") < 0 && /(mozilla)(?:.*? rv:([\w.]+)|)/.exec(ua) ||
                 [];
 
         atmosphere.util.browser[match[1] || ""] = true;
         atmosphere.util.browser.version = match[2] || "0";
+        
+        // Trident is the layout engine of the Internet Explorer
+        // IE 11 has no "MSIE: 11.0" token
+        if (atmosphere.util.browser.trident) {
+        	atmosphere.util.browser.msie = true;
+        }
 
         // The storage event of Internet Explorer and Firefox 3 works strangely
         if (atmosphere.util.browser.msie || (atmosphere.util.browser.mozilla && atmosphere.util.browser.version.split(".")[0] === "1")) {

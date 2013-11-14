@@ -1509,7 +1509,7 @@ jQuery.atmosphere = function () {
                     return;
                 }
 
-                if (jQuery.browser.msie && jQuery.browser.version < 10) {
+                if (jQuery.browser.msie && +jQuery.browser.version.split(".")[0] < 10) {
                     if ((rq.transport === 'streaming')) {
                         if (rq.enableXDR && window.XDomainRequest) {
                             _ieXDR(rq);
@@ -2697,7 +2697,7 @@ jQuery.atmosphere = function () {
         checkCORSSupport: function () {
             if (jQuery.browser.msie && !window.XDomainRequest) {
                 return true;
-            } else if (jQuery.browser.opera && jQuery.browser.version < 12.0) {
+            } else if (jQuery.browser.opera && +jQuery.browser.version.split(".")[0] < 12.0) {
                 return true;
             }
 
@@ -2824,8 +2824,13 @@ jQuery.atmosphere = function () {
     jQuery.uaMatch = function (ua) {
         ua = ua.toLowerCase();
 
-        var match = /(chrome)[ \/]([\w.]+)/.exec(ua) || /(webkit)[ \/]([\w.]+)/.exec(ua) || /(opera)(?:.*version|)[ \/]([\w.]+)/.exec(ua)
-            || /(msie) ([\w.]+)/.exec(ua) || ua.indexOf("compatible") < 0 && /(mozilla)(?:.*? rv:([\w.]+)|)/.exec(ua) || [];
+        var match = /(chrome)[ \/]([\w.]+)/.exec(ua) || 
+                /(webkit)[ \/]([\w.]+)/.exec(ua) || 
+                /(opera)(?:.*version|)[ \/]([\w.]+)/.exec(ua) || 
+                /(msie) ([\w.]+)/.exec(ua) || 
+                /(trident)(?:.*? rv:([\w.]+)|)/.exec(ua) ||
+                ua.indexOf("compatible") < 0 && /(mozilla)(?:.*? rv:([\w.]+)|)/.exec(ua) || 
+                [];
 
         return {
             browser: match[1] || "",
@@ -2846,6 +2851,12 @@ jQuery.atmosphere = function () {
         browser.webkit = true;
     } else if (browser.webkit) {
         browser.safari = true;
+    }
+    
+    // Trident is the layout engine of the Internet Explorer
+    // IE 11 has no "MSIE: 11.0" token
+    if (browser.trident) {
+    	browser.msie = true;
     }
 
     jQuery.browser = browser;
