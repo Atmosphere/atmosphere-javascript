@@ -3017,9 +3017,13 @@
     });
 
     // Pressing ESC key in Firefox kills the connection
+    // for your information, this is fixed in Firefox 20
+    // https://bugzilla.mozilla.org/show_bug.cgi?id=614304
     atmosphere.util.on(window, "keypress", function (event) {
-        if (event.which === 27) {
-            event.preventDefault();
+        if (event.charCode === 27 || event.keyCode === 27) {
+            if (event.preventDefault) {
+            	event.preventDefault();
+            }
         }
     });
 
