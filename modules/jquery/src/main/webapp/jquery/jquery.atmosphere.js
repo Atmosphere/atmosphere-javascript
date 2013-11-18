@@ -1010,6 +1010,9 @@ jQuery.atmosphere = function () {
                         } else {
                             _open('re-opening', "sse", _request);
                         }
+                    } else if (_request.isReopen) {
+                        _request.isReopen = false;
+                        _open('re-opening', _request.transport, _request);
                     }
                     sseOpened = true;
 
