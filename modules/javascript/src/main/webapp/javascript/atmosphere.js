@@ -2387,7 +2387,7 @@
             }
 
             function _readHeaders(xdr, request) {
-                if (!request.readResponsesHeaders)
+                if (!request.readResponsesHeaders) {
                     if (!request.enableProtocol) {
                         request.lastTimestamp = atmosphere.util.now();
                         request.uuid = guid;
