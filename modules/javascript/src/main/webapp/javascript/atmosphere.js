@@ -2387,33 +2387,35 @@
             }
 
             function _readHeaders(xdr, request) {
-                if (!request.readResponsesHeaders && !request.enableProtocol) {
-                    request.lastTimestamp = atmosphere.util.now();
-                    request.uuid = guid;
-                    return;
+                if (!request.readResponsesHeaders) {
+                    if (!request.enableProtocol) {
+                        request.lastTimestamp = atmosphere.util.now();
+                        request.uuid = guid;
+                    }
                 }
+                else {
+                    try {
+                        var tempDate = xdr.getResponseHeader('X-Cache-Date');
+                        if (tempDate && tempDate != null && tempDate.length > 0) {
+                            request.lastTimestamp = tempDate.split(" ").pop();
+                        }
 
-                try {
-                    var tempDate = xdr.getResponseHeader('X-Cache-Date');
-                    if (tempDate && tempDate != null && tempDate.length > 0) {
-                        request.lastTimestamp = tempDate.split(" ").pop();
-                    }
+                        var tempUUID = xdr.getResponseHeader('X-Atmosphere-tracking-id');
+                        if (tempUUID && tempUUID != null) {
+                            request.uuid = tempUUID.split(" ").pop();
+                        }
 
-                    var tempUUID = xdr.getResponseHeader('X-Atmosphere-tracking-id');
-                    if (tempUUID && tempUUID != null) {
-                        request.uuid = tempUUID.split(" ").pop();
+                        // HOTFIX for firefox bug: https://bugzilla.mozilla.org/show_bug.cgi?id=608735
+                        if (request.headers) {
+                            atmosphere.util.each(_request.headers, function (name) {
+                                var v = xdr.getResponseHeader(name);
+                                if (v) {
+                                    _response.headers[name] = v;
+                                }
+                            });
+                        }
+                    } catch (e) {
                     }
-
-                    // HOTFIX for firefox bug: https://bugzilla.mozilla.org/show_bug.cgi?id=608735
-                    if (request.headers) {
-                        atmosphere.util.each(_request.headers, function (name) {
-                            var v = xdr.getResponseHeader(name);
-                            if (v) {
-                                _response.headers[name] = v;
-                            }
-                        });
-                    }
-                } catch (e) {
                 }
             }
 
