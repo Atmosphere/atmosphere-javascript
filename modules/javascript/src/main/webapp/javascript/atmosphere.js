@@ -327,6 +327,7 @@
             function _close() {
                 if (_request.reconnectId) {
                     clearTimeout(_request.reconnectId);
+                    delete _request.reconnectId;
                 }
                 _request.reconnect = false;
                 _abordingConnection = true;
@@ -1883,6 +1884,7 @@
                     clearTimeout(request.id);
                     if (request.reconnectId) {
                         clearTimeout(request.reconnectId);
+                        delete request.reconnectId;
                     }
 
                     if (reconnectInterval > 0) {
