@@ -1546,7 +1546,8 @@
                 }
 
                 if (rq.contentType !== '') {
-                    url += "&Content-Type=" + encodeURIComponent(rq.contentType);
+                    //Eurk!
+                    url += "&Content-Type=" + rq.transport === 'websocket' ? rq.contentType : encodeURIComponent(rq.contentType);
                 }
 
                 if (rq.enableProtocol) {
