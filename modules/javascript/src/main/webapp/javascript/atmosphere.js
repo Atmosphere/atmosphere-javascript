@@ -461,7 +461,11 @@
                 _request.firstMessage = uuid == 0 ? true : false;
                 _request.isOpen = false;
                 _request.ctime = atmosphere.util.now();
-                _request.uuid = uuid;
+
+                // We carry any UUID set by the user or from a previous connection.
+                if (_request.uuid === 0) {
+                    _request.uuid = uuid;
+                }
                 _response.closedByClientTimeout = false;
 
                 if (_request.transport !== 'websocket' && _request.transport !== 'sse') {
@@ -2590,6 +2594,9 @@
         if (typeof (callback) === 'function') {
             atmosphere.addCallback(callback);
         }
+
+        // https://github.com/Atmosphere/atmosphere-javascript/issues/58
+        uuid = 0;
 
         if (typeof (url) !== "string") {
             request = url;

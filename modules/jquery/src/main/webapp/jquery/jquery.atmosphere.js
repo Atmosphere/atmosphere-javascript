@@ -359,7 +359,11 @@ jQuery.atmosphere = function () {
                 _request.firstMessage = jQuery.atmosphere.uuid == 0 ? true : false;
                 _request.isOpen = false;
                 _request.ctime = jQuery.now();
-                _request.uuid = jQuery.atmosphere.uuid;
+
+                // We carry any UUID set by the user or from a previous connection.
+                if (_request.uuid === 0) {
+                    _request.uuid = jQuery.atmosphere.uuid;
+                }
                 _request.closedByClientTimeout = false;
 
                 if (_request.transport !== 'websocket' && _request.transport !== 'sse') {
@@ -2630,6 +2634,9 @@ jQuery.atmosphere = function () {
             if (typeof (callback) === 'function') {
                 jQuery.atmosphere.addCallback(callback);
             }
+
+            // https://github.com/Atmosphere/atmosphere-javascript/issues/58
+            jQuery.atmosphere.uuid = 0;
 
             if (typeof (url) !== "string") {
                 request = url;
