@@ -13,7 +13,7 @@ Atmosphere transparently supports WebSockets, Server Side Events (SSE), Long-Pol
      <dependency>
          <groupId>org.atmosphere.client</groupId>
          <artifactId>{jquery|javascript}</artifactId>
-         <version>2.0.9|2.1.1</version>
+         <version>2.0.9|2.1.2</version>
       </dependency>
 ```
 
