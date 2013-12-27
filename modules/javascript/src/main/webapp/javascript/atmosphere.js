@@ -23,7 +23,15 @@
  * Highly inspired by 
  * - Portal by Donghwan Kim http://flowersinthesand.github.io/portal/
  */
-(function () {
+(function(root, factory) {
+    if (typeof define === "function" && define.amd) {
+        // AMD
+        define(factory);
+    } else {
+        // Browser globals, Window
+        root.portal = factory();
+    }
+}(this, function() {
 
     "use strict";
 
@@ -3015,7 +3023,7 @@
         // Trident is the layout engine of the Internet Explorer
         // IE 11 has no "MSIE: 11.0" token
         if (atmosphere.util.browser.trident) {
-        	atmosphere.util.browser.msie = true;
+            atmosphere.util.browser.msie = true;
         }
 
         // The storage event of Internet Explorer and Firefox 3 works strangely
@@ -3034,7 +3042,7 @@
     atmosphere.util.on(window, "keypress", function (event) {
         if (event.charCode === 27 || event.keyCode === 27) {
             if (event.preventDefault) {
-            	event.preventDefault();
+                event.preventDefault();
             }
         }
     });
@@ -3042,6 +3050,7 @@
     atmosphere.util.on(window, "offline", function () {
         atmosphere.unsubscribe();
     });
-    window.atmosphere = atmosphere;
-})();
+    
+    return atmosphere;
+}));
 /* jshint eqnull:true, noarg:true, noempty:true, eqeqeq:true, evil:true, laxbreak:true, undef:true, browser:true, indent:false, maxerr:50 */
