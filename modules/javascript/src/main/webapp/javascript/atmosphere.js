@@ -29,7 +29,7 @@
         define(factory);
     } else {
         // Browser globals, Window
-        root.portal = factory();
+        root.atmosphere = factory();
     }
 }(this, function() {
 
