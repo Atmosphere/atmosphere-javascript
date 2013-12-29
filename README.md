@@ -5,7 +5,7 @@ The Atmosphere Framework contains client and server side components for building
 
 Atmosphere transparently supports WebSockets, Server Side Events (SSE), Long-Polling, HTTP Streaming (Forever frame) and JSONP.
 
-### This project contains the Javascript clients available for all Atmosphere's version and [Node.js](http://nodejs.org/). We offer a pure [Javascript Client](https://raw.github.com/Atmosphere/atmosphere-javascript/master/modules/javascript/src/main/webapp/javascript/atmosphere.js) and a [jQuery Plugin](https://raw.github.com/Atmosphere/atmosphere-javascript/master/modules/jquery/src/main/webapp/jquery/jquery.atmosphere.js)
+### This project contains the Javascript clients available for all Atmosphere's version and [Node.js](https://github.com/flowersinthesand/atmosphere.js-node). We offer a pure [Javascript Client](https://raw.github.com/Atmosphere/atmosphere-javascript/master/modules/javascript/src/main/webapp/javascript/atmosphere.js) and a [jQuery Plugin](https://raw.github.com/Atmosphere/atmosphere-javascript/master/modules/jquery/src/main/webapp/jquery/jquery.atmosphere.js)
 
 
 ### To bootstap the client using Maven, add the following dependency:
