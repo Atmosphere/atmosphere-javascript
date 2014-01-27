@@ -2498,14 +2498,14 @@ jQuery.atmosphere = function () {
                     if (_request.connectTimeout > 0) {
                         jQuery.ajax({
                             url: url,
-                            async: true,
+                            async: false,
                             timeout: _request.connectTimeout,
                             cache: false
                         });
                     } else {
                         jQuery.ajax({
                             url: url,
-                            async: true,
+                            async: false,
                             cache: false
                         });
                     }
