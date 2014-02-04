@@ -1583,6 +1583,9 @@ jQuery.atmosphere = function () {
                         var update = false;
 
                         if (rq.transport === 'streaming' && rq.readyState > 2 && ajaxRequest.readyState === 4) {
+                            if (rq.reconnectingOnLength) {
+                                return;
+                            }
                             _clearState();
                             reconnectF();
                             return;
@@ -2469,6 +2472,7 @@ jQuery.atmosphere = function () {
                 // Wait to be sure we have the full message before closing.
                 if (_response.partialMessage === "" && (rq.transport === 'streaming') && (ajaxRequest.responseText.length > rq.maxStreamingLength)) {
                     _response.messages = [];
+                    rq.reconnectingOnLength = true;
                     _invokeClose(true);
                     _disconnect();
                     _clearState();
