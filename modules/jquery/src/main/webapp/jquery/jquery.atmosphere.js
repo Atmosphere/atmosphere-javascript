@@ -1134,12 +1134,12 @@ jQuery.atmosphere = function () {
 
                     var reopening = webSocketOpened;
 
-                    webSocketOpened = true;
                     if(_websocket != null) {
                         _websocket.webSocketOpened = webSocketOpened;
                     }
 
                     if (!_request.enableProtocol) {
+                        webSocketOpened = true;
                         if (reopening) {
                             _open('re-opening', "websocket", _request);
                         } else {
@@ -1157,6 +1157,12 @@ jQuery.atmosphere = function () {
 
                 _websocket.onmessage = function (message) {
                     _timeout(_request);
+
+                    // We only consider it opened if we get the handshake data
+                    // https://github.com/Atmosphere/atmosphere-javascript/issues/74
+                    if (_request.enableProtocol) {
+                        webSocketOpened = true;
+                    }
 
                     _response.state = 'messageReceived';
                     _response.status = 200;
