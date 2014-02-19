@@ -1817,6 +1817,7 @@
                         _subscribed = true;
                     } catch (e) {
                         atmosphere.util.log(rq.logLevel, ["Unable to connect to " + rq.url]);
+                        _onError(0, e);
                     }
 
                 } else {
