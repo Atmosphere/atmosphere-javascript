@@ -1135,7 +1135,7 @@ jQuery.atmosphere = function () {
                     var reopening = webSocketOpened;
 
                     if(_websocket != null) {
-                        _websocket.webSocketOpened = webSocketOpened;
+                        _websocket.canSendMessage = true;
                     }
 
                     if (!_request.enableProtocol) {
@@ -2273,7 +2273,7 @@ jQuery.atmosphere = function () {
                         data = msg;
                     }
 
-                    if (!_websocket.webSocketOpened) {
+                    if (!_websocket.canSendMessage) {
                         jQuery.atmosphere.error("WebSocket not connected.");
                         return;
                     }
@@ -2562,7 +2562,7 @@ jQuery.atmosphere = function () {
                     _activeRequest = null;
                 }
                 if (_websocket != null) {
-                    if (_websocket.webSocketOpened) {
+                    if (_websocket.canSendMessage) {
                         _websocket.close();
                     }
                     _websocket = null;

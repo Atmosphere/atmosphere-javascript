@@ -361,7 +361,7 @@
                     _activeRequest = null;
                 }
                 if (_websocket != null) {
-                    if (_websocket.webSocketOpened) {
+                    if (_websocket.canSendMessage) {
                         _websocket.close();
                     }
                     _websocket = null;
@@ -1223,7 +1223,7 @@
                     var reopening = webSocketOpened;
 
                     if(_websocket != null) {
-                        _websocket.webSocketOpened = webSocketOpened;
+                        _websocket.canSendMessage = true;
                     }
 
                     if (!_request.enableProtocol) {
@@ -2361,7 +2361,7 @@
                         data = msg;
                     }
 
-                    if (!_websocket.webSocketOpened) {
+                    if (!_websocket.canSendMessage) {
                         atmosphere.util.error("WebSocket not connected.");
                         return;
                     }
