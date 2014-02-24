@@ -2778,7 +2778,15 @@
             return s.join("&").replace(/%20/g, "+");
         },
 
-        storage: !!(window.localStorage && window.StorageEvent),
+        storage: function () {
+        	try {
+        		return !!(window.localStorage && window.StorageEvent);
+        	} catch (e) {
+        		//Firefox throws an exception here, see 
+        		//https://bugzilla.mozilla.org/show_bug.cgi?id=748620
+        		return false;
+        	}
+        },
 
         iterate: function (fn, interval) {
             var timeoutId;
