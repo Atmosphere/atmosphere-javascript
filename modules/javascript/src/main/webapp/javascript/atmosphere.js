@@ -115,6 +115,7 @@
                 readResponsesHeaders: false,
                 maxReconnectOnClose: 5,
                 enableProtocol: true,
+                pollingInterval : 0,
                 onError: function (response) {
                 },
                 onClose: function (response) {
@@ -290,7 +291,7 @@
                     _invokeClose(true);
                     _disconnect();
                     _clearState();
-                    _reconnect(ajaxRequest, rq, 0);
+                    _reconnect(ajaxRequest, rq, rq.pollingInterval);
                 }
             }
 
@@ -960,7 +961,7 @@
                                     // _readHeaders(_jqxhr, rq);
 
                                     if (!rq.executeCallbackBeforeReconnect) {
-                                        _reconnect(_jqxhr, rq, 0);
+                                        _reconnect(_jqxhr, rq, rq.pollingInterval);
                                     }
 
                                     if (msg != null && typeof msg !== 'string') {
@@ -977,7 +978,7 @@
                                     }
 
                                     if (rq.executeCallbackBeforeReconnect) {
-                                        _reconnect(_jqxhr, rq, 0);
+                                        _reconnect(_jqxhr, rq, rq.pollingInterval);
                                     }
                                 } else {
                                     atmosphere.util.log(_request.logLevel, ["JSONP reconnect maximum try reached " + _request.requestCount]);
@@ -1733,7 +1734,7 @@
                             if (atmosphere.util.trim(responseText).length === 0 && rq.transport === 'long-polling') {
                                 // For browser that aren't support onabort
                                 if (!ajaxRequest.hasData) {
-                                    _reconnect(ajaxRequest, rq, 0);
+                                    _reconnect(ajaxRequest, rq, rq.pollingInterval);
                                 } else {
                                     ajaxRequest.hasData = false;
                                 }
@@ -1804,14 +1805,14 @@
 
                             var isAllowedToReconnect = request.transport !== 'streaming' && request.transport !== 'polling';
                             if (isAllowedToReconnect && !rq.executeCallbackBeforeReconnect) {
-                                _reconnect(ajaxRequest, rq, 0);
+                                _reconnect(ajaxRequest, rq, rq.pollingInterval);
                             }
 
                             if (_response.responseBody.length !== 0 && !skipCallbackInvocation)
                                 _invokeCallback();
 
                             if (isAllowedToReconnect && rq.executeCallbackBeforeReconnect) {
-                                _reconnect(ajaxRequest, rq, 0);
+                                _reconnect(ajaxRequest, rq, rq.pollingInterval);
                             }
 
                             _verifyStreamingLength(ajaxRequest, rq);
