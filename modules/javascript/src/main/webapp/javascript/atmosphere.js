@@ -323,6 +323,8 @@
                     closeR.url = url;
                     closeR.contentType = "text/plain";
                     closeR.transport = 'polling';
+                    closeR.method = 'GET';
+                    closeR.data = '';
                     closeR.async = false;
                     _pushOnClose("", closeR);
                 }
@@ -991,7 +993,7 @@
                         }, 50);
                     },
                     abort: function () {
-                        if (script.clean) {
+                        if (script && script.clean) {
                             script.clean();
                         }
                     }
