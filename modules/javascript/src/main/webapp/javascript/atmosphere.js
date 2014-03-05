@@ -2999,9 +2999,9 @@
         },
 
         checkCORSSupport: function () {
-            if (atmosphere.util.browser.msie && !window.XDomainRequest) {
+            if (atmosphere.util.browser.msie && !window.XDomainRequest && +atmosphere.util.browser.version.split(".")[0] < 11) {
                 return true;
-            } else if (atmosphere.util.browser.opera && atmosphere.util.browser.version < 12.0) {
+            } else if (atmosphere.util.browser.opera && +atmosphere.util.browser.version.split(".") < 12.0) {
                 return true;
             }
 
@@ -3047,7 +3047,7 @@
         }
 
         // The storage event of Internet Explorer and Firefox 3 works strangely
-        if (atmosphere.util.browser.msie || (atmosphere.util.browser.mozilla && atmosphere.util.browser.version.split(".")[0] === "1")) {
+        if (atmosphere.util.browser.msie || (atmosphere.util.browser.mozilla && +atmosphere.util.browser.version.split(".")[0] === 1)) {
             atmosphere.util.storage = false;
         }
     })();

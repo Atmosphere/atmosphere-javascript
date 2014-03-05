@@ -2726,7 +2726,7 @@
         },
 
         checkCORSSupport: function () {
-            if (jQuery.browser.msie && !window.XDomainRequest) {
+            if (jQuery.browser.msie && !window.XDomainRequest && +jQuery.browser.version.split(".")[0] < 11) {
                 return true;
             } else if (jQuery.browser.opera && +jQuery.browser.version.split(".")[0] < 12.0) {
                 return true;
