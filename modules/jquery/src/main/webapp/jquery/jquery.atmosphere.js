@@ -2479,6 +2479,7 @@ jQuery.atmosphere = function () {
                 if (_response.partialMessage === "" && (rq.transport === 'streaming') && (ajaxRequest.responseText.length > rq.maxStreamingLength)) {
                     _response.messages = [];
                     rq.reconnectingOnLength = true;
+                    rq.isReopen = true;
                     _invokeClose(true);
                     _disconnect();
                     _clearState();
