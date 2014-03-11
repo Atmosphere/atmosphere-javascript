@@ -1235,10 +1235,8 @@
                         }
                     }
 
-                    if (_request.logLevel === 'warn') {
                         jQuery.atmosphere.warn("Websocket closed, reason: " + reason);
                         jQuery.atmosphere.warn("Websocket closed, wasClean: " + message.wasClean);
-                    }
 
                     if (_response.closedByClientTimeout) {
                         return;
@@ -1278,7 +1276,9 @@
                     }
                 };
 
-                if (_websocket.url === undefined) {
+                var ua = navigator.userAgent.toLowerCase();
+                var isAndroid = ua.indexOf("android") > -1;
+                if (isAndroid && _websocket.url === undefined) {
                     // Android 4.1 does not really support websockets and fails silently
                     _websocket.onclose({
                         reason: "Android 4.1 does not support websockets.",
