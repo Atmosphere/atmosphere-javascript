@@ -1029,7 +1029,7 @@
              * @private
              */
             function _buildWebSocketUrl() {
-                return atmosphere.util.getAbsoluteURL(_attachHeaders(_request)).replace(/^http/, "ws");
+                return _attachHeaders(_request, atmosphere.util.getAbsoluteURL(_request.url)).replace(/^http/, "ws");
             }
 
             /**
