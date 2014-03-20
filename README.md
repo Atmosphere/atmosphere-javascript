@@ -12,8 +12,8 @@ Atmosphere transparently supports WebSockets, Server Side Events (SSE), Long-Pol
 ## Install
 You can get atmosphere.js and jquery.atmosphere.js. If you use a script tag whose src attribute is set to one of the below one, browser may not load it because the content type served by raw.github.com is text/plain. About Node.js client, see [here](https://github.com/flowersinthesand/atmosphere.js-node)
 
-* [atmosphere v2.1.4](https://raw.github.com/Atmosphere/atmosphere-javascript/javascript-project-2.1.4/modules/javascript/src/main/webapp/javascript/atmosphere.js)
-* [jquery-atmosphere v.2.1.4](https://raw.github.com/Atmosphere/atmosphere-javascript/javascript-project-2.1.4/modules/jquery/src/main/webapp/jquery/jquery.atmosphere.js)
+* [atmosphere v2.1.5](https://raw.github.com/Atmosphere/atmosphere-javascript/javascript-project-2.1.5/modules/javascript/src/main/webapp/javascript/atmosphere.js)
+* [jquery-atmosphere v.2.1.5](https://raw.github.com/Atmosphere/atmosphere-javascript/javascript-project-2.1.5/modules/jquery/src/main/webapp/jquery/jquery.atmosphere.js)
 
 Also they are available in the following ways, but there may be delays between a release and its availability. We don't manage these ways officially but they are managed by open source community so you can contribute.
 * CDNJS CDN - [atmosphere](http://cdnjs.com/libraries/atmosphere/) and [jquery-atmosphere](http://cdnjs.com/libraries/jquery.atmosphere/)
@@ -42,8 +42,10 @@ bower install jquery-atmosphere
 
 Full API documentation can be read [here](https://github.com/Atmosphere/atmosphere/wiki/jQuery.atmosphere.js-atmosphere.js-API) and a lot of samples [here](https://github.com/Atmosphere/atmosphere-samples)
 
-2.0.x version has been certified to work with Atmosphere 1.0.x and 2.0.x.
+2.2.0 => Works with Atmosphere Runtime 2.2.x.
+2.1.x => Works with Atmosphere Runtime 2.1.x 
+2.0.x => Works with Atmosphere Runtime 2.0.x
 
-2.1.x version is certified to work with Atmosphere 2.x and also work with 1.0.x, but some API has been deprecated so you may need to change your Atmosphere 1.0.x client code.
+It is recommended to always use the version that match Atmosphere's runtime.
 
 [![githalytics.com alpha](https://cruel-carlota.pagodabox.com/834d88e08fda4345fef8e361d9216aa7 "githalytics.com")](http://githalytics.com/Atmosphere/atmosphere-javascript.git)
