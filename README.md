@@ -42,9 +42,9 @@ bower install jquery-atmosphere
 
 Full API documentation can be read [here](https://github.com/Atmosphere/atmosphere/wiki/jQuery.atmosphere.js-atmosphere.js-API) and a lot of samples [here](https://github.com/Atmosphere/atmosphere-samples)
 
-2.2.0 => Works with Atmosphere Runtime 2.2.x.
-2.1.x => Works with Atmosphere Runtime 2.1.x 
-2.0.x => Works with Atmosphere Runtime 2.0.x
+* 2.2.0 => Works with Atmosphere Runtime 2.2.x.
+* 2.1.x => Works with Atmosphere Runtime 2.1.x 
+* 2.0.x => Works with Atmosphere Runtime 2.0.x
 
 It is recommended to always use the version that match Atmosphere's runtime.
 
