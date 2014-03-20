@@ -35,7 +35,7 @@
 
     "use strict";
 
-    var version = "2.1.6-javascript",
+    var version = "2.2.0-javascript",
         atmosphere = {},
         guid,
         requests = [],
