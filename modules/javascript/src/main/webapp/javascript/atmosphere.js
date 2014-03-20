@@ -1280,7 +1280,8 @@
                             _response.messages = [];
                         }
                     } else {
-                        if (!_handleProtocol(_request, message))
+                        message = _handleProtocol(_request, message);
+                        if (message === "")
                             return;
 
                         _response.responseBody = message;
@@ -1383,29 +1384,37 @@
 
             function _handleProtocol(request, message) {
 
-                // The first messages is always the uuid.
-                var b = true;
-
-                if (request.transport === 'polling') return b;
+                var nMessage = message;
+                if (request.transport === 'polling') return nMessage;
 
                 if (atmosphere.util.trim(message).length !== 0 && request.enableProtocol && request.firstMessage) {
                     request.firstMessage = false;
                     var messages = message.split(request.messageDelimiter);
-                    var pos = messages.length === 2 ? 0 : 1;
+                    var pos = request.trackMessageLength ? 1 : 0;
                     request.uuid = atmosphere.util.trim(messages[pos]);
                     request.stime = atmosphere.util.trim(messages[pos + 1]);
-                    b = false;
                     if (request.transport !== 'long-polling') {
                         _triggerOpen(request);
                     }
                     uuid = request.uuid;
+                    nMessage = "";
+
+                    // We have trailing messages
+                    pos = request.trackMessageLength ? 3 : 2;
+                    if (messages.length > pos + 1) {
+                        for (var i = pos; i < messages.length; i++) {
+                            nMessage += messages[i];
+                            if (i + 1 !== messages.length) {
+                                nMessage += request.messageDelimiter;
+                            }
+                        }
+                    }
                 } else if (request.enableProtocol && request.firstMessage) {
                     // In case we are getting some junk from IE
-                    b = false;
                 } else {
                     _triggerOpen(request);
                 }
-                return b;
+                return atmosphere.util.trim(nMessage);
             }
 
             function _timeout(_request) {
@@ -1447,10 +1456,11 @@
              * @param response
              */
             function _trackMessageSize(message, request, response) {
-                if (!_handleProtocol(request, message))
-                    return true;
+                message = _handleProtocol(request, message);
                 if (message.length === 0)
                     return true;
+
+                response.responseBody = message;
 
                 if (request.trackMessageLength) {
                     // prepend partialMessage if any
