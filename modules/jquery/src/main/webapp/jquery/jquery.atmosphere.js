@@ -2270,6 +2270,7 @@
                     dispatchUrl: _request.dispatchUrl,
                     enableProtocol: false,
                     messageDelimiter: '|',
+                    trackMessageLength: _request.trackMessageLength,
                     maxReconnectOnClose: _request.maxReconnectOnClose
                 };
 
