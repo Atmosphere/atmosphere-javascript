@@ -44,8 +44,10 @@ Full API documentation can be read [here](https://github.com/Atmosphere/atmosphe
 
 * 2.2.0 => Works with Atmosphere Runtime 2.2.x.
 * 2.1.x => Works with Atmosphere Runtime 2.1.x 
-* 2.0.x => Works with Atmosphere Runtime 2.0.x
+* 2.0.x => Works with Atmosphere Runtime 2.0.x and 1.0.13+ 
 
 It is recommended to always use the version that match Atmosphere's runtime.
+
+Latest version may work with lower version, but not officially tested.
 
 [![githalytics.com alpha](https://cruel-carlota.pagodabox.com/834d88e08fda4345fef8e361d9216aa7 "githalytics.com")](http://githalytics.com/Atmosphere/atmosphere-javascript.git)
