@@ -2558,6 +2558,7 @@
             }
 
             function _clearState() {
+                _response.partialMessage = "";
                 if (_request.id) {
                     clearTimeout(_request.id);
                 }
