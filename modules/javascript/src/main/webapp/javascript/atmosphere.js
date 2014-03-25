@@ -337,12 +337,15 @@
              * @private
              */
             function _close() {
+		if (_request.logLevel === 'debug') {
+			atmosphere.util.debug("Closing");
+		}
+                _abordingConnection = true;
                 if (_request.reconnectId) {
                     clearTimeout(_request.reconnectId);
                     delete _request.reconnectId;
                 }
                 _request.reconnect = false;
-                _abordingConnection = true;
                 _response.request = _request;
                 _response.state = 'unsubscribe';
                 _response.responseBody = "";
