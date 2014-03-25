@@ -1236,8 +1236,10 @@
                         }
                     }
 
+                    if (_request.logLevel === 'warn') {
                         jQuery.atmosphere.warn("Websocket closed, reason: " + reason);
                         jQuery.atmosphere.warn("Websocket closed, wasClean: " + message.wasClean);
+                    }
 
                     if (_response.closedByClientTimeout) {
                         return;
@@ -1252,7 +1254,7 @@
                     } else if (!webSocketOpened) {
                         _reconnectWithFallbackTransport("Websocket failed. Downgrading to Comet and resending");
 
-                    } else if (_request.reconnect && _response.transport === 'websocket') {
+                    } else if (_request.reconnect && _response.transport === 'websocket' && message.code !== 1001) {
                         _clearState();
                         if (_requestCount++ < _request.maxReconnectOnClose) {
                             _open('re-connecting', _request.transport, _request);
