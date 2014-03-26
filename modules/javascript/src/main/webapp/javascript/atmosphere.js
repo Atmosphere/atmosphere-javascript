@@ -1417,7 +1417,7 @@
                 } else {
                     _triggerOpen(request);
                 }
-                return atmosphere.util.trim(nMessage);
+                return nMessage;
             }
 
             function _timeout(_request) {

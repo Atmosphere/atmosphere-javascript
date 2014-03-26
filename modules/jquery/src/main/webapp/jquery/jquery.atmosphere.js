@@ -1322,7 +1322,7 @@
                 } else {
                     _triggerOpen(request);
                 }
-                return jQuery.trim(nMessage);
+                return nMessage;
             }
 
             function _timeout(_request) {
