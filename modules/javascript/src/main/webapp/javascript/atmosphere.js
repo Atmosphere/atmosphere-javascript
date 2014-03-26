@@ -1472,7 +1472,7 @@
                     var messages = [];
                     var messageStart = message.indexOf(request.messageDelimiter);
                     while (messageStart !== -1) {
-                        var str = atmosphere.util.trim(message.substring(0, messageStart));
+                        var str = message.substring(0, messageStart);
                         var messageLength = +str;
                         if (isNaN(messageLength))
                             throw new Error('message length "' + str + '" is not a number');
