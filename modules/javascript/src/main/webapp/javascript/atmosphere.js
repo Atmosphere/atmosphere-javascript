@@ -347,8 +347,8 @@
                 _response.status = 408;
                 _response.partialMessage = "";
                 _invokeCallback();
-                _clearState();
                 _disconnect();
+                _clearState();
             }
 
             function _clearState() {

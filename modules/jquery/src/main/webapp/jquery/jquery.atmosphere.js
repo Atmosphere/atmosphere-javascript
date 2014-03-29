@@ -2558,8 +2558,8 @@
                 _response.responseBody = "";
                 _response.status = 408;
                 _invokeCallback();
-                _clearState();
                 _disconnect();
+                _clearState();
             }
 
             function _clearState() {
