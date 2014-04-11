@@ -1700,9 +1700,6 @@
                         var update = false;
 
                         if (rq.transport === 'streaming' && rq.readyState > 2 && ajaxRequest.readyState === 4) {
-                            if (rq.reconnectingOnLength) {
-                                return;
-                            }
                             _clearState();
                             reconnectF();
                             return;
@@ -1743,6 +1740,7 @@
 
                         if (update) {
                             var responseText = ajaxRequest.responseText;
+                            _response.errorHandled = false;
 
                             if (atmosphere.util.trim(responseText).length === 0 && rq.transport === 'long-polling') {
                                 // For browser that aren't support onabort
