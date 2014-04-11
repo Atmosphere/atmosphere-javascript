@@ -157,7 +157,8 @@
                 request: null,
                 partialMessage: "",
                 errorHandled: false,
-                closedByClientTimeout: false
+                closedByClientTimeout: false,
+                ffTryingReconnect: false
             };
 
             /**
@@ -1666,6 +1667,7 @@
 
                         ajaxRequest.onerror = function () {
                             _response.error = true;
+                            _response.ffTryingReconnect = true;
                             try {
                                 _response.status = XMLHttpRequest.status;
                             } catch (e) {
@@ -1724,9 +1726,20 @@
                                 return;
                             }
 
-                            // Firefox incorrectly send statechange 0->2 when a reconnect attempt fails. The above checks ensure that onopen is not called for these
                             if ((!rq.enableProtocol || !request.firstMessage) && ajaxRequest.readyState === 2) {
-                                _triggerOpen(rq);
+                                // Firefox incorrectly send statechange 0->2 when a reconnect attempt fails. The above checks ensure that onopen is not called for these
+                                // In that case, ajaxRequest.onerror will be called just after onreadystatechange is called, so we delay the trigger untill we are
+                                // garantee the connection is well established.
+                                if (atmosphere.util.browser.mozilla && _response.ffTryingReconnect) {
+                                    _response.ffTryingReconnect = false;
+                                    setTimeout(function(){
+                                       if (!_response.ffTryingReconnect) {
+                                           _triggerOpen(rq);
+                                       }
+                                    }, 500);
+                                } else {
+                                    _triggerOpen(rq);
+                                }
                             }
 
                         } else if (ajaxRequest.readyState === 4) {
