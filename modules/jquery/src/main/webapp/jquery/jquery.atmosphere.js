@@ -1544,6 +1544,13 @@ jQuery.atmosphere = function () {
                     }
                 };
 
+                var disconnected = function () {
+                    // Prevent onerror callback to be called
+                    _response.errorHandled = true;
+                    _clearState();
+                    reconnectF();
+                };
+
                 if (rq.reconnect && (rq.maxRequest === -1 || rq.requestCount++ < rq.maxRequest)) {
                     var ajaxRequest = jQuery.ajaxSettings.xhr();
                     ajaxRequest.hasData = false;
@@ -1614,10 +1621,7 @@ jQuery.atmosphere = function () {
                             }
 
                             if (status >= 300 || status === 0) {
-                                // Prevent onerror callback to be called
-                                _response.errorHandled = true;
-                                _clearState();
-                                reconnectF();
+                                disconnected();
                                 return;
                             }
                             
@@ -1631,11 +1635,12 @@ jQuery.atmosphere = function () {
 
                         if (update) {
                             var responseText = ajaxRequest.responseText;
+                            _response.errorHandled = false;
 
                             if (jQuery.trim(responseText.length).length === 0 && rq.transport === 'long-polling') {
                                 // For browser that aren't support onabort
                                 if (!ajaxRequest.hasData) {
-                                    reconnectF();
+                                    disconnected();
                                 } else {
                                     ajaxRequest.hasData = false;
                                 }
