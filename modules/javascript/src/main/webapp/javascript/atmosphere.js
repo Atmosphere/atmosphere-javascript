@@ -2489,15 +2489,24 @@
                         _requestCount = 0;
                         if (typeof (f.onMessage) !== 'undefined')
                             f.onMessage(response);
+
+                        if (typeof (f.onmessage) !== 'undefined')
+                            f.onmessage(response);
                         break;
                     case "error":
                         if (typeof (f.onError) !== 'undefined')
                             f.onError(response);
+
+                        if (typeof (f.onerror) !== 'undefined')
+                            f.onerror(response);
                         break;
                     case "opening":
                         delete _request.closed;
                         if (typeof (f.onOpen) !== 'undefined')
                             f.onOpen(response);
+
+                        if (typeof (f.onopen) !== 'undefined')
+                            f.onopen(response);
                         break;
                     case "messagePublished":
                         if (typeof (f.onMessagePublished) !== 'undefined')
@@ -2523,8 +2532,16 @@
                     case "unsubscribe":
                     case "closed":
                         var closed = typeof (_request.closed) !== 'undefined' ? _request.closed : false;
-                        if (typeof (f.onClose) !== 'undefined' && !closed)
-                            f.onClose(response);
+
+                        if (!closed) {
+                            if (typeof (f.onClose) !== 'undefined') {
+                                f.onClose(response);
+                            }
+
+                            if (typeof (f.onclose) !== 'undefined') {
+                                f.onclose(response);
+                            }
+                        }
                         _request.closed = true;
                         break;
                 }
@@ -2623,7 +2640,7 @@
                 return _request.url;
             };
 
-            this.push = function (message, dispatchUrl) {
+            this.send = this.push = function (message, dispatchUrl) {
                 if (dispatchUrl != null) {
                     var originalDispatchUrl = _request.dispatchUrl;
                     _request.dispatchUrl = dispatchUrl;
