@@ -1807,7 +1807,7 @@
                     }
                 }
 
-                if (_request.withCredentials) {
+                if (_request.withCredentials && _request.transport !== 'websocket') {
                     if ("withCredentials" in ajaxRequest) {
                         ajaxRequest.withCredentials = true;
                     }

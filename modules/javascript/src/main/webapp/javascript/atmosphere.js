@@ -1316,7 +1316,7 @@
                                     + "cannot accept (for example, a text-only endpoint received binary data).";
                                 break;
                             case 1004:
-                                reason = "The endpoint is terminating the connection because a data frame was received that " + "is too large.";
+                                reason = "The endpoint is terminating the connection because a data frame was received that is too large.";
                                 break;
                             case 1005:
                                 reason = "Unknown: no status code was provided even though one was expected.";
@@ -1904,7 +1904,7 @@
                     }
                 }
 
-                if (_request.withCredentials) {
+                if (_request.withCredentials && _request.transport !== 'websocket') {
                     if ("withCredentials" in ajaxRequest) {
                         ajaxRequest.withCredentials = true;
                     }
