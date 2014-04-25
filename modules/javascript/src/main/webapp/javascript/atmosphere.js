@@ -68,6 +68,49 @@
         onClientTimeout: function(request){
         },
 
+        /**
+         * Creates an object based on an atmosphere subscription that exposes functions defined by the Websocket interface.
+         *
+         * @class WebsocketApiAdapter
+         * @param {Object} request the request object to build the underlying subscription
+         * @constructor
+         */
+        WebsocketApiAdapter: function (request) {
+            var _socket, _adapter;
+
+            /**
+             * Overrides the onMessage callback in given request.
+             *
+             * @method onMessage
+             * @param {Object} e the event object
+             */
+            request.onMessage = function (e) {
+                _adapter.onmessage({data: e.responseBody});
+            };
+
+            _adapter = {
+                send: function (data) {
+                    _socket.push(data);
+                },
+
+                onmessage: function(e) {
+                },
+
+                onopen: function(e) {
+                },
+
+                onclose: function (e) {
+                },
+
+                onerror: function (e) {
+
+                }
+            };
+            _socket = new atmosphere.subscribe(request);
+
+            return _adapter;
+        },
+
         AtmosphereRequest: function (options) {
 
             /**
@@ -2640,7 +2683,7 @@
                 return _request.url;
             };
 
-            this.send = this.push = function (message, dispatchUrl) {
+            this.push = function (message, dispatchUrl) {
                 if (dispatchUrl != null) {
                     var originalDispatchUrl = _request.dispatchUrl;
                     _request.dispatchUrl = dispatchUrl;
