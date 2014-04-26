@@ -38,6 +38,7 @@
     var version = "2.2.0-javascript",
         atmosphere = {},
         guid,
+        undefined,
         requests = [],
         callbacks = [],
         uuid = 0,
@@ -361,6 +362,8 @@
                     closeR.attachHeadersAsQueryString = false;
                     closeR.dropHeaders = true;
                     closeR.url = url;
+                    //request is a disconnect request
+                    closeR.disconnect=true;
                     closeR.contentType = "text/plain";
                     closeR.transport = 'polling';
                     closeR.method = 'GET';
@@ -1936,6 +1939,11 @@
                 url = atmosphere.util.prepareURL(url);
 
                 if (create) {
+                    //if request is disconnect request override mime type
+                    //this also can be fixed at the java side of atmospehere
+                    if(request.disconnect!==undefined && ajaxRequest.overrideMimeType) {
+                    	ajaxRequest.overrideMimeType('text/html');
+                    }	
                     ajaxRequest.open(request.method, url, request.async);
                     if (request.connectTimeout > 0) {
                         request.id = setTimeout(function () {
@@ -2617,8 +2625,7 @@
                 _request.reconnect = _request.mrequest;
 
                 var isString = typeof (_response.responseBody) === 'string';
-                var messages = (isString && _request.trackMessageLength) ? (_response.messages.length > 0 ? _response.messages : ['']) : new Array(
-                    _response.responseBody);
+                var messages = (isString && _request.trackMessageLength) ? (_response.messages.length > 0 ? _response.messages : ['']) : [_response.responseBody];
                 for (var i = 0; i < messages.length; i++) {
 
                     if (messages.length > 1 && messages[i].length === 0) {
@@ -2839,7 +2846,9 @@
         },
 
         trim: function (str) {
-            if (!String.prototype.trim) {
+            // When evaled IE throws "String is undefined", check 
+            // if String object is accessible first
+            if (String===undefined || !String.prototype.trim) {
                 return str.toString().replace(/(?:(?:^|\n)\s+|\s+(?:$|\n))/g, "").replace(/\s+/g, " ");
             } else {
                 return str.toString().trim();
