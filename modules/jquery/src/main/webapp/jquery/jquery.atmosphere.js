@@ -1339,6 +1339,7 @@
                 if (request.transport === 'polling') return nMessage;
 
                 if (jQuery.trim(message).length !== 0 && request.enableProtocol && request.firstMessage) {
+                    var pos = request.trackMessageLength ? 1 : 0;
                     var messages = message.split(request.messageDelimiter);
 
                     if (messages.length <= pos + 1) {
@@ -1348,7 +1349,6 @@
                     }
 
                     request.firstMessage = false;
-                    var pos = request.trackMessageLength ? 1 : 0;
                     request.uuid = jQuery.trim(messages[pos]);
                     request.stime = jQuery.trim(messages[pos + 1]);
                     b = false;
