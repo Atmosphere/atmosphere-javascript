@@ -176,6 +176,10 @@
                 maxReconnectOnClose: 5,
                 enableProtocol: true,
                 pollingInterval : 0,
+                heartbeat: {
+                    client: null,
+                    server: null
+                },
                 onError: function (response) {
                 },
                 onClose: function (response) {
@@ -1538,6 +1542,10 @@
                     url += "&X-Cache-Date=" + 0;
                 }
 
+                if (rq.heartbeat !== null && rq.heartbeat.server !== null) {
+                    url += "&X-Heartbeat-Server=" + rq.heartbeat.server;
+                }
+
                 if (rq.contentType !== '') {
                     url += "&Content-Type=" + (rq.transport === 'websocket' ? rq.contentType : encodeURIComponent(rq.contentType));
                 }
@@ -1870,6 +1878,10 @@
                         ajaxRequest.setRequestHeader("X-Cache-Date", request.lastTimestamp);
                     } else {
                         ajaxRequest.setRequestHeader("X-Cache-Date", 0);
+                    }
+
+                    if (ajaxRequest.heartbeat !== null && ajaxRequest.heartbeat.server !== null) {
+                        ajaxRequest.setRequestHeader("X-Heartbeat-Server", ajaxRequest.heartbeat.server);
                     }
 
                     if (request.trackMessageLength) {
