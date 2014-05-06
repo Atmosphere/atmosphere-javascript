@@ -851,6 +851,10 @@
                             clearTimeout(rq.openId);
                         }
 
+                        if (rq.heartbeatTimer) {
+                            clearTimeout(rq.heartbeatTimer);
+                        }
+
                         if (rq.reconnect && _requestCount++ < rq.maxReconnectOnClose) {
                             _open('re-connecting', rq.transport, rq);
                             _reconnect(_jqxhr, rq, rq.reconnectInterval);
@@ -1103,6 +1107,10 @@
                 _sse.onerror = function (message) {
                     clearTimeout(_request.id);
 
+                    if (_request.heartbeatTimer) {
+                        clearTimeout(_request.heartbeatTimer);
+                    }
+
                     if (_response.closedByClientTimeout) return;
 
                     _invokeClose(sseOpened);
@@ -1248,6 +1256,10 @@
 
                 _websocket.onerror = function (message) {
                     clearTimeout(_request.id);
+
+                    if (_request.heartbeatTimer) {
+                        clearTimeout(_request.heartbeatTimer);
+                    }
                 };
 
                 _websocket.onclose = function (message) {
@@ -1355,6 +1367,16 @@
                     request.firstMessage = false;
                     request.uuid = jQuery.trim(messages[pos]);
                     request.stime = jQuery.trim(messages[pos + 1]);
+
+                    var interval = parseInt(jQuery.trim(messages[pos + 2]), 10);
+                    var paddingData = messages[pos + 3];
+
+                    if (!isNaN(interval) && interval > 0) {
+                        request.heartbeatTimer = setTimeout(function () {
+                            _push(paddingData);
+                        }, interval);
+                    }
+
                     b = false;
                     if (request.transport !== 'long-polling') {
                         _triggerOpen(request);
@@ -2634,6 +2656,11 @@
                     clearTimeout(_request.reconnectId);
                     delete _request.reconnectId;
                 }
+
+                if (_request.heartbeatTimer) {
+                    clearTimeout(_request.heartbeatTimer);
+                }
+
                 _request.reconnect = false;
                 _abordingConnection = true;
                 _response.request = _request;
@@ -2649,6 +2676,10 @@
                 _response.partialMessage = "";
                 if (_request.id) {
                     clearTimeout(_request.id);
+                }
+
+                if (_request.heartbeatTimer) {
+                    clearTimeout(_request.heartbeatTimer);
                 }
 
                 if (_ieStream != null) {
@@ -2789,6 +2820,10 @@
                     var rq = requestsClone[i];
                     rq.close();
                     clearTimeout(rq.response.request.id);
+
+                    if (rq.heartbeatTimer) {
+                        clearTimeout(rq.heartbeatTimer);
+                    }
                 }
             }
             jQuery.atmosphere.requests = [];
@@ -2805,6 +2840,11 @@
                     if (rq.getUrl() === url) {
                         rq.close();
                         clearTimeout(rq.response.request.id);
+
+                        if (rq.heartbeatTimer) {
+                            clearTimeout(rq.heartbeatTimer);
+                        }
+
                         idx = i;
                         break;
                     }
