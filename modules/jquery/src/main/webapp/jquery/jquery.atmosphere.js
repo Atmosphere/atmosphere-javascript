@@ -1385,7 +1385,7 @@
                     nMessage = "";
 
                     // We have trailing messages
-                    pos = request.trackMessageLength ? 3 : 2;
+                    pos = request.trackMessageLength ? 5 : 4;
                     if (messages.length > pos + 1) {
                         for (var i = pos; i < messages.length; i++) {
                             nMessage += messages[i];
@@ -2383,7 +2383,9 @@
                     enableProtocol: false,
                     messageDelimiter: '|',
                     trackMessageLength: _request.trackMessageLength,
-                    maxReconnectOnClose: _request.maxReconnectOnClose
+                    maxReconnectOnClose: _request.maxReconnectOnClose,
+                    heartbeatTimer: _request.heartbeatTimer,
+                    heartbeat: _request.heartbeat
                 };
 
                 if (typeof (message) === 'object') {
