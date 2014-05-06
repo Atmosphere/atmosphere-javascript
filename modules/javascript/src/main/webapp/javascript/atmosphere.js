@@ -1468,7 +1468,7 @@
                     request.uuid = atmosphere.util.trim(messages[pos]);
                     request.stime = atmosphere.util.trim(messages[pos + 1]);
 
-                    var interval = parseInt(amosphere.util.trim(messages[pos + 2]), 10);
+                    var interval = parseInt(atmosphere.util.trim(messages[pos + 2]), 10);
                     var paddingData = messages[pos + 3];
 
                     if (!isNaN(interval) && interval > 0) {
