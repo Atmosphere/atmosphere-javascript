@@ -1305,7 +1305,7 @@
                     }
 
                     jQuery.atmosphere.uuid = request.uuid;
-                } else if (request.enableProtocol && request.firstMessage) {
+                } else if (request.enableProtocol && request.firstMessage && jQuery.browser.msie && +jQuery.browser.version.split(".")[0] < 10)
                     // In case we are getting some junk from IE
                     b = false;
                 } else {
