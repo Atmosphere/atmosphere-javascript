@@ -106,6 +106,17 @@
                 _adapter.onmessage({data: e.responseBody});
             };
 
+
+            /**
+             * Overrides the onOpen callback in given request to proxy the event to the adapter.
+             *
+             * @method onOpen
+             * @param {Object} e the event object
+             */
+            request.onOpen = function (e) {
+                _adapter.onopen(e);
+            };
+
             _adapter = {
                 send: function (data) {
                     _socket.push(data);
