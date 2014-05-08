@@ -2620,7 +2620,7 @@
         }
 
         // https://github.com/Atmosphere/atmosphere-javascript/issues/58
-        uuid = 0;
+        uuid = ((typeof (request) !== 'undefined') && typeof (request.uuid) !== 'undefined') ? request.uuid : 0;
 
         if (typeof (url) !== "string") {
             request = url;
