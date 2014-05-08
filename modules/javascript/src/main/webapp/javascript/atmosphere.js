@@ -1503,7 +1503,7 @@
                             }
                         }
                     }
-                } else if (request.enableProtocol && request.firstMessage) {
+                } else if (request.enableProtocol && request.firstMessage && atmosphere.util.browser.msie && +atmosphere.util.browser.version.split(".")[0] < 10) {
                     // In case we are getting some junk from IE
                 } else {
                     _triggerOpen(request);
