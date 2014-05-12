@@ -3086,7 +3086,7 @@
     });
 
     atmosphere.util.on(window, "offline", function () {
-        atmosphere.unsubscribe();
+        //atmosphere.unsubscribe();
     });
     
     return atmosphere;
