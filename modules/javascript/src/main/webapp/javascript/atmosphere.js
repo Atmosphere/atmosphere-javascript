@@ -1478,6 +1478,11 @@
                     request.uuid = atmosphere.util.trim(messages[pos]);
                     request.stime = atmosphere.util.trim(messages[pos + 1]);
 
+                    if (messages.length <= pos + 3) {
+                        atmosphere.util.log('error', ["Protocol data not sent by the server. " +
+                            "If you enable protocol on client side, be sure to install JavascriptProtocol interceptor on server side."]);
+                    }
+
                     var interval = parseInt(atmosphere.util.trim(messages[pos + 2]), 10);
                     var paddingData = messages[pos + 3];
 

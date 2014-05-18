@@ -1379,6 +1379,11 @@
                     request.uuid = jQuery.trim(messages[pos]);
                     request.stime = jQuery.trim(messages[pos + 1]);
 
+                    if (messages.length <= pos + 3) {
+                        jQuery.atmosphere.log('error', ["Protocol data not sent by the server. " +
+                            "If you enable protocol on client side, be sure to install JavascriptProtocol interceptor on server side."]);
+                    }
+
                     var interval = parseInt(jQuery.trim(messages[pos + 2]), 10);
                     var paddingData = messages[pos + 3];
 
