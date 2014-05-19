@@ -1381,7 +1381,8 @@
 
                     if (messages.length <= pos + 3) {
                         jQuery.atmosphere.log('error', ["Protocol data not sent by the server. " +
-                            "If you enable protocol on client side, be sure to install JavascriptProtocol interceptor on server side."]);
+                            "If you enable protocol on client side, be sure to install JavascriptProtocol interceptor on server side." +
+                            "Also note that atmosphere-runtime 2.2+ should be used."]);
                     }
 
                     var interval = parseInt(jQuery.trim(messages[pos + 2]), 10);
