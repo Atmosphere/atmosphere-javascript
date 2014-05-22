@@ -16,14 +16,14 @@
 /**
  * Atmosphere.js
  * https://github.com/Atmosphere/atmosphere-javascript
- * 
+ *
  * API reference
  * https://github.com/Atmosphere/atmosphere/wiki/jQuery.atmosphere.js-API
- * 
- * Highly inspired by 
+ *
+ * Highly inspired by
  * - Portal by Donghwan Kim http://flowersinthesand.github.io/portal/
  */
-(function(root, factory) {
+(function (root, factory) {
     if (typeof define === "function" && define.amd) {
         // AMD
         define(factory);
@@ -31,7 +31,7 @@
         // Browser globals, Window
         root.atmosphere = factory();
     }
-}(this, function() {
+}(this, function () {
 
     "use strict";
 
@@ -65,7 +65,7 @@
         },
         onFailureToReconnect: function (request, response) {
         },
-        onClientTimeout: function(request){
+        onClientTimeout: function (request) {
         },
 
         /**
@@ -103,10 +103,10 @@
                     _socket.push(data);
                 },
 
-                onmessage: function(e) {
+                onmessage: function (e) {
                 },
 
-                onopen: function(e) {
+                onopen: function (e) {
                 },
 
                 onclose: function (e) {
@@ -193,7 +193,7 @@
                 },
                 onFailureToReconnect: function (request, response) {
                 },
-                onClientTimeout: function(request){
+                onClientTimeout: function (request) {
                 }
             };
 
@@ -390,9 +390,9 @@
              * @private
              */
             function _close() {
-		if (_request.logLevel === 'debug') {
-			atmosphere.util.debug("Closing");
-		}
+                if (_request.logLevel === 'debug') {
+                    atmosphere.util.debug("Closing");
+                }
                 _abordingConnection = true;
                 if (_request.reconnectId) {
                     clearTimeout(_request.reconnectId);
@@ -1015,7 +1015,7 @@
                                 if (rq.reconnect && _requestCount++ < rq.maxReconnectOnClose) {
                                     _open('re-connecting', rq.transport, rq);
                                     _reconnect(_jqxhr, rq, request.reconnectInterval);
-                                    rq.openId = setTimeout(function() {
+                                    rq.openId = setTimeout(function () {
                                         _triggerOpen(rq);
                                     }, rq.reconnectInterval + 1000);
                                 } else {
@@ -1200,10 +1200,10 @@
 
                     // https://github.com/remy/polyfills/blob/master/EventSource.js
                     // Since we polling.
-                   /* if (_sse.URL) {
-                        _sse.interval = 100;
-                        _sse.URL = _buildSSEUrl();
-                    } */
+                    /* if (_sse.URL) {
+                     _sse.interval = 100;
+                     _sse.URL = _buildSSEUrl();
+                     } */
 
                     if (!skipCallbackInvocation) {
                         _invokeCallback();
@@ -1310,7 +1310,7 @@
 
                     var reopening = webSocketOpened;
 
-                    if(_websocket != null) {
+                    if (_websocket != null) {
                         _websocket.canSendMessage = true;
                     }
 
@@ -1849,10 +1849,10 @@
                                 // garantee the connection is well established.
                                 if (atmosphere.util.browser.mozilla && _response.ffTryingReconnect) {
                                     _response.ffTryingReconnect = false;
-                                    setTimeout(function(){
-                                       if (!_response.ffTryingReconnect) {
-                                           _triggerOpen(rq);
-                                       }
+                                    setTimeout(function () {
+                                        if (!_response.ffTryingReconnect) {
+                                            _triggerOpen(rq);
+                                        }
                                     }, 500);
                                 } else {
                                     _triggerOpen(rq);
@@ -1913,7 +1913,7 @@
                                                 _invokeCallback();
                                             }
 
-                                            if (_verifyStreamingLength(ajaxRequest, rq)){
+                                            if (_verifyStreamingLength(ajaxRequest, rq)) {
                                                 _reconnectOnMaxStreamingLength(ajaxRequest, rq);
                                                 return;
                                             }
@@ -2632,7 +2632,7 @@
                         break;
                     case "closedByClient":
                         if (typeof (f.onClientTimeout) !== 'undefined')
-                           f.onClientTimeout(_request);
+                            f.onClientTimeout(_request);
                         break;
                     case "re-opening":
                         delete _request.closed;
@@ -2962,13 +2962,13 @@
         },
 
         storage: function () {
-        	try {
-        		return !!(window.localStorage && window.StorageEvent);
-        	} catch (e) {
-        		//Firefox throws an exception here, see 
-        		//https://bugzilla.mozilla.org/show_bug.cgi?id=748620
-        		return false;
-        	}
+            try {
+                return !!(window.localStorage && window.StorageEvent);
+            } catch (e) {
+                //Firefox throws an exception here, see
+                //https://bugzilla.mozilla.org/show_bug.cgi?id=748620
+                return false;
+            }
         },
 
         iterate: function (fn, interval) {
@@ -3221,7 +3221,7 @@
 
         atmosphere.util.browser[match[1] || ""] = true;
         atmosphere.util.browser.version = match[2] || "0";
-        
+
         // Trident is the layout engine of the Internet Explorer
         // IE 11 has no "MSIE: 11.0" token
         if (atmosphere.util.browser.trident) {
@@ -3252,7 +3252,7 @@
     atmosphere.util.on(window, "offline", function () {
         atmosphere.unsubscribe();
     });
-    
+
     return atmosphere;
 }));
 /* jshint eqnull:true, noarg:true, noempty:true, eqeqeq:true, evil:true, laxbreak:true, undef:true, browser:true, indent:false, maxerr:50 */
