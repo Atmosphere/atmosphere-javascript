@@ -1488,9 +1488,11 @@
                     var paddingData = messages[pos + 3];
 
                     if (!isNaN(interval) && interval > 0) {
-                        request.heartbeatTimer = setTimeout(function () {
+                        var _pushHeartbeat = function () {
                             _push(paddingData);
-                        }, interval);
+                            request.heartbeatTimer = setTimeout(_pushHeartbeat, interval);
+                        };
+                        request.heartbeatTimer = setTimeout(_pushHeartbeat, interval);
                     }
 
                     if (request.transport !== 'long-polling') {
