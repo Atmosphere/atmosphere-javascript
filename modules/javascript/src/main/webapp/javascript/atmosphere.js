@@ -173,7 +173,7 @@
                     client: null,
                     server: null
                 },
-                pingInterval: 0,
+                ackInterval: 0,
                 onError: function (response) {
                 },
                 onClose: function (response) {
@@ -1513,12 +1513,11 @@
                         }
                     }
 
-                    if (request.pingInterval !== 0) {
+                    if (request.ackInterval !== 0) {
                         setTimeout(function () {
                             _push("...ACK...");
-                        }, request.pingInterval);
+                        }, request.ackInterval);
                     }
-
                 } else if (request.enableProtocol && request.firstMessage && atmosphere.util.browser.msie && +atmosphere.util.browser.version.split(".")[0] < 10) {
                     // In case we are getting some junk from IE
                     atmosphere.util.log(_request.logLevel, ["Receiving unexpected data from IE"]);
