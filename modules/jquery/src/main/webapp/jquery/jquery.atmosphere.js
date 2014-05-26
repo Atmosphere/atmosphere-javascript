@@ -191,6 +191,7 @@
                     client: null,
                     server: null
                 },
+                ackInterval: 0,
                 onError: function (response) {
                 },
                 onClose: function (response) {
@@ -1412,6 +1413,12 @@
                                 nMessage += request.messageDelimiter;
                             }
                         }
+                    }
+
+                    if (request.ackInterval !== 0) {
+                        setTimeout(function () {
+                            _push("...ACK...");
+                        }, request.ackInterval);
                     }
                 } else if (request.enableProtocol && request.firstMessage && jQuery.browser.msie && +jQuery.browser.version.split(".")[0] < 10) {
                     // In case we are getting some junk from IE
