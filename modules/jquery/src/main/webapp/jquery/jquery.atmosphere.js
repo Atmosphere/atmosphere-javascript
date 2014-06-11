@@ -106,6 +106,15 @@
                 _adapter.onmessage({data: e.responseBody});
             };
 
+            /**
+             * Overrides the onMessagePublished callback in given request.
+             *
+             * @method onMessagePublished
+             * @param {Object} e the event object
+             */
+            request.onMessagePublished = function (e) {
+                _adapter.onmessage({data: e.responseBody});
+            };
 
             /**
              * Overrides the onOpen callback in given request to proxy the event to the adapter.
