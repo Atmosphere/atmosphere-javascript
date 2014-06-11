@@ -127,6 +127,10 @@
             };
 
             _adapter = {
+                close: function () {
+                    _socket.close();
+                },
+
                 send: function (data) {
                     _socket.push(data);
                 },
