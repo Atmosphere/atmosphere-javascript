@@ -60,7 +60,7 @@
     };
 
     jQuery.atmosphere = {
-        version: "2.2.2-jquery",
+        version: "2.2.3-jquery",
         uuid : 0,
         requests: [],
         callbacks: [],
