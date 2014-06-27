@@ -3243,7 +3243,26 @@
     });
 
     atmosphere.util.on(window, "offline", function () {
-        atmosphere.unsubscribe();
+        if (requests.length > 0) {
+            var requestsClone = [].concat(requests);
+            for (var i = 0; i < requestsClone.length; i++) {
+                var rq = requestsClone[i];
+                rq.close();
+                clearTimeout(rq.response.request.id);
+
+                if (rq.heartbeatTimer) {
+                    clearTimeout(rq.heartbeatTimer);
+                }
+            }
+        }
+    });
+
+    atmosphere.util.on(window, "online", function () {
+        if (requests.length > 0) {
+            for (var i = 0; i < requests.length; i++) {
+                requests[i].execute();
+            }
+        }
     });
 
     return atmosphere;

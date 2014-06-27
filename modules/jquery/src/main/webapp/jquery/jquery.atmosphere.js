@@ -41,7 +41,28 @@
     });
 
     jQuery(window).bind("offline", function () {
-        jQuery.atmosphere.unsubscribe();
+        var requestsClone = [].concat(jQuery.atmosphere.requests);
+        for (var i = 0; i < requestsClone.length; i++) {
+            var rq = requestsClone[i];
+            rq.close();
+            clearTimeout(rq.response.request.id);
+
+            if (rq.heartbeatTimer) {
+                clearTimeout(rq.heartbeatTimer);
+            }
+        }
+    });
+
+    jQuery(window).bind("online", function () {
+        for (var i = 0; i < jQuery.atmosphere.requests.length; i++) {
+            var rq = jQuery.atmosphere.requests[i];
+            rq.close();
+            clearTimeout(rq.response.request.id);
+
+            if (rq.heartbeatTimer) {
+                clearTimeout(rq.heartbeatTimer);
+            }
+        }
     });
 
     // Prevent ESC to kill the connection from Firefox.
