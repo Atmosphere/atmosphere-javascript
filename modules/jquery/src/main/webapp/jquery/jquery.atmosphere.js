@@ -54,13 +54,9 @@
     });
 
     jQuery(window).bind("online", function () {
-        for (var i = 0; i < jQuery.atmosphere.requests.length; i++) {
-            var rq = jQuery.atmosphere.requests[i];
-            rq.close();
-            clearTimeout(rq.response.request.id);
-
-            if (rq.heartbeatTimer) {
-                clearTimeout(rq.heartbeatTimer);
+        if (jQuery.atmosphere.requests.length > 0) {
+            for (var i = 0; i < jQuery.atmosphere.requests.length; i++) {
+                jQuery.atmosphere.requests[i].execute();
             }
         }
     });
