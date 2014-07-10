@@ -221,6 +221,7 @@
                     server: null
                 },
                 ackInterval: 0,
+                closeAsync: false,
                 onError: function (response) {
                 },
                 onClose: function (response) {
@@ -2306,15 +2307,6 @@
                 }
             }
 
-            function _pushOnClose(message) {
-                var rq = _getPushRequest(message);
-                rq.transport = "ajax";
-                rq.method = "GET";
-                rq.async = false;
-                rq.reconnect = false;
-                _executeRequest(rq);
-            }
-
             function _pushLocal(message) {
                 _localStorageService.send(message);
             }
@@ -2662,14 +2654,14 @@
                     if (_request.connectTimeout > 0) {
                         jQuery.ajax({
                             url: url,
-                            async: false,
+                            async: _request.closeAsync,
                             timeout: _request.connectTimeout,
                             cache: false
                         });
                     } else {
                         jQuery.ajax({
                             url: url,
-                            async: false,
+                            async: _request.closeAsync,
                             cache: false
                         });
                     }

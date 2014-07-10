@@ -187,6 +187,7 @@
                     server: null
                 },
                 ackInterval: 0,
+                closeAsync: false,
                 onError: function (response) {
                 },
                 onClose: function (response) {
@@ -393,7 +394,7 @@
                     closeR.transport = 'polling';
                     closeR.method = 'GET';
                     closeR.data = '';
-                    closeR.async = false;
+                    closeR.async = rq.closeAsync;
                     _pushOnClose("", closeR);
                 }
             }
@@ -2391,7 +2392,6 @@
                 }
                 rq.transport = "polling";
                 rq.method = "GET";
-                rq.async = false;
                 rq.withCredentials = false;
                 rq.reconnect = false;
                 rq.force = true;
