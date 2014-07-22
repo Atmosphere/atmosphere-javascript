@@ -25,7 +25,7 @@ Also they are available in the following ways, but there may be delays between a
 <dependency>
     <groupId>org.atmosphere.client</groupId>
     <artifactId>{jquery|javascript}</artifactId>
-    <version>2.0.9|2.1.5|2.2.1</version>
+    <version>2.1.5|2.2.3</version>
  </dependency>
 ```
 
