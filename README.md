@@ -12,7 +12,7 @@ Atmosphere transparently supports WebSockets, Server Side Events (SSE), Long-Pol
 ## Install
 You can get atmosphere.js and jquery.atmosphere.js. If you use a script tag whose src attribute is set to one of the below one, browser may not load it because the content type served by raw.github.com is text/plain. About Node.js client, see [here](https://github.com/flowersinthesand/atmosphere.js-node)
 
-* [atmosphere v2.2.1(https://raw.github.com/Atmosphere/atmosphere-javascript/javascript-project-2.2.1/modules/javascript/src/main/webapp/javascript/atmosphere.js)
+* [atmosphere v2.2.1](https://raw.github.com/Atmosphere/atmosphere-javascript/javascript-project-2.2.1/modules/javascript/src/main/webapp/javascript/atmosphere.js)
 * [jquery-atmosphere v2.2.1](https://raw.github.com/Atmosphere/atmosphere-javascript/javascript-project-2.2.1/modules/jquery/src/main/webapp/jquery/jquery.atmosphere.js)
 
 Also they are available in the following ways, but there may be delays between a release and its availability. We don't manage these ways officially but they are managed by open source community so you can contribute.
