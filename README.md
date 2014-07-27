@@ -17,7 +17,7 @@ You can get atmosphere.js and jquery.atmosphere.js. If you use a script tag whos
 
 Also they are available in the following ways, but there may be delays between a release and its availability. We don't manage these ways officially but they are managed by open source community so you can contribute.
 * CDNJS CDN - [atmosphere](http://cdnjs.com/libraries/atmosphere/) and [jquery-atmosphere](http://cdnjs.com/libraries/jquery.atmosphere/)
-* WebJars - [atmosphere](http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22org.webjars%22%20AND%20a%3A%22atmosphere%22) and [jquery-atmosphere](http://search.maven.org/#search%7Cgav%7C1%7Cg%3A%22org.webjars%22%20AND%20a%3A%22jquery-atmosphere%22)
+* WebJars - [atmosphere](http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22org.webjars%22%20AND%20a%3A%22atmosphere-javascript%22) and [jquery-atmosphere](http://search.maven.org/#search%7Cgav%7C1%7Cg%3A%22org.webjars%22%20AND%20a%3A%22jquery-atmosphere%22)
 
 ### Maven
 
