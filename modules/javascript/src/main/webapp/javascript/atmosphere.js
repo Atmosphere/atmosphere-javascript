@@ -394,6 +394,9 @@
                     closeR.transport = 'polling';
                     closeR.method = 'GET';
                     closeR.data = '';
+                    if (_request.enableXDR) {
+                        closeR.enableXDR = _request.enableXDR
+                    }
                     closeR.async = rq.closeAsync;
                     _pushOnClose("", closeR);
                 }

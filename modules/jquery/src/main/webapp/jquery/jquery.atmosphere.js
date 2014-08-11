@@ -2656,13 +2656,15 @@
                             url: url,
                             async: _request.closeAsync,
                             timeout: _request.connectTimeout,
-                            cache: false
+                            cache: false,
+                            crossDomain: _request.enableXDR
                         });
                     } else {
                         jQuery.ajax({
                             url: url,
                             async: _request.closeAsync,
-                            cache: false
+                            cache: false,
+                            crossDomain: _request.enableXDR
                         });
                     }
                 }
