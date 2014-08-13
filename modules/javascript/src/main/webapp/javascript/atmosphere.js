@@ -67,6 +67,8 @@
         },
         onClientTimeout: function (request) {
         },
+        onOpenAfterResume: function(request) {
+        },
 
         /**
          * Creates an object based on an atmosphere subscription that exposes functions defined by the Websocket interface.
@@ -208,7 +210,9 @@
                 },
                 onFailureToReconnect: function (request, response) {
                 },
-                onClientTimeout: function (request) {
+                onClientTimeout: function(request){
+                },
+                onOpenAfterResume: function(request) {
                 }
             };
 
@@ -1719,6 +1723,8 @@
                 } else if (rq.isReopen) {
                     rq.isReopen = false;
                     _open('re-opening', rq.transport, rq);
+                } else if (_response.state === 'messageReceived'){
+                    _openAfterResume(_response);
                 }
             }
 
@@ -2080,6 +2086,11 @@
 
             function _tryingToReconnect(response) {
                 response.state = 're-connecting';
+                _invokeFunction(response);
+            }
+
+            function _openAfterResume(response) {
+                response.state = 'openAfterResume';
                 _invokeFunction(response);
             }
 
@@ -2654,6 +2665,10 @@
                             }
                         }
                         _request.closed = true;
+                        break;
+                    case "openAfterResume":
+                        if (typeof (f.onOpenAfterResume) !== 'undefined')
+                            f.onOpenAfterResume(_request);
                         break;
                 }
             }
