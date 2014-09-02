@@ -2092,6 +2092,7 @@
             function _openAfterResume(response) {
                 response.state = 'openAfterResume';
                 _invokeFunction(response);
+                response.state = 'messageReceived';
             }
 
             function _ieXDR(request) {
