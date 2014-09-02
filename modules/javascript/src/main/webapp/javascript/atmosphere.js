@@ -1723,7 +1723,7 @@
                 } else if (rq.isReopen) {
                     rq.isReopen = false;
                     _open('re-opening', rq.transport, rq);
-                } else if (_response.state === 'messageReceived'){
+                } else if (_response.state === 'messageReceived' && (rq.transport === 'jsonp' || rq.transport === 'long-polling')) {
                     _openAfterResume(_response);
                 }
             }
