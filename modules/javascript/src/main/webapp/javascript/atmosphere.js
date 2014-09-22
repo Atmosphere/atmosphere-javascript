@@ -190,6 +190,7 @@
                 },
                 ackInterval: 0,
                 closeAsync: false,
+                reconnectOnServerError: true,
                 onError: function (response) {
                 },
                 onClose: function (response) {
@@ -1851,8 +1852,8 @@
                             if (ajaxRequest.readyState === 4) {
                                 status = ajaxRequest.status > 1000 ? 0 : ajaxRequest.status;
                             }
-                            
-                            if (status >= 300 && status < 600) {
+
+                            if (!rq.reconnectOnServerError && (status >= 300 && status < 600)) {
                                 _onError(status, ajaxRequest.statusText);
                                 return;
                             }
