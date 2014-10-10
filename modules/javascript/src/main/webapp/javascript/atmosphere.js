@@ -1054,6 +1054,7 @@
                             if (rq.reconnect) {
                                 if (rq.maxRequest === -1 || rq.requestCount++ < rq.maxRequest) {
                                     // _readHeaders(_jqxhr, rq);
+                                    _timeout(rq);
 
                                     if (!rq.executeCallbackBeforeReconnect) {
                                         _reconnect(_jqxhr, rq, rq.pollingInterval);
@@ -1066,7 +1067,6 @@
                                             // The message was partial
                                         }
                                     }
-
                                     var skipCallbackInvocation = _trackMessageSize(msg, rq, _response);
                                     if (!skipCallbackInvocation) {
                                         _prepareCallback(_response.responseBody, "messageReceived", 200, rq.transport);
