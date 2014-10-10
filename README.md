@@ -25,7 +25,7 @@ Also they are available in the following ways, but there may be delays between a
 <dependency>
     <groupId>org.atmosphere.client</groupId>
     <artifactId>{jquery|javascript}</artifactId>
-    <version>2.2.4</version>
+    <version>2.2.5</version>
  </dependency>
 ```
 
@@ -52,7 +52,7 @@ Latest version may work with lower version, but not officially tested.
 
 ### Changelogs
 
-* 2.2 release: [2.2.4] (http://goo.gl/zeTxji) [2.2.3] (http://goo.gl/Tm8CF7) [2.2.2] (http://goo.gl/JuuqxI) [2.2.1] (http://goo.gl/Fq6oQI) [2.2.0] (http://goo.gl/I9zBre)
+* 2.2 release: [2.2.5](http://goo.gl/VUrtN9) [2.2.4] (http://goo.gl/zeTxji) [2.2.3] (http://goo.gl/Tm8CF7) [2.2.2] (http://goo.gl/JuuqxI) [2.2.1] (http://goo.gl/Fq6oQI) [2.2.0] (http://goo.gl/I9zBre)
 * 2.1 release: [2.1.7] (http://goo.gl/zS2Xzw) [2.1.6] (http://goo.gl/bKgBMw) [2.1.5] (http://goo.gl/KTjIZt) [2.1.4] (http://goo.gl/T7lmYn) [2.1.3] (http://goo.gl/mcRKF1) [2.1.2] (http://goo.gl/wECg76) [2.1.1] (http://goo.gl/nFf7JD) [2.1.0] (http://goo.gl/KdTPpU)
 * 2.0 release: [2.0.10] (http://goo.gl/TIQri5) [2.0.8] (http://goo.gl/AGT3sc) [2.0.7] (http://goo.gl/divfqp) [2.0.6] (http://goo.gl/JEb6dI) [2.0.5] (http://goo.gl/aWouaJ) [2.0.4] (http://goo.gl/oN0V72) 
 
