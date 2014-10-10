@@ -288,6 +288,13 @@
             var _requestCount = 0;
 
             /**
+             * The Heartbeat bytes send by the server.
+             * @type {string}
+             * @private
+             */
+            var _heartbeatPadding = ' ';
+
+            /**
              * {boolean} If request is currently aborded.
              *
              * @private
@@ -1497,15 +1504,16 @@
                     }
 
                     var interval = parseInt(atmosphere.util.trim(messages[pos + 1]), 10);
-                    var paddingData = messages[pos + 2];
+                    _heartbeatPadding = messages[pos + 2];
 
                     if (!isNaN(interval) && interval > 0) {
                         var _pushHeartbeat = function () {
-                            _push(paddingData);
+                            _push(_heartbeatPadding);
                             request.heartbeatTimer = setTimeout(_pushHeartbeat, interval);
                         };
                         request.heartbeatTimer = setTimeout(_pushHeartbeat, interval);
                     }
+
 
                     if (request.transport !== 'long-polling') {
                         _triggerOpen(request);
@@ -2734,7 +2742,8 @@
                         _localSocketF(_response.responseBody);
                     }
 
-                    if (_response.responseBody.length === 0 && _response.state === "messageReceived") {
+                    if ((_response.responseBody.length === 0 ||
+                        (isString && _heartbeatPadding === _response.responseBody)) && _response.state === "messageReceived") {
                         continue;
                     }
 
