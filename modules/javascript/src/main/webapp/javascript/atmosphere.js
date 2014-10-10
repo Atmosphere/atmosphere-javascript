@@ -1539,9 +1539,12 @@
             }
 
             function _timeout(_request) {
+                _request.timedOut = false;
+
                 clearTimeout(_request.id);
                 if (_request.timeout > 0 && _request.transport !== 'polling') {
                     _request.id = setTimeout(function () {
+                        _request.timedOut = true;
                         _onClientTimeout(_request);
                         _disconnect();
                         _clearState();
@@ -2119,7 +2122,6 @@
                 var transport = rq.transport;
                 var lastIndex = 0;
                 var xdr = new window.XDomainRequest();
-
                 var reconnect = function () {
                     if (rq.transport === "long-polling" && (rq.reconnect && (rq.maxRequest === -1 || rq.requestCount++ < rq.maxRequest))) {
                         xdr.status = 200;
@@ -2168,6 +2170,18 @@
 
                 // Handles close event
                 xdr.onload = function () {
+                    // Prevent onerror callback to be called
+                    if (_request.timedOut) {
+                        _request.timedOut = false;
+                        _clearState();
+                        rq.lastIndex = 0;
+                        if (rq.reconnect && _requestCount++ < rq.maxReconnectOnClose) {
+                            _open('re-connecting', request.transport, request);
+                            reconnect();
+                        } else {
+                            _onError(0, "maxReconnectOnClose reached");
+                        }
+                    }
                 };
 
                 var handle = function (xdr) {
