@@ -1061,7 +1061,6 @@
                             if (rq.reconnect) {
                                 if (rq.maxRequest === -1 || rq.requestCount++ < rq.maxRequest) {
                                     // _readHeaders(_jqxhr, rq);
-                                    _timeout(rq);
 
                                     if (!rq.executeCallbackBeforeReconnect) {
                                         _reconnect(_jqxhr, rq, rq.pollingInterval);
@@ -1082,6 +1081,7 @@
                                     if (rq.executeCallbackBeforeReconnect) {
                                         _reconnect(_jqxhr, rq, rq.pollingInterval);
                                     }
+                                    _timeout(rq);
                                 } else {
                                     atmosphere.util.log(_request.logLevel, ["JSONP reconnect maximum try reached " + _request.requestCount]);
                                     _onError(0, "maxRequest reached");
