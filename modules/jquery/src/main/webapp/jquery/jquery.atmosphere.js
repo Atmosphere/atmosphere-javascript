@@ -1157,7 +1157,9 @@
                         clearTimeout(_request.heartbeatTimer);
                     }
 
-                    if (_response.closedByClientTimeout) return;
+                    if (_response.closedByClientTimeout) {
+                        return;
+                    }
 
                     _invokeClose(sseOpened);
                     _clearState();
@@ -1977,6 +1979,11 @@
             }
 
             function _reconnect(ajaxRequest, request, reconnectInterval) {
+
+                if (_response.closedByClientTimeout) {
+                    return;
+                }
+
                 if (request.reconnect || (request.suspend && _subscribed)) {
                     var status = 0;
                     if (ajaxRequest.readyState > 1) {
