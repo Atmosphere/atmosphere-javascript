@@ -2080,9 +2080,9 @@
                     if (_request.timedOut) {
                         _request.timedOut = false;
                         _clearState();
-                        rq.lastIndex = 0;
-                        if (rq.reconnect && _requestCount++ < rq.maxReconnectOnClose) {
-                            _open('re-connecting', request.transport, request);
+                        _request.lastIndex = 0;
+                        if (_request.reconnect && _requestCount++ < _request.maxReconnectOnClose) {
+                            _open('re-connecting', _request.transport, _request);
                             reconnect();
                         } else {
                             _onError(0, "maxReconnectOnClose reached");
