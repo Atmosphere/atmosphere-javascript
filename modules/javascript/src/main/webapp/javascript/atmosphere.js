@@ -1549,12 +1549,9 @@
             }
 
             function _timeout(_request) {
-                _request.timedOut = false;
-
                 clearTimeout(_request.id);
                 if (_request.timeout > 0 && _request.transport !== 'polling') {
                     _request.id = setTimeout(function () {
-                        _request.timedOut = true;
                         _onClientTimeout(_request);
                         _disconnect();
                         _clearState();
@@ -2185,18 +2182,6 @@
 
                 // Handles close event
                 xdr.onload = function () {
-                    // Prevent onerror callback to be called
-                    if (_request.timedOut) {
-                        _request.timedOut = false;
-                        _clearState();
-                        _request.lastIndex = 0;
-                        if (_request.reconnect && _requestCount++ < _request.maxReconnectOnClose) {
-                            _open('re-connecting', _request.transport, _request);
-                            reconnect();
-                        } else {
-                            _onError(0, "maxReconnectOnClose reached");
-                        }
-                    }
                 };
 
                 var handle = function (xdr) {
