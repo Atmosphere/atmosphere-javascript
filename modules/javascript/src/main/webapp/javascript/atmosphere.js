@@ -2009,6 +2009,8 @@
             }
 
             function _reconnectOnMaxStreamingLength(ajaxRequest, rq) {
+                _response.messages = [];
+                rq.isReopen = true;
                 _close();
                 _abordingConnection = false;
                 _reconnect(ajaxRequest, rq, 500);
