@@ -365,6 +365,25 @@
             }
 
             /**
+             * Returns true if the given level is equal or above the configured log level.
+             *
+             * @private
+             */
+            function _canLog(level) {
+                if (level == 'debug') {
+                    return _request.logLevel === 'debug';
+                } else if (level == 'info') {
+                    return _request.logLevel === 'info' || _request.logLevel === 'debug';
+                } else if (level == 'warn') {
+                    return _request.logLevel === 'warn' || _request.logLevel === 'info' || _request.logLevel === 'debug';
+                } else if (level == 'error') {
+                    return _request.logLevel === 'error' || _request.logLevel === 'warn' || _request.logLevel === 'info' || _request.logLevel === 'debug';
+                } else {
+                    return false;
+                }
+            }
+
+            /**
              *
              * @private
              */
@@ -420,7 +439,7 @@
              * @private
              */
             function _close() {
-                if (_request.logLevel === 'debug') {
+                if (_canLog('debug')) {
                     atmosphere.util.debug("Closing");
                 }
                 _abordingConnection = true;
@@ -547,7 +566,7 @@
                 if (_request.shared) {
                     _localStorageService = _local(_request);
                     if (_localStorageService != null) {
-                        if (_request.logLevel === 'debug') {
+                        if (_canLog('debug')) {
                             atmosphere.util.debug("Storage service available. All communication will be local");
                         }
 
@@ -557,7 +576,7 @@
                         }
                     }
 
-                    if (_request.logLevel === 'debug') {
+                    if (_canLog('debug')) {
                         atmosphere.util.debug("No Storage service available.");
                     }
                     // Wasn't local or an error occurred
@@ -927,7 +946,7 @@
                 storageService = servers.storage() || servers.windowref();
                 storageService.init();
 
-                if (_request.logLevel === 'debug') {
+                if (_canLog('debug')) {
                     atmosphere.util.debug("Installed StorageService " + storageService);
                 }
 
@@ -1154,7 +1173,7 @@
 
                 var location = _buildSSEUrl();
 
-                if (_request.logLevel === 'debug') {
+                if (_canLog('debug')) {
                     atmosphere.util.debug("Invoking executeSSE");
                     atmosphere.util.debug("Using URL: " + location);
                 }
@@ -1186,7 +1205,7 @@
 
                 _sse.onopen = function (event) {
                     _timeout(_request);
-                    if (_request.logLevel === 'debug') {
+                    if (_canLog('debug')) {
                         atmosphere.util.debug("SSE successfully opened");
                     }
 
@@ -1286,7 +1305,7 @@
                 _response.transport = "websocket";
 
                 var location = _buildWebSocketUrl(_request.url);
-                if (_request.logLevel === 'debug') {
+                if (_canLog('debug')) {
                     atmosphere.util.debug("Invoking executeWebSocket");
                     atmosphere.util.debug("Using URL: " + location);
                 }
@@ -1326,7 +1345,7 @@
                 _websocket.onopen = function (message) {
                     _timeout(_request);
 
-                    if (_request.logLevel === 'debug') {
+                    if (_canLog('debug')) {
                         atmosphere.util.debug("Websocket successfully opened");
                     }
 
@@ -1427,7 +1446,7 @@
                         }
                     }
 
-                    if (_request.logLevel === 'warn') {
+                    if (_canLog('warn')) {
                         atmosphere.util.warn("Websocket closed, reason: " + reason);
                         atmosphere.util.warn("Websocket closed, wasClean: " + message.wasClean);
                     }
@@ -1462,7 +1481,7 @@
                             }
                         } else {
                             atmosphere.util.log(_request.logLevel, ["Websocket reconnect maximum try reached " + _request.requestCount]);
-                            if (_request.logLevel === 'warn') {
+                            if (_canLog('warn')) {
                                 atmosphere.util.warn("Websocket error, reason: " + message.reason);
                             }
                             _onError(0, "maxReconnectOnClose reached");
@@ -2745,7 +2764,7 @@
 
                     // Invoke global callbacks
                     if (callbacks.length > 0) {
-                        if (_request.logLevel === 'debug') {
+                        if (_canLog('debug')) {
                             atmosphere.util.debug("Invoking " + callbacks.length + " global callbacks: " + _response.state);
                         }
                         try {
@@ -2757,7 +2776,7 @@
 
                     // Invoke request callback
                     if (typeof (_request.callback) === 'function') {
-                        if (_request.logLevel === 'debug') {
+                        if (_canLog('debug')) {
                             atmosphere.util.debug("Invoking request callbacks");
                         }
                         try {
