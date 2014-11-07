@@ -288,6 +288,13 @@
             var _requestCount = 0;
 
             /**
+             * The Heartbeat interval send by the server.
+             * @type {int}
+             * @private
+             */
+            var _heartbeatInterval = 0;
+
+            /**
              * The Heartbeat bytes send by the server.
              * @type {string}
              * @private
@@ -1524,17 +1531,8 @@
                             "Also note that atmosphere-runtime 2.2+ should be used."]);
                     }
 
-                    var interval = parseInt(atmosphere.util.trim(messages[pos + 1]), 10);
+                    _heartbeatInterval = parseInt(atmosphere.util.trim(messages[pos + 1]), 10);
                     _heartbeatPadding = messages[pos + 2];
-
-                    if (!isNaN(interval) && interval > 0) {
-                        var _pushHeartbeat = function () {
-                            _push(_heartbeatPadding);
-                            request.heartbeatTimer = setTimeout(_pushHeartbeat, interval);
-                        };
-                        request.heartbeatTimer = setTimeout(_pushHeartbeat, interval);
-                    }
-
 
                     if (request.transport !== 'long-polling') {
                         _triggerOpen(request);
@@ -1755,6 +1753,27 @@
                     _open('re-opening', rq.transport, rq);
                 } else if (_response.state === 'messageReceived' && (rq.transport === 'jsonp' || rq.transport === 'long-polling')) {
                     _openAfterResume(_response);
+                } else {
+                     return;
+                }
+
+                _startHeartbeat(rq);
+            }
+
+            function _startHeartbeat(rq) {
+                if (rq.heartbeatTimer != null) {
+                    clearTimeout(rq.heartbeatTimer);
+                }
+
+                if (!isNaN(_heartbeatInterval) && _heartbeatInterval > 0) {
+                    var _pushHeartbeat = function () {
+                        if (_canLog('debug')) {
+                            atmosphere.util.debug("Sending heartbeat");
+                        }
+                        _push(_heartbeatPadding);
+                        rq.heartbeatTimer = setTimeout(_pushHeartbeat, _heartbeatInterval);
+                    };
+                    rq.heartbeatTimer = setTimeout(_pushHeartbeat, _heartbeatInterval);
                 }
             }
 
