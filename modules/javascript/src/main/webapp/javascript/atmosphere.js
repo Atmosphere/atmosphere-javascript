@@ -2851,6 +2851,10 @@
                 return _request.enableProtocol;
             };
 
+            this.init = function () {
+                _init();
+            }
+
             this.request = _request;
             this.response = _response;
         }
@@ -3341,6 +3345,7 @@
     atmosphere.util.on(window, "online", function () {
         if (requests.length > 0) {
             for (var i = 0; i < requests.length; i++) {
+                requests[i].init();
                 requests[i].execute();
             }
         }

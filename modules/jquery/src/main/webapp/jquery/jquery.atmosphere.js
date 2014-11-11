@@ -56,6 +56,7 @@
     jQuery(window).bind("online", function () {
         if (jQuery.atmosphere.requests.length > 0) {
             for (var i = 0; i < jQuery.atmosphere.requests.length; i++) {
+                jQuery.atmosphere.requests[i].init();
                 jQuery.atmosphere.requests[i].execute();
             }
         }
@@ -2862,6 +2863,10 @@
             this.enableProtocol = function (message) {
                 return _request.enableProtocol;
             };
+
+            this.init = function () {
+                _init();
+            }
 
             this.request = _request;
             this.response = _response;
