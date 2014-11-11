@@ -1528,39 +1528,41 @@
 
                     var messages = [];
                     var messageStart = message.indexOf(request.messageDelimiter);
-                    while (messageStart !== -1) {
-                        var str = message.substring(0, messageStart);
-                        var messageLength = parseInt(str, 10);
-                        if (isNaN(messageLength))
-                            throw 'message length "' + str + '" is not a number';
-                        messageStart += request.messageDelimiter.length;
-                        if (messageStart + messageLength > message.length) {
-                            // message not complete, so there is no trailing messageDelimiter
-                            messageStart = -1;
-                        } else {
-                            // message complete, so add it
-                            messages.push(message.substring(messageStart, messageStart + messageLength));
-                            // remove consumed characters
-                            message = message.substring(messageStart + messageLength, message.length);
-                            messageStart = message.indexOf(request.messageDelimiter);
+                    if (messageStart != -1) {
+                        while (messageStart !== -1) {
+                            var str = message.substring(0, messageStart);
+                            var messageLength = parseInt(str, 10);
+                            if (isNaN(messageLength))
+                                throw 'message length "' + str + '" is not a number';
+                            messageStart += request.messageDelimiter.length;
+                            if (messageStart + messageLength > message.length) {
+                                // message not complete, so there is no trailing messageDelimiter
+                                messageStart = -1;
+                            } else {
+                                // message complete, so add it
+                                messages.push(message.substring(messageStart, messageStart + messageLength));
+                                // remove consumed characters
+                                message = message.substring(messageStart + messageLength, message.length);
+                                messageStart = message.indexOf(request.messageDelimiter);
+                            }
                         }
-                    }
 
-                    /* keep any remaining data */
-                    response.partialMessage = message;
+                        /* keep any remaining data */
+                        response.partialMessage = message;
 
-                    if (messages.length !== 0) {
-                        response.responseBody = messages.join(request.messageDelimiter);
-                        response.messages = messages;
-                        return false;
-                    } else {
-                        response.responseBody = "";
-                        response.messages = [];
-                        return true;
-                    }
-                } else {
-                    response.responseBody = message;
+                        if (messages.length !== 0) {
+                            response.responseBody = messages.join(request.messageDelimiter);
+                            response.messages = messages;
+                            return false;
+                        } else {
+                            response.responseBody = "";
+                            response.messages = [];
+                            return true;
+                        }
+                    } 
                 }
+                response.responseBody = message;
+                response.messages = [message];
                 return false;
             }
 
