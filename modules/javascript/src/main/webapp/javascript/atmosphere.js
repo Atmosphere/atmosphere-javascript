@@ -435,7 +435,7 @@
                     if (_request.enableXDR) {
                         closeR.enableXDR = _request.enableXDR
                     }
-                    closeR.async = rq.closeAsync;
+                    closeR.async = _request.closeAsync;
                     _pushOnClose("", closeR);
                 }
             }
