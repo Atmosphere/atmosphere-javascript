@@ -1026,6 +1026,28 @@
                     open: function () {
                         var callback = "atmosphere" + (++guid);
 
+                         function _reconnectOnFailure() {
+                            rq.lastIndex = 0;
+
+                            if (rq.openId) {
+                                clearTimeout(rq.openId);
+                            }
+
+                            if (rq.heartbeatTimer) {
+                                clearTimeout(rq.heartbeatTimer);
+                            }
+
+                            if (rq.reconnect && _requestCount++ < rq.maxReconnectOnClose) {
+                                _open('re-connecting', rq.transport, rq);
+                                _reconnect(_jqxhr, rq, request.reconnectInterval);
+                                rq.openId = setTimeout(function () {
+                                    _triggerOpen(rq);
+                                }, rq.reconnectInterval + 1000);
+                            } else {
+                                _onError(0, "maxReconnectOnClose reached");
+                            }
+                        }
+
                         function poll() {
                             var url = rq.url;
                             if (rq.dispatchUrl != null) {
@@ -1045,38 +1067,28 @@
 
                             script = document.createElement("script");
                             script.src = url + "&jsonpTransport=" + callback;
+                            //script.async = rq.async;
                             script.clean = function () {
                                 script.clean = script.onerror = script.onload = script.onreadystatechange = null;
                                 if (script.parentNode) {
                                     script.parentNode.removeChild(script);
                                 }
+
+                                if (++request.scriptCount === 2) {
+                                    request.scriptCount = 1;
+                                    _reconnectOnFailure();
+                                }
+
                             };
                             script.onload = script.onreadystatechange = function () {
                                 if (!script.readyState || /loaded|complete/.test(script.readyState)) {
                                     script.clean();
                                 }
                             };
+
                             script.onerror = function () {
+                                request.scriptCount = 1;
                                 script.clean();
-                                rq.lastIndex = 0;
-
-                                if (rq.openId) {
-                                    clearTimeout(rq.openId);
-                                }
-
-                                if (rq.heartbeatTimer) {
-                                    clearTimeout(rq.heartbeatTimer);
-                                }
-
-                                if (rq.reconnect && _requestCount++ < rq.maxReconnectOnClose) {
-                                    _open('re-connecting', rq.transport, rq);
-                                    _reconnect(_jqxhr, rq, request.reconnectInterval);
-                                    rq.openId = setTimeout(function () {
-                                        _triggerOpen(rq);
-                                    }, rq.reconnectInterval + 1000);
-                                } else {
-                                    _onError(0, "maxReconnectOnClose reached");
-                                }
                             };
 
                             head.insertBefore(script, head.firstChild);
@@ -1084,34 +1096,33 @@
 
                         // Attaches callback
                         window[callback] = function (msg) {
-                            if (rq.reconnect) {
-                                if (rq.maxRequest === -1 || rq.requestCount++ < rq.maxRequest) {
-                                    // _readHeaders(_jqxhr, rq);
+                            request.scriptCount = 0;
+                            if (rq.reconnect &&rq.maxRequest === -1 || rq.requestCount++ < rq.maxRequest) {
 
-                                    if (!rq.executeCallbackBeforeReconnect) {
-                                        _reconnect(_jqxhr, rq, rq.pollingInterval);
-                                    }
-
-                                    if (msg != null && typeof msg !== 'string') {
-                                        try {
-                                            msg = msg.message;
-                                        } catch (err) {
-                                            // The message was partial
-                                        }
-                                    }
-                                    var skipCallbackInvocation = _trackMessageSize(msg, rq, _response);
-                                    if (!skipCallbackInvocation) {
-                                        _prepareCallback(_response.responseBody, "messageReceived", 200, rq.transport);
-                                    }
-
-                                    if (rq.executeCallbackBeforeReconnect) {
-                                        _reconnect(_jqxhr, rq, rq.pollingInterval);
-                                    }
-                                    _timeout(rq);
-                                } else {
-                                    atmosphere.util.log(_request.logLevel, ["JSONP reconnect maximum try reached " + _request.requestCount]);
-                                    _onError(0, "maxRequest reached");
+                                // _readHeaders(_jqxhr, rq);
+                                if (!rq.executeCallbackBeforeReconnect) {
+                                    _reconnect(_jqxhr, rq, rq.pollingInterval);
                                 }
+
+                                if (msg != null && typeof msg !== 'string') {
+                                    try {
+                                        msg = msg.message;
+                                    } catch (err) {
+                                        // The message was partial
+                                    }
+                                }
+                                var skipCallbackInvocation = _trackMessageSize(msg, rq, _response);
+                                if (!skipCallbackInvocation) {
+                                    _prepareCallback(_response.responseBody, "messageReceived", 200, rq.transport);
+                                }
+
+                                if (rq.executeCallbackBeforeReconnect) {
+                                    _reconnect(_jqxhr, rq, rq.pollingInterval);
+                                }
+                                _timeout(rq);
+                            } else {
+                                atmosphere.util.log(_request.logLevel, ["JSONP reconnect maximum try reached " + _request.requestCount]);
+                                _onError(0, "maxRequest reached");
                             }
                         };
                         setTimeout(function () {
@@ -1124,7 +1135,6 @@
                         }
                     }
                 };
-
                 _jqxhr.open();
             }
 
