@@ -1997,7 +1997,7 @@
                     ajaxRequest.setRequestHeader("X-Atmosphere-Framework", jQuery.atmosphere.version);
                     ajaxRequest.setRequestHeader("X-Atmosphere-Transport", request.transport);
 
-                    if (ajaxRequest.heartbeat !== null && ajaxRequest.heartbeat.server !== null) {
+                    if (request.heartbeat !== null && request.heartbeat.server !== null) {
                         ajaxRequest.setRequestHeader("X-Heartbeat-Server", ajaxRequest.heartbeat.server);
                     }
 
