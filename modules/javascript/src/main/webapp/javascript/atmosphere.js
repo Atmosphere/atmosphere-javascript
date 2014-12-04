@@ -1362,7 +1362,7 @@
 
                 _websocket.onopen = function (message) {
                     _timeout(_request);
-                    offline = true;
+                    offline = false;
 
                     if (_canLog('debug')) {
                         atmosphere.util.debug("Websocket successfully opened");

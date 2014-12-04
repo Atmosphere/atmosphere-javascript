@@ -80,6 +80,7 @@
     jQuery.atmosphere = {
         version: "2.2.6-jquery",
         uuid : 0,
+        offline : false,
         requests: [],
         callbacks: [],
 
@@ -1267,6 +1268,7 @@
                     if (_canLog('debug')) {
                         jQuery.atmosphere.debug("Websocket successfully opened");
                     }
+                    offline = false;
 
                     var reopening = webSocketOpened;
 
@@ -1370,7 +1372,11 @@
                         jQuery.atmosphere.warn("Websocket closed, wasClean: " + message.wasClean);
                     }
 
-                    if (_response.closedByClientTimeout) {
+                    if (_response.closedByClientTimeout || offline) {
+                        if (_request.reconnectId) {
+                            clearTimeout(_request.reconnectId);
+                            delete _request.reconnectId;
+                        }
                         return;
                     }
 
