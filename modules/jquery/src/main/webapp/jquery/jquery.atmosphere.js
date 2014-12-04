@@ -41,6 +41,7 @@
     });
 
     jQuery(window).bind("offline", function () {
+        jQuery.atmosphere.offline = true;
         var requestsClone = [].concat(jQuery.atmosphere.requests);
         for (var i = 0; i < requestsClone.length; i++) {
             var rq = requestsClone[i];
@@ -54,6 +55,7 @@
     });
 
     jQuery(window).bind("online", function () {
+        jQuery.atmosphere.offline = false;
         if (jQuery.atmosphere.requests.length > 0) {
             for (var i = 0; i < jQuery.atmosphere.requests.length; i++) {
                 jQuery.atmosphere.requests[i].init();
@@ -1268,7 +1270,7 @@
                     if (_canLog('debug')) {
                         jQuery.atmosphere.debug("Websocket successfully opened");
                     }
-                    offline = false;
+                    jQuery.atmosphere.offline = false;
 
                     var reopening = webSocketOpened;
 
@@ -1372,7 +1374,7 @@
                         jQuery.atmosphere.warn("Websocket closed, wasClean: " + message.wasClean);
                     }
 
-                    if (_response.closedByClientTimeout || offline) {
+                    if (_response.closedByClientTimeout || jQuery.atmosphere.offline) {
                         if (_request.reconnectId) {
                             clearTimeout(_request.reconnectId);
                             delete _request.reconnectId;
