@@ -38,6 +38,7 @@
     var version = "2.2.6-javascript",
         atmosphere = {},
         guid,
+        offline = false,
         requests = [],
         callbacks = [],
         uuid = 0,
@@ -1361,6 +1362,7 @@
 
                 _websocket.onopen = function (message) {
                     _timeout(_request);
+                    offline = true;
 
                     if (_canLog('debug')) {
                         atmosphere.util.debug("Websocket successfully opened");
@@ -1468,7 +1470,11 @@
                         atmosphere.util.warn("Websocket closed, wasClean: " + message.wasClean);
                     }
 
-                    if (_response.closedByClientTimeout) {
+                    if (_response.closedByClientTimeout || offline) {
+                        if (_request.reconnectId) {
+                            clearTimeout(_request.reconnectId);
+                            delete _request.reconnectId;
+                        }
                         return;
                     }
 
@@ -3340,6 +3346,7 @@
     });
 
     atmosphere.util.on(window, "offline", function () {
+        offline = true;
         if (requests.length > 0) {
             var requestsClone = [].concat(requests);
             for (var i = 0; i < requestsClone.length; i++) {
@@ -3361,6 +3368,7 @@
                 requests[i].execute();
             }
         }
+        offline = false;
     });
 
     return atmosphere;
