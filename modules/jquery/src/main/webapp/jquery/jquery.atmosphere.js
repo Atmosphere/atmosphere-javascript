@@ -951,9 +951,6 @@
                             if (rq.maxRequest === -1 || rq.requestCount++ < rq.maxRequest) {
                                 _readHeaders(_jqxhr, rq);
 
-                                if (!rq.executeCallbackBeforeReconnect) {
-                                    _reconnect(_jqxhr, rq, 10);
-                                }
 
                                 var msg = json.message;
                                 if (msg != null && typeof msg !== 'string') {
@@ -965,6 +962,11 @@
                                 }
 
                                 var skipCallbackInvocation = _trackMessageSize(msg, rq, _response);
+
+                                if (!rq.executeCallbackBeforeReconnect) {
+                                    _reconnect(_jqxhr, rq, rq.pollingInterval);
+                                }
+
                                 if (!skipCallbackInvocation) {
                                     _prepareCallback(_response.responseBody, "messageReceived", 200, rq.transport);
                                 }
