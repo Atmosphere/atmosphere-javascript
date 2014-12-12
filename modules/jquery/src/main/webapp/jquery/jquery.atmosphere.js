@@ -952,7 +952,7 @@
                                 _readHeaders(_jqxhr, rq);
 
                                 if (!rq.executeCallbackBeforeReconnect) {
-                                    _reconnect(_jqxhr, rq, rq.pollingInterval);
+                                    _reconnect(_jqxhr, rq, 10);
                                 }
 
                                 var msg = json.message;
