@@ -393,7 +393,7 @@
 
             function _debug(msg) {
                 if (_canLog('debug')) {
-                    jQuery.atmosphere.debug(new Date() + " Atmosphere: " + msg);
+                    atmosphere.util.debug(new Date() + " Atmosphere: " + msg);
                 }
             }
 
