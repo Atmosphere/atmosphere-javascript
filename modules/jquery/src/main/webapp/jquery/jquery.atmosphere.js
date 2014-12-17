@@ -424,6 +424,12 @@
                 }
             }
 
+            function _debug(msg) {
+                if (_canLog('debug')) {
+                        jQuery.atmosphere.debug(new Date()+" Atmosphere: " + msg);
+                }
+            }
+
             /**
              * Subscribe request using request transport. <br>
              * If request is currently opened, this one will be closed.
@@ -1268,6 +1274,7 @@
                 }
 
                 _websocket.onopen = function (message) {
+                    _debug("websocket.onopen");
                     _timeout(_request);
                     if (_canLog('debug')) {
                         jQuery.atmosphere.debug("Websocket successfully opened");
@@ -1298,6 +1305,7 @@
                 };
 
                 _websocket.onmessage = function (message) {
+                    _debug("websocket.onmessage: "+message);
                     _timeout(_request);
 
                     // We only consider it opened if we get the handshake data
@@ -1330,6 +1338,7 @@
                 };
 
                 _websocket.onerror = function (message) {
+                    _debug("websocket.onerror");
                     clearTimeout(_request.id);
 
                     if (_request.heartbeatTimer) {
@@ -1338,6 +1347,7 @@
                 };
 
                 _websocket.onclose = function (message) {
+                    _debug("websocket.onclose");
                     if (_response.state === 'closed')
                         return;
                     clearTimeout(_request.id);
@@ -1772,10 +1782,12 @@
                         _response.transport = rq.transport;
 
                         ajaxRequest.onabort = function () {
+                            _debug("ajaxrequest.onabort");
                             _invokeClose(true);
                         };
 
                         ajaxRequest.onerror = function () {
+                            _debug("ajaxrequest.onerror");
                             _response.error = true;
                             _response.ffTryingReconnect = true;
                             try {
@@ -1795,6 +1807,7 @@
                     }
 
                     ajaxRequest.onreadystatechange = function () {
+                        _debug("ajaxRequest.onreadystatechange, new state: "+ajaxRequest.readyState);
                         if (_abordingConnection) {
                             return;
                         }
@@ -2573,39 +2586,48 @@
             }
 
             function _f(response, f) {
+
                 switch (response.state) {
                     case "messageReceived":
+                        _debug("Firing onMessage");
                         _requestCount = 0;
                         if (typeof (f.onMessage) !== 'undefined')
                             f.onMessage(response);
                         break;
                     case "error":
+                        _debug("Firing onError");
                         if (typeof (f.onError) !== 'undefined')
                             f.onError(response);
                         break;
                     case "opening":
+                        _debug("Firing onOpen");
                         delete _request.closed;
                         if (typeof (f.onOpen) !== 'undefined')
                             f.onOpen(response);
                         break;
                     case "messagePublished":
+                        _debug("Firing onMessagePublished");
                         if (typeof (f.onMessagePublished) !== 'undefined')
                             f.onMessagePublished(response);
                         break;
                     case "re-connecting":
+                        _debug("Firing onReconnect");
                         if (typeof (f.onReconnect) !== 'undefined')
                             f.onReconnect(_request, response);
                         break;
                     case "closedByClient":
+                        _debug("Firing onClientTimeout");
                         if (typeof (f.onClientTimeout) !== 'undefined')
                             f.onClientTimeout(_request);
                         break;
                     case "re-opening":
+                        _debug("Firing onReopen");
                         delete _request.closed;
                         if (typeof (f.onReopen) !== 'undefined')
                             f.onReopen(_request, response);
                         break;
                     case "fail-to-reconnect":
+                        _debug("Firing onFailureToReconnect");
                         if (typeof (f.onFailureToReconnect) !== 'undefined')
                             f.onFailureToReconnect(_request, response);
                         break;
@@ -2613,9 +2635,12 @@
                     case "closed":
                         var closed = typeof (_request.closed) !== 'undefined' ? _request.closed : false;
                         if (!closed) {
+                            _debug("Firing onClose");
                             if (typeof (f.onClose) !== 'undefined') {
                                 f.onClose(response);
                             }
+                        } else {
+                            _debug("Closed but not firing onClose");
                         }
 
                         _request.closed = true;
