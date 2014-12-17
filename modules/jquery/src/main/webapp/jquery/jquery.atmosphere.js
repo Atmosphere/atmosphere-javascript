@@ -1740,9 +1740,9 @@
                     }
                 }
 
-                var reconnectF = function () {
+                var reconnectF = function (force) {
                     rq.lastIndex = 0;
-                    if (rq.reconnect && _requestCount++ < rq.maxReconnectOnClose) {
+                    if (force || (rq.reconnect && _requestCount++ < rq.maxReconnectOnClose)) {
                         _response.ffTryingReconnect = true;
                         _open('re-connecting', request.transport, request);
                         _reconnect(ajaxRequest, rq, request.reconnectInterval);
@@ -1755,7 +1755,7 @@
                     // Prevent onerror callback to be called
                     _response.errorHandled = true;
                     _clearState();
-                    reconnectF();
+                    reconnectF(false);
                 };
 
                 if (rq.reconnect && (rq.maxRequest === -1 || rq.requestCount++ < rq.maxRequest)) {
@@ -1789,7 +1789,7 @@
                             }
                             if (!_response.errorHandled) {
                                 _clearState();
-                                reconnectF();
+                                reconnectF(false);
                             }
                         };
                     }
@@ -1805,7 +1805,7 @@
 
                         if (rq.transport === 'streaming' && rq.readyState > 2 && ajaxRequest.readyState === 4) {
                             _clearState();
-                            reconnectF();
+                            reconnectF(false);
                             return;
                         }
 
@@ -1860,7 +1860,7 @@
                             if (jQuery.trim(responseText).length === 0 && rq.transport === 'long-polling') {
                                 // For browser that aren't support onabort
                                 if (!ajaxRequest.hasData) {
-                                    _reconnect(ajaxRequest, rq, rq.pollingInterval);
+                                    reconnectF(true);
                                 } else {
                                     ajaxRequest.hasData = false;
                                 }
