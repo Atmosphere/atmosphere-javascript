@@ -426,7 +426,7 @@
 
             function _debug(msg) {
                 if (_canLog('debug')) {
-                        jQuery.atmosphere.debug(new Date()+" Atmosphere: " + msg);
+                    jQuery.atmosphere.debug(new Date() + " Atmosphere: " + msg);
                 }
             }
 
@@ -1146,6 +1146,7 @@
                 }
 
                 _sse.onopen = function (event) {
+                    _debug("websocket.onopen");
                     _timeout(_request);
                     if (_canLog('debug')) {
                         jQuery.atmosphere.debug("SSE successfully opened");
@@ -1170,6 +1171,7 @@
                 };
 
                 _sse.onmessage = function (message) {
+                    _debug("websocket.onmessage");
                     _timeout(_request);
                     if (!_request.enableXDR && message.origin !== window.location.protocol + "//" + window.location.host) {
                         jQuery.atmosphere.log(_request.logLevel, ["Origin was not " + window.location.protocol + "//" + window.location.host]);
@@ -1189,6 +1191,7 @@
                 };
 
                 _sse.onerror = function (message) {
+                    _debug("websocket.onerror");
                     clearTimeout(_request.id);
 
                     if (_request.heartbeatTimer) {
@@ -2586,7 +2589,6 @@
             }
 
             function _f(response, f) {
-
                 switch (response.state) {
                     case "messageReceived":
                         _debug("Firing onMessage");

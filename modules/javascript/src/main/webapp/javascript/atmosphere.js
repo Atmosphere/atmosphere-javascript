@@ -391,6 +391,12 @@
                 }
             }
 
+            function _debug(msg) {
+                if (_canLog('debug')) {
+                    jQuery.atmosphere.debug(new Date() + " Atmosphere: " + msg);
+                }
+            }
+
             /**
              *
              * @private
@@ -1082,12 +1088,14 @@
 
                             };
                             script.onload = script.onreadystatechange = function () {
+                                _debug("jsonp.onload");
                                 if (!script.readyState || /loaded|complete/.test(script.readyState)) {
                                     script.clean();
                                 }
                             };
 
                             script.onerror = function () {
+                                _debug("jsonp.onerror");
                                 request.scriptCount = 1;
                                 script.clean();
                             };
@@ -1097,6 +1105,7 @@
 
                         // Attaches callback
                         window[callback] = function (msg) {
+                            _debug("jsonp.window");
                             request.scriptCount = 0;
                             if (rq.reconnect &&rq.maxRequest === -1 || rq.requestCount++ < rq.maxRequest) {
 
@@ -1222,6 +1231,7 @@
                 }
 
                 _sse.onopen = function (event) {
+                    _debug("sse.onopen");
                     _timeout(_request);
                     if (_canLog('debug')) {
                         atmosphere.util.debug("SSE successfully opened");
@@ -1247,6 +1257,7 @@
                 };
 
                 _sse.onmessage = function (message) {
+                    _debug("sse.onmessage");
                     _timeout(_request);
 
                     if (!_request.enableXDR && message.origin && message.origin !== window.location.protocol + "//" + window.location.host) {
@@ -1275,6 +1286,7 @@
                 };
 
                 _sse.onerror = function (message) {
+                    _debug("sse.onerror");
                     clearTimeout(_request.id);
 
                     if (_request.heartbeatTimer) {
@@ -1361,6 +1373,7 @@
                 }
 
                 _websocket.onopen = function (message) {
+                    _debug("websocket.onopen");
                     _timeout(_request);
                     offline = false;
 
@@ -1392,6 +1405,7 @@
                 };
 
                 _websocket.onmessage = function (message) {
+                    _debug("websocket.onmessage");
                     _timeout(_request);
 
                     // We only consider it opened if we get the handshake data
@@ -1424,6 +1438,7 @@
                 };
 
                 _websocket.onerror = function (message) {
+                    _debug("websocket.onerror");
                     clearTimeout(_request.id);
 
                     if (_request.heartbeatTimer) {
@@ -1432,6 +1447,7 @@
                 };
 
                 _websocket.onclose = function (message) {
+                    _debug("websocket.onclose");
                     clearTimeout(_request.id);
                     if (_response.state === 'closed')
                         return;
@@ -1866,10 +1882,12 @@
                         _response.transport = rq.transport;
 
                         ajaxRequest.onabort = function () {
+                            _debug("ajaxrequest.onabort")
                             _invokeClose(true);
                         };
 
                         ajaxRequest.onerror = function () {
+                            _debug("ajaxrequest.onerror")
                             _response.error = true;
                             _response.ffTryingReconnect = true;
                             try {
@@ -1889,6 +1907,7 @@
                     }
 
                     ajaxRequest.onreadystatechange = function () {
+                        _debug("ajaxRequest.onreadystatechange, new state: " + ajaxRequest.readyState);
                         if (_abordingConnection) {
                             return;
                         }
@@ -2687,6 +2706,7 @@
             function _f(response, f) {
                 switch (response.state) {
                     case "messageReceived":
+                        _debug("Firing onMessage");
                         _requestCount = 0;
                         if (typeof (f.onMessage) !== 'undefined')
                             f.onMessage(response);
@@ -2695,6 +2715,7 @@
                             f.onmessage(response);
                         break;
                     case "error":
+                        _debug("Firing onError");
                         if (typeof (f.onError) !== 'undefined')
                             f.onError(response);
 
@@ -2703,6 +2724,7 @@
                         break;
                     case "opening":
                         delete _request.closed;
+                        _debug("Firing onOpen");
                         if (typeof (f.onOpen) !== 'undefined')
                             f.onOpen(response);
 
@@ -2710,23 +2732,28 @@
                             f.onopen(response);
                         break;
                     case "messagePublished":
+                        _debug("Firing messagePublished");
                         if (typeof (f.onMessagePublished) !== 'undefined')
                             f.onMessagePublished(response);
                         break;
                     case "re-connecting":
+                        _debug("Firing onReconnect");
                         if (typeof (f.onReconnect) !== 'undefined')
                             f.onReconnect(_request, response);
                         break;
                     case "closedByClient":
+                        _debug("Firing closedByClient");
                         if (typeof (f.onClientTimeout) !== 'undefined')
                             f.onClientTimeout(_request);
                         break;
                     case "re-opening":
                         delete _request.closed;
+                        _debug("Firing onReopen");
                         if (typeof (f.onReopen) !== 'undefined')
                             f.onReopen(_request, response);
                         break;
                     case "fail-to-reconnect":
+                        _debug("Firing onFailureToReconnect");
                         if (typeof (f.onFailureToReconnect) !== 'undefined')
                             f.onFailureToReconnect(_request, response);
                         break;
@@ -2735,6 +2762,7 @@
                         var closed = typeof (_request.closed) !== 'undefined' ? _request.closed : false;
 
                         if (!closed) {
+                            _debug("Firing onClose");
                             if (typeof (f.onClose) !== 'undefined') {
                                 f.onClose(response);
                             }
@@ -2742,6 +2770,8 @@
                             if (typeof (f.onclose) !== 'undefined') {
                                 f.onclose(response);
                             }
+                        } else {
+                            _debug("Closed but not firing onClose");
                         }
                         _request.closed = true;
                         break;
