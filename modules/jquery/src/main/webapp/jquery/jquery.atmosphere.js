@@ -475,7 +475,7 @@
                     // port
                     (parts[3] || (parts[1] === "http:" ? 80 : 443)) != (window.location.port || (window.location.protocol === "http:" ? 80 : 443))
                 ));
-                return window.EventSource && (!options.crossOrigin || !util.browser.safari || util.browser.vmajor >= 7);
+                return window.EventSource && (!crossOrigin || !jQuery.browser.safari || jQuery.browser.vmajor >= 7);
             }
 
             /**
