@@ -567,7 +567,8 @@
              */
             function _supportSSE() {
                 // Origin parts
-                var parts = /^([\w\+\.\-]+:)(?:\/\/([^\/?#:]*)(?::(\d+))?)?/.exec(_request.url.toLowerCase());
+                var url = atmosphere.util.getAbsoluteURL(_request.url.toLowerCase());
+                var parts = /^([\w\+\.\-]+:)(?:\/\/([^\/?#:]*)(?::(\d+))?)?/.exec(url);
                 var crossOrigin = !!(parts && (
                     // protocol
                     parts[1] != window.location.protocol ||

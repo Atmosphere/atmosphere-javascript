@@ -465,8 +465,18 @@
              * @private
              */
             function _supportSSE() {
+                function makeAbsolute(url) {
+                    var div = document.createElement("div");
+                    // Uses an innerHTML property to obtain an absolute URL
+                    div.innerHTML = '<a href="' + url + '"/>';
+                    // encodeURI and decodeURI are needed to normalize URL between Internet Explorer and non-Internet Explorer,
+                    // since Internet Explorer doesn't encode the href property value and return it - http://jsfiddle.net/Yq9M8/1/
+                    return encodeURI(decodeURI(div.firstChild.href));
+                }
+                
                 // Origin parts
-                var parts = /^([\w\+\.\-]+:)(?:\/\/([^\/?#:]*)(?::(\d+))?)?/.exec(_request.url.toLowerCase());
+                var url = makeAbsolute(_request.url.toLowerCase());
+                var parts = /^([\w\+\.\-]+:)(?:\/\/([^\/?#:]*)(?::(\d+))?)?/.exec(url);
                 var crossOrigin = !!(parts && (
                     // protocol
                     parts[1] != window.location.protocol ||
