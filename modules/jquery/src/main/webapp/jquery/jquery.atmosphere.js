@@ -465,7 +465,17 @@
              * @private
              */
             function _supportSSE() {
-                return window.EventSource;
+                // Origin parts
+                var parts = /^([\w\+\.\-]+:)(?:\/\/([^\/?#:]*)(?::(\d+))?)?/.exec(_request.url.toLowerCase());
+                var crossOrigin = !!(parts && (
+                    // protocol
+                    parts[1] != window.location.protocol ||
+                    // hostname
+                    parts[2] != window.location.hostname ||
+                    // port
+                    (parts[3] || (parts[1] === "http:" ? 80 : 443)) != (window.location.port || (window.location.protocol === "http:" ? 80 : 443))
+                ));
+                return window.EventSource && (!options.crossOrigin || !util.browser.safari || util.browser.vmajor >= 7);
             }
 
             /**
@@ -3129,13 +3139,18 @@
             ua = ua.toLowerCase();
 	
             var match = /(chrome)[ \/]([\w.]+)/.exec(ua) || 
-                    /(webkit)[ \/]([\w.]+)/.exec(ua) || 
                     /(opera)(?:.*version|)[ \/]([\w.]+)/.exec(ua) || 
                     /(msie) ([\w.]+)/.exec(ua) || 
-                    /(trident)(?:.*? rv:([\w.]+)|)/.exec(ua) ||
+                    /(trident)(?:.*? rv:([\w.]+)|)/.exec(ua) || 
+                    ua.indexOf("android") < 0 && /version\/(.+) (safari)/.exec(ua) ||
                     ua.indexOf("compatible") < 0 && /(mozilla)(?:.*? rv:([\w.]+)|)/.exec(ua) || 
                     [];
-	
+
+            // Swaps variables
+            if (match[2] === "safari") {
+                match[2] = match[1];
+                match[1] = "safari";
+            }
             return {
                 browser: match[1] || "",
                 version: match[2] || "0"
@@ -3148,13 +3163,7 @@
         if (matched.browser) {
             browser[matched.browser] = true;
             browser.version = matched.version;
-        }
-	
-        // Chrome is Webkit, but Webkit is also Safari.
-        if (browser.chrome) {
-            browser.webkit = true;
-        } else if (browser.webkit) {
-            browser.safari = true;
+            browser.vmajor = browser.version.split(".")[0];
         }
         
         // Trident is the layout engine of the Internet Explorer
