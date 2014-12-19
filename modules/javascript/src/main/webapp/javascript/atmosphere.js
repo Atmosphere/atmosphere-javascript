@@ -566,7 +566,18 @@
              * @private
              */
             function _supportSSE() {
-                return window.EventSource;
+                // Origin parts
+                var url = atmosphere.util.getAbsoluteURL(_request.url.toLowerCase());
+                var parts = /^([\w\+\.\-]+:)(?:\/\/([^\/?#:]*)(?::(\d+))?)?/.exec(url);
+                var crossOrigin = !!(parts && (
+                    // protocol
+                    parts[1] != window.location.protocol ||
+                    // hostname
+                    parts[2] != window.location.hostname ||
+                    // port
+                    (parts[3] || (parts[1] === "http:" ? 80 : 443)) != (window.location.port || (window.location.protocol === "http:" ? 80 : 443))
+                ));
+                return window.EventSource && (!crossOrigin || !atmosphere.util.browser.safari || atmosphere.util.browser.vmajor >= 7);
             }
 
             /**
@@ -3338,15 +3349,21 @@
     (function () {
         var ua = navigator.userAgent.toLowerCase(),
             match = /(chrome)[ \/]([\w.]+)/.exec(ua) ||
-                /(webkit)[ \/]([\w.]+)/.exec(ua) ||
                 /(opera)(?:.*version|)[ \/]([\w.]+)/.exec(ua) ||
                 /(msie) ([\w.]+)/.exec(ua) ||
                 /(trident)(?:.*? rv:([\w.]+)|)/.exec(ua) ||
+                ua.indexOf("android") < 0 && /version\/(.+) (safari)/.exec(ua) ||
                 ua.indexOf("compatible") < 0 && /(mozilla)(?:.*? rv:([\w.]+)|)/.exec(ua) ||
                 [];
 
+        // Swaps variables
+        if (match[2] === "safari") {
+            match[2] = match[1];
+            match[1] = "safari";
+        }
         atmosphere.util.browser[match[1] || ""] = true;
         atmosphere.util.browser.version = match[2] || "0";
+        atmosphere.util.browser.vmajor = atmosphere.util.browser.version.split(".")[0];
 
         // Trident is the layout engine of the Internet Explorer
         // IE 11 has no "MSIE: 11.0" token
