@@ -303,11 +303,11 @@
             var _heartbeatPadding = ' ';
 
             /**
-             * {boolean} If request is currently aborded.
+             * {boolean} If request is currently aborted.
              *
              * @private
              */
-            var _abordingConnection = false;
+            var _abortingConnection = false;
 
             /**
              * A local "channel' of communication.
@@ -353,7 +353,7 @@
              */
             function _init() {
                 _subscribed = true;
-                _abordingConnection = false;
+                _abortingConnection = false;
                 _requestCount = 0;
 
                 _websocket = null;
@@ -456,7 +456,7 @@
                 if (_canLog('debug')) {
                     atmosphere.util.debug("Closing");
                 }
-                _abordingConnection = true;
+                _abortingConnection = true;
                 if (_request.reconnectId) {
                     clearTimeout(_request.reconnectId);
                     delete _request.reconnectId;
@@ -522,7 +522,7 @@
                     // The heir is the parent unless unloading
                     _storageService.signal("close", {
                         reason: "",
-                        heir: !_abordingConnection ? guid : (_storageService.get("children") || [])[0]
+                        heir: !_abortingConnection ? guid : (_storageService.get("children") || [])[0]
                     });
                     _storageService.close();
                 }
@@ -827,7 +827,7 @@
                     },
                     close: function () {
                         // Do not signal the parent if this method is executed by the unload event handler
-                        if (!_abordingConnection) {
+                        if (!_abortingConnection) {
                             clearInterval(_traceTimer);
                             connector.signal("close");
                             connector.close();
@@ -1311,7 +1311,7 @@
                     _invokeClose(sseOpened);
                     _clearState();
 
-                    if (_abordingConnection) {
+                    if (_abortingConnection) {
                         atmosphere.util.log(_request.logLevel, ["SSE closed normally"]);
                     } else if (!sseOpened) {
                         _reconnectWithFallbackTransport("SSE failed. Downgrading to fallback transport and resending");
@@ -1509,7 +1509,7 @@
 
                     _response.state = 'closed';
 
-                    if (_abordingConnection) {
+                    if (_abortingConnection) {
                         atmosphere.util.log(_request.logLevel, ["Websocket closed normally"]);
                     } else if (!webSocketOpened) {
                         _reconnectWithFallbackTransport("Websocket failed. Downgrading to Comet and resending");
@@ -1919,7 +1919,7 @@
 
                     ajaxRequest.onreadystatechange = function () {
                         _debug("ajaxRequest.onreadystatechange, new state: " + ajaxRequest.readyState);
-                        if (_abordingConnection) {
+                        if (_abortingConnection) {
                             return;
                         }
 
@@ -2098,7 +2098,7 @@
                 _response.messages = [];
                 rq.isReopen = true;
                 _close();
-                _abordingConnection = false;
+                _abortingConnection = false;
                 _reconnect(ajaxRequest, rq, 500);
             }
 
@@ -2912,7 +2912,7 @@
 
             this.init = function () {
                 _init();
-            }
+            };
 
             this.request = _request;
             this.response = _response;
