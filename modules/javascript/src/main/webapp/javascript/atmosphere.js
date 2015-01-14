@@ -3379,6 +3379,13 @@
     })();
 
     atmosphere.util.on(window, "unload", function (event) {
+        atmosphere.util.debug(new Date() + " Atmosphere: " + "unload event");
+        atmosphere.unsubscribe();
+    });
+
+    // Temp fix for https://github.com/Atmosphere/atmosphere-javascript/issues/143
+    atmosphere.util.on(window, "beforeunload", function (event) {
+        atmosphere.util.debug(new Date() + " Atmosphere: " + "beforeunload event");
         atmosphere.unsubscribe();
     });
 
