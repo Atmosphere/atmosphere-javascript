@@ -37,6 +37,13 @@
 }(function(jQuery) {
 
     jQuery(window).bind("unload.atmosphere", function () {
+        jQuery.atmosphere.util.debug(new Date() + " Atmosphere: " + "unload event");
+        jQuery.atmosphere.unsubscribe();
+    });
+
+    // Temp fix for https://github.com/Atmosphere/atmosphere-javascript/issues/143
+    jQuery(window).bind("beforeunload.atmosphere", function () {
+        jQuery.atmosphere.util.debug(new Date() + " Atmosphere: " + "beforeunload event");
         jQuery.atmosphere.unsubscribe();
     });
 
