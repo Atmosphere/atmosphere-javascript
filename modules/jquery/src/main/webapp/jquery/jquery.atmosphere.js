@@ -1900,7 +1900,7 @@
                         if (update) {
                             var responseText = ajaxRequest.responseText;
 
-                            if (jQuery.trim(responseText).length === 0 && rq.transport === 'long-polling') {
+                            if (rq.transport === 'long-polling' && jQuery.trim(responseText).length === 0) {
                                 // For browser that aren't support onabort
                                 if (!ajaxRequest.hasData) {
                                     reconnectF(true);
