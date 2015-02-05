@@ -1555,7 +1555,7 @@
                 var nMessage = message;
                 if (request.transport === 'polling') return nMessage;
 
-                if (atmosphere.util.trim(message).length !== 0 && request.enableProtocol && request.firstMessage) {
+                if (request.enableProtocol && request.firstMessage && atmosphere.util.trim(message).length !== 0) {
                     var pos = request.trackMessageLength ? 1 : 0;
                     var messages = message.split(request.messageDelimiter);
 
@@ -1985,7 +1985,7 @@
                             _response.errorHandled = false;
 
                             // IE behave the same way when resuming long-polling or when the server goes down.
-                            if (atmosphere.util.trim(responseText).length === 0 && rq.transport === 'long-polling') {
+                            if (rq.transport === 'long-polling' && atmosphere.util.trim(responseText).length === 0) {
                                 // For browser that aren't support onabort
                                 if (!ajaxRequest.hasData) {
                                     reconnectF(true);
