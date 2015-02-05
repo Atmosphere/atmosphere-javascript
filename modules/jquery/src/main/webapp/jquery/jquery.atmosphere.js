@@ -1472,7 +1472,7 @@
                 var nMessage = message;
                 if (request.transport === 'polling') return nMessage;
 
-                if (jQuery.trim(message).length !== 0 && request.enableProtocol && request.firstMessage) {
+                if (request.enableProtocol && request.firstMessage && jQuery.trim(message).length !== 0) {
                     var pos = request.trackMessageLength ? 1 : 0;
                     var messages = message.split(request.messageDelimiter);
 
