@@ -984,7 +984,6 @@
                             if (rq.maxRequest === -1 || rq.requestCount++ < rq.maxRequest) {
                                 _readHeaders(_jqxhr, rq);
 
-
                                 var msg = json.message;
                                 if (msg != null && typeof msg !== 'string') {
                                     try {
