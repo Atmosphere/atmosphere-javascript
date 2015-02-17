@@ -432,6 +432,7 @@
                         connected: false
                     };
                     var closeR = new atmosphere.AtmosphereRequest(rq);
+                    closeR.connectTimeout = _request.connectTimeout;
                     closeR.attachHeadersAsQueryString = false;
                     closeR.dropHeaders = true;
                     closeR.url = url;
