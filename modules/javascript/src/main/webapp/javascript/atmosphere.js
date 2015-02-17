@@ -487,7 +487,7 @@
                     clearTimeout(_request.heartbeatTimer);
                 }
                 
-                //fix proposed by jfarcand in https://github.com/Atmosphere/atmosphere/issues/1860#issuecomment-74707226
+                // https://github.com/Atmosphere/atmosphere/issues/1860#issuecomment-74707226
                 if(_request.reconnectId) {
                     clearTimeout(_request.reconnectId);
                     delete _request.reconnectId;

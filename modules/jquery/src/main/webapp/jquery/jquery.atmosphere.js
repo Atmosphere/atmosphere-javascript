@@ -2838,6 +2838,12 @@
                     clearTimeout(_request.heartbeatTimer);
                 }
 
+                // https://github.com/Atmosphere/atmosphere/issues/1860#issuecomment-74707226
+                if(_request.reconnectId) {
+                    clearTimeout(_request.reconnectId);
+                    delete _request.reconnectId;
+                }
+
                 if (_ieStream != null) {
                     _ieStream.close();
                     _ieStream = null;
