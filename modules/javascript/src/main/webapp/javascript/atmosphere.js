@@ -68,7 +68,7 @@
         },
         onClientTimeout: function (request) {
         },
-        onOpenAfterResume: function(request) {
+        onOpenAfterResume: function (request) {
         },
 
         /**
@@ -212,9 +212,9 @@
                 },
                 onFailureToReconnect: function (request, response) {
                 },
-                onClientTimeout: function(request){
+                onClientTimeout: function (request) {
                 },
-                onOpenAfterResume: function(request) {
+                onOpenAfterResume: function (request) {
                 }
             };
 
@@ -571,11 +571,11 @@
                 var parts = /^([\w\+\.\-]+:)(?:\/\/([^\/?#:]*)(?::(\d+))?)?/.exec(url);
                 var crossOrigin = !!(parts && (
                     // protocol
-                    parts[1] != window.location.protocol ||
+                parts[1] != window.location.protocol ||
                     // hostname
-                    parts[2] != window.location.hostname ||
+                parts[2] != window.location.hostname ||
                     // port
-                    (parts[3] || (parts[1] === "http:" ? 80 : 443)) != (window.location.port || (window.location.protocol === "http:" ? 80 : 443))
+                (parts[3] || (parts[1] === "http:" ? 80 : 443)) != (window.location.port || (window.location.protocol === "http:" ? 80 : 443))
                 ));
                 return window.EventSource && (!crossOrigin || !atmosphere.util.browser.safari || atmosphere.util.browser.vmajor >= 7);
             }
@@ -625,14 +625,14 @@
                 } else if (_request.transport === 'websocket') {
                     if (!_supportWebsocket()) {
                         _reconnectWithFallbackTransport("Websocket is not supported, using request.fallbackTransport (" + _request.fallbackTransport
-                            + ")");
+                        + ")");
                     } else {
                         _executeWebSocket(false);
                     }
                 } else if (_request.transport === 'sse') {
                     if (!_supportSSE()) {
                         _reconnectWithFallbackTransport("Server Side Events(SSE) is not supported, using request.fallbackTransport ("
-                            + _request.fallbackTransport + ")");
+                        + _request.fallbackTransport + ")");
                     } else {
                         _executeSSE(false);
                     }
@@ -961,10 +961,10 @@
                     document.cookie = _sharingKey + "=" +
                         // Opera's JSON implementation ignores a number whose a last digit of 0 strangely
                         // but has no problem with a number whose a last digit of 9 + 1
-                        encodeURIComponent(atmosphere.util.stringifyJSON({
-                            ts: atmosphere.util.now() + 1,
-                            heir: (storageService.get("children") || [])[0]
-                        })) + "; path=/";
+                    encodeURIComponent(atmosphere.util.stringifyJSON({
+                        ts: atmosphere.util.now() + 1,
+                        heir: (storageService.get("children") || [])[0]
+                    })) + "; path=/";
                 }
 
                 // Chooses a storageService
@@ -1044,7 +1044,7 @@
                     open: function () {
                         var callback = "atmosphere" + (++guid);
 
-                         function _reconnectOnFailure() {
+                        function _reconnectOnFailure() {
                             rq.lastIndex = 0;
 
                             if (rq.openId) {
@@ -1118,7 +1118,7 @@
                         window[callback] = function (msg) {
                             _debug("jsonp.window");
                             request.scriptCount = 0;
-                            if (rq.reconnect &&rq.maxRequest === -1 || rq.requestCount++ < rq.maxRequest) {
+                            if (rq.reconnect && rq.maxRequest === -1 || rq.requestCount++ < rq.maxRequest) {
 
                                 // _readHeaders(_jqxhr, rq);
                                 if (!rq.executeCallbackBeforeReconnect) {
@@ -1471,14 +1471,14 @@
                                 break;
                             case 1001:
                                 reason = "The endpoint is going away, either because of a server failure or because the "
-                                    + "browser is navigating away from the page that opened the connection.";
+                                + "browser is navigating away from the page that opened the connection.";
                                 break;
                             case 1002:
                                 reason = "The endpoint is terminating the connection due to a protocol error.";
                                 break;
                             case 1003:
                                 reason = "The connection is being terminated because the endpoint received data of a type it "
-                                    + "cannot accept (for example, a text-only endpoint received binary data).";
+                                + "cannot accept (for example, a text-only endpoint received binary data).";
                                 break;
                             case 1004:
                                 reason = "The endpoint is terminating the connection because a data frame was received that is too large.";
@@ -1570,8 +1570,8 @@
 
                     if (messages.length <= pos + 2) {
                         atmosphere.util.log('error', ["Protocol data not sent by the server. " +
-                            "If you enable protocol on client side, be sure to install JavascriptProtocol interceptor on server side." +
-                            "Also note that atmosphere-runtime 2.2+ should be used."]);
+                        "If you enable protocol on client side, be sure to install JavascriptProtocol interceptor on server side." +
+                        "Also note that atmosphere-runtime 2.2+ should be used."]);
                     }
 
                     _heartbeatInterval = parseInt(atmosphere.util.trim(messages[pos + 1]), 10);
@@ -1690,7 +1690,7 @@
                             response.messages = [];
                             return true;
                         }
-                    } 
+                    }
                 }
                 response.responseBody = message;
                 response.messages = [message];
@@ -1799,7 +1799,7 @@
                 } else if (_response.state === 'messageReceived' && (rq.transport === 'jsonp' || rq.transport === 'long-polling')) {
                     _openAfterResume(_response);
                 } else {
-                     return;
+                    return;
                 }
 
                 _startHeartbeat(rq);
@@ -2231,18 +2231,18 @@
                 };
 
                 var rewriteURL = rq.rewriteURL || function (url) {
-                    // Maintaining session by rewriting URL
-                    // http://stackoverflow.com/questions/6453779/maintaining-session-by-rewriting-url
-                    var match = /(?:^|;\s*)(JSESSIONID|PHPSESSID)=([^;]*)/.exec(document.cookie);
+                        // Maintaining session by rewriting URL
+                        // http://stackoverflow.com/questions/6453779/maintaining-session-by-rewriting-url
+                        var match = /(?:^|;\s*)(JSESSIONID|PHPSESSID)=([^;]*)/.exec(document.cookie);
 
-                    switch (match && match[1]) {
-                        case "JSESSIONID":
-                            return url.replace(/;jsessionid=[^\?]*|(\?)|$/, ";jsessionid=" + match[2] + "$1");
-                        case "PHPSESSID":
-                            return url.replace(/\?PHPSESSID=[^&]*&?|\?|$/, "?PHPSESSID=" + match[2] + "&").replace(/&$/, "");
-                    }
-                    return url;
-                };
+                        switch (match && match[1]) {
+                            case "JSESSIONID":
+                                return url.replace(/;jsessionid=[^\?]*|(\?)|$/, ";jsessionid=" + match[2] + "$1");
+                            case "PHPSESSID":
+                                return url.replace(/\?PHPSESSID=[^&]*&?|\?|$/, "?PHPSESSID=" + match[2] + "&").replace(/&$/, "");
+                        }
+                        return url;
+                    };
 
                 // Handles open and message event
                 xdr.onprogress = function () {
@@ -3257,9 +3257,9 @@
 
             function quote(string) {
                 return '"' + string.replace(escapable, function (a) {
-                    var c = meta[a];
-                    return typeof c === "string" ? c : "\\u" + ("0000" + a.charCodeAt(0).toString(16)).slice(-4);
-                }) + '"';
+                        var c = meta[a];
+                        return typeof c === "string" ? c : "\\u" + ("0000" + a.charCodeAt(0).toString(16)).slice(-4);
+                    }) + '"';
             }
 
             function f(n) {
@@ -3289,8 +3289,8 @@
                         switch (Object.prototype.toString.call(value)) {
                             case "[object Date]":
                                 return isFinite(value.valueOf()) ? '"' + value.getUTCFullYear() + "-" + f(value.getUTCMonth() + 1) + "-"
-                                    + f(value.getUTCDate()) + "T" + f(value.getUTCHours()) + ":" + f(value.getUTCMinutes()) + ":" + f(value.getUTCSeconds())
-                                    + "Z" + '"' : "null";
+                                + f(value.getUTCDate()) + "T" + f(value.getUTCHours()) + ":" + f(value.getUTCMinutes()) + ":" + f(value.getUTCSeconds())
+                                + "Z" + '"' : "null";
                             case "[object Array]":
                                 len = value.length;
                                 partial = [];
