@@ -1525,10 +1525,6 @@
                         if (_requestCount++ < _request.maxReconnectOnClose) {
                             _open('re-connecting', _request.transport, _request);
                             if (_request.reconnectInterval > 0) {
-                                if(_request.reconnectId) {
-                                    clearTimeout(_request.reconnectId);
-                                    delete _request.reconnectId;
-                                }
                                 _request.reconnectId = setTimeout(function () {
                                     _response.responseBody = "";
                                     _response.messages = [];
