@@ -1728,7 +1728,7 @@
                 if (!isNaN(_heartbeatInterval) && _heartbeatInterval > 0) {
                     var _pushHeartbeat = function () {
                         if (_canLog('debug')) {
-                            atmosphere.util.debug("Sending heartbeat");
+                            jQuery.atmosphere.debug("Sending heartbeat");
                         }
                         _push(_heartbeatPadding);
                         rq.heartbeatTimer = setTimeout(_pushHeartbeat, _heartbeatInterval);
