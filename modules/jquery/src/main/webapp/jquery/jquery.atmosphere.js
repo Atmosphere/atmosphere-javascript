@@ -37,6 +37,7 @@
 }(function (jQuery) {
 
     jQuery(window).bind("unload.atmosphere", function () {
+        jQuery.atmosphere.debug(new Date() + " Atmosphere: " + "unload event");
         jQuery.atmosphere.unsubscribe();
     });
 

@@ -3386,6 +3386,7 @@
     })();
 
     atmosphere.util.on(window, "unload", function (event) {
+    	atmosphere.util.debug(new Date() + " Atmosphere: " + "unload event");
         atmosphere.unsubscribe();
     });
 
