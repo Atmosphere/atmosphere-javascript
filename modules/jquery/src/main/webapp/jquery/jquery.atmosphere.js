@@ -41,12 +41,6 @@
         jQuery.atmosphere.unsubscribe();
     });
 
-    // Temp fix for https://github.com/Atmosphere/atmosphere-javascript/issues/143
-    jQuery(window).bind("beforeunload.atmosphere", function () {
-        jQuery.atmosphere.debug(new Date() + " Atmosphere: " + "beforeunload event");
-        jQuery.atmosphere.unsubscribe();
-    });
-
     jQuery(window).bind("offline", function () {
         jQuery.atmosphere.offline = true;
         var requestsClone = [].concat(jQuery.atmosphere.requests);
