@@ -35,7 +35,7 @@
 
     "use strict";
 
-    var version = "2.2.9-javascript",
+    var version = "2.2.10-javascript",
         atmosphere = {},
         guid,
         offline = false,
