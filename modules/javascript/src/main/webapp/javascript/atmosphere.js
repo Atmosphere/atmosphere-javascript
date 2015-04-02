@@ -2146,7 +2146,7 @@
                 }
 
                 if (!_request.dropHeaders) {
-                    ajaxRequest.setRequestHeader("X-Atmosphere-Framework", atmosphere.util.version);
+                    ajaxRequest.setRequestHeader("X-Atmosphere-Framework", version);
                     ajaxRequest.setRequestHeader("X-Atmosphere-Transport", request.transport);
 
                     if (request.heartbeat !== null && request.heartbeat.server !== null) {
