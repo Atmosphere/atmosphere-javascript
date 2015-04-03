@@ -441,6 +441,7 @@
                     closeR.transport = 'polling';
                     closeR.method = 'GET';
                     closeR.data = '';
+                    closeR.heartbeat = null;
                     if (_request.enableXDR) {
                         closeR.enableXDR = _request.enableXDR
                     }
