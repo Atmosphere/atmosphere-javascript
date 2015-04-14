@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Jeanfrancois Arcand
+ * Copyright 2015 Async-IO.org
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,7 +35,7 @@
 
     "use strict";
 
-    var version = "2.2.7-javascript",
+    var version = "2.2.10-javascript",
         atmosphere = {},
         guid,
         offline = false,
@@ -68,7 +68,7 @@
         },
         onClientTimeout: function (request) {
         },
-        onOpenAfterResume: function(request) {
+        onOpenAfterResume: function (request) {
         },
 
         /**
@@ -192,6 +192,7 @@
                 ackInterval: 0,
                 closeAsync: false,
                 reconnectOnServerError: true,
+                reconnectOnWindowLocationChange: false,
                 onError: function (response) {
                 },
                 onClose: function (response) {
@@ -212,9 +213,9 @@
                 },
                 onFailureToReconnect: function (request, response) {
                 },
-                onClientTimeout: function(request){
+                onClientTimeout: function (request) {
                 },
-                onOpenAfterResume: function(request) {
+                onOpenAfterResume: function (request) {
                 }
             };
 
@@ -432,6 +433,7 @@
                         connected: false
                     };
                     var closeR = new atmosphere.AtmosphereRequest(rq);
+                    closeR.connectTimeout = _request.connectTimeout;
                     closeR.attachHeadersAsQueryString = false;
                     closeR.dropHeaders = true;
                     closeR.url = url;
@@ -439,6 +441,7 @@
                     closeR.transport = 'polling';
                     closeR.method = 'GET';
                     closeR.data = '';
+                    closeR.heartbeat = null;
                     if (_request.enableXDR) {
                         closeR.enableXDR = _request.enableXDR
                     }
@@ -485,6 +488,12 @@
 
                 if (_request.heartbeatTimer) {
                     clearTimeout(_request.heartbeatTimer);
+                }
+                
+                // https://github.com/Atmosphere/atmosphere/issues/1860#issuecomment-74707226
+                if(_request.reconnectId) {
+                    clearTimeout(_request.reconnectId);
+                    delete _request.reconnectId;
                 }
 
                 if (_ieStream != null) {
@@ -571,11 +580,11 @@
                 var parts = /^([\w\+\.\-]+:)(?:\/\/([^\/?#:]*)(?::(\d+))?)?/.exec(url);
                 var crossOrigin = !!(parts && (
                     // protocol
-                    parts[1] != window.location.protocol ||
+                parts[1] != window.location.protocol ||
                     // hostname
-                    parts[2] != window.location.hostname ||
+                parts[2] != window.location.hostname ||
                     // port
-                    (parts[3] || (parts[1] === "http:" ? 80 : 443)) != (window.location.port || (window.location.protocol === "http:" ? 80 : 443))
+                (parts[3] || (parts[1] === "http:" ? 80 : 443)) != (window.location.port || (window.location.protocol === "http:" ? 80 : 443))
                 ));
                 return window.EventSource && (!crossOrigin || !atmosphere.util.browser.safari || atmosphere.util.browser.vmajor >= 7);
             }
@@ -625,14 +634,14 @@
                 } else if (_request.transport === 'websocket') {
                     if (!_supportWebsocket()) {
                         _reconnectWithFallbackTransport("Websocket is not supported, using request.fallbackTransport (" + _request.fallbackTransport
-                            + ")");
+                        + ")");
                     } else {
                         _executeWebSocket(false);
                     }
                 } else if (_request.transport === 'sse') {
                     if (!_supportSSE()) {
                         _reconnectWithFallbackTransport("Server Side Events(SSE) is not supported, using request.fallbackTransport ("
-                            + _request.fallbackTransport + ")");
+                        + _request.fallbackTransport + ")");
                     } else {
                         _executeSSE(false);
                     }
@@ -961,10 +970,10 @@
                     document.cookie = _sharingKey + "=" +
                         // Opera's JSON implementation ignores a number whose a last digit of 0 strangely
                         // but has no problem with a number whose a last digit of 9 + 1
-                        encodeURIComponent(atmosphere.util.stringifyJSON({
-                            ts: atmosphere.util.now() + 1,
-                            heir: (storageService.get("children") || [])[0]
-                        })) + "; path=/";
+                    encodeURIComponent(atmosphere.util.stringifyJSON({
+                        ts: atmosphere.util.now() + 1,
+                        heir: (storageService.get("children") || [])[0]
+                    })) + "; path=/";
                 }
 
                 // Chooses a storageService
@@ -1044,7 +1053,7 @@
                     open: function () {
                         var callback = "atmosphere" + (++guid);
 
-                         function _reconnectOnFailure() {
+                        function _reconnectOnFailure() {
                             rq.lastIndex = 0;
 
                             if (rq.openId) {
@@ -1118,7 +1127,7 @@
                         window[callback] = function (msg) {
                             _debug("jsonp.window");
                             request.scriptCount = 0;
-                            if (rq.reconnect &&rq.maxRequest === -1 || rq.requestCount++ < rq.maxRequest) {
+                            if (rq.reconnect && rq.maxRequest === -1 || rq.requestCount++ < rq.maxRequest) {
 
                                 // _readHeaders(_jqxhr, rq);
                                 if (!rq.executeCallbackBeforeReconnect) {
@@ -1471,14 +1480,14 @@
                                 break;
                             case 1001:
                                 reason = "The endpoint is going away, either because of a server failure or because the "
-                                    + "browser is navigating away from the page that opened the connection.";
+                                + "browser is navigating away from the page that opened the connection.";
                                 break;
                             case 1002:
                                 reason = "The endpoint is terminating the connection due to a protocol error.";
                                 break;
                             case 1003:
                                 reason = "The connection is being terminated because the endpoint received data of a type it "
-                                    + "cannot accept (for example, a text-only endpoint received binary data).";
+                                + "cannot accept (for example, a text-only endpoint received binary data).";
                                 break;
                             case 1004:
                                 reason = "The endpoint is terminating the connection because a data frame was received that is too large.";
@@ -1514,7 +1523,7 @@
                     } else if (!webSocketOpened) {
                         _reconnectWithFallbackTransport("Websocket failed. Downgrading to Comet and resending");
 
-                    } else if (_request.reconnect && _response.transport === 'websocket' && message.code !== 1001) {
+                    } else if (_request.reconnect && _response.transport === 'websocket' && (_request.reconnectOnWindowLocationChange || message.code !== 1001)) {
                         _clearState();
                         if (_requestCount++ < _request.maxReconnectOnClose) {
                             _open('re-connecting', _request.transport, _request);
@@ -1555,7 +1564,7 @@
                 var nMessage = message;
                 if (request.transport === 'polling') return nMessage;
 
-                if (atmosphere.util.trim(message).length !== 0 && request.enableProtocol && request.firstMessage) {
+                if (request.enableProtocol && request.firstMessage && atmosphere.util.trim(message).length !== 0) {
                     var pos = request.trackMessageLength ? 1 : 0;
                     var messages = message.split(request.messageDelimiter);
 
@@ -1570,8 +1579,8 @@
 
                     if (messages.length <= pos + 2) {
                         atmosphere.util.log('error', ["Protocol data not sent by the server. " +
-                            "If you enable protocol on client side, be sure to install JavascriptProtocol interceptor on server side." +
-                            "Also note that atmosphere-runtime 2.2+ should be used."]);
+                        "If you enable protocol on client side, be sure to install JavascriptProtocol interceptor on server side." +
+                        "Also note that atmosphere-runtime 2.2+ should be used."]);
                     }
 
                     _heartbeatInterval = parseInt(atmosphere.util.trim(messages[pos + 1]), 10);
@@ -1690,7 +1699,7 @@
                             response.messages = [];
                             return true;
                         }
-                    } 
+                    }
                 }
                 response.responseBody = message;
                 response.messages = [message];
@@ -1799,7 +1808,7 @@
                 } else if (_response.state === 'messageReceived' && (rq.transport === 'jsonp' || rq.transport === 'long-polling')) {
                     _openAfterResume(_response);
                 } else {
-                     return;
+                    return;
                 }
 
                 _startHeartbeat(rq);
@@ -1985,7 +1994,7 @@
                             _response.errorHandled = false;
 
                             // IE behave the same way when resuming long-polling or when the server goes down.
-                            if (atmosphere.util.trim(responseText).length === 0 && rq.transport === 'long-polling') {
+                            if (rq.transport === 'long-polling' && atmosphere.util.trim(responseText).length === 0) {
                                 // For browser that aren't support onabort
                                 if (!ajaxRequest.hasData) {
                                     reconnectF(true);
@@ -2138,7 +2147,7 @@
                 }
 
                 if (!_request.dropHeaders) {
-                    ajaxRequest.setRequestHeader("X-Atmosphere-Framework", atmosphere.util.version);
+                    ajaxRequest.setRequestHeader("X-Atmosphere-Framework", version);
                     ajaxRequest.setRequestHeader("X-Atmosphere-Transport", request.transport);
 
                     if (request.heartbeat !== null && request.heartbeat.server !== null) {
@@ -2231,18 +2240,18 @@
                 };
 
                 var rewriteURL = rq.rewriteURL || function (url) {
-                    // Maintaining session by rewriting URL
-                    // http://stackoverflow.com/questions/6453779/maintaining-session-by-rewriting-url
-                    var match = /(?:^|;\s*)(JSESSIONID|PHPSESSID)=([^;]*)/.exec(document.cookie);
+                        // Maintaining session by rewriting URL
+                        // http://stackoverflow.com/questions/6453779/maintaining-session-by-rewriting-url
+                        var match = /(?:^|;\s*)(JSESSIONID|PHPSESSID)=([^;]*)/.exec(document.cookie);
 
-                    switch (match && match[1]) {
-                        case "JSESSIONID":
-                            return url.replace(/;jsessionid=[^\?]*|(\?)|$/, ";jsessionid=" + match[2] + "$1");
-                        case "PHPSESSID":
-                            return url.replace(/\?PHPSESSID=[^&]*&?|\?|$/, "?PHPSESSID=" + match[2] + "&").replace(/&$/, "");
-                    }
-                    return url;
-                };
+                        switch (match && match[1]) {
+                            case "JSESSIONID":
+                                return url.replace(/;jsessionid=[^\?]*|(\?)|$/, ";jsessionid=" + match[2] + "$1");
+                            case "PHPSESSID":
+                                return url.replace(/\?PHPSESSID=[^&]*&?|\?|$/, "?PHPSESSID=" + match[2] + "&").replace(/&$/, "");
+                        }
+                        return url;
+                    };
 
                 // Handles open and message event
                 xdr.onprogress = function () {
@@ -3257,9 +3266,9 @@
 
             function quote(string) {
                 return '"' + string.replace(escapable, function (a) {
-                    var c = meta[a];
-                    return typeof c === "string" ? c : "\\u" + ("0000" + a.charCodeAt(0).toString(16)).slice(-4);
-                }) + '"';
+                        var c = meta[a];
+                        return typeof c === "string" ? c : "\\u" + ("0000" + a.charCodeAt(0).toString(16)).slice(-4);
+                    }) + '"';
             }
 
             function f(n) {
@@ -3289,8 +3298,8 @@
                         switch (Object.prototype.toString.call(value)) {
                             case "[object Date]":
                                 return isFinite(value.valueOf()) ? '"' + value.getUTCFullYear() + "-" + f(value.getUTCMonth() + 1) + "-"
-                                    + f(value.getUTCDate()) + "T" + f(value.getUTCHours()) + ":" + f(value.getUTCMinutes()) + ":" + f(value.getUTCSeconds())
-                                    + "Z" + '"' : "null";
+                                + f(value.getUTCDate()) + "T" + f(value.getUTCHours()) + ":" + f(value.getUTCMinutes()) + ":" + f(value.getUTCSeconds())
+                                + "Z" + '"' : "null";
                             case "[object Array]":
                                 len = value.length;
                                 partial = [];
@@ -3379,13 +3388,7 @@
     })();
 
     atmosphere.util.on(window, "unload", function (event) {
-        atmosphere.util.debug(new Date() + " Atmosphere: " + "unload event");
-        atmosphere.unsubscribe();
-    });
-
-    // Temp fix for https://github.com/Atmosphere/atmosphere-javascript/issues/143
-    atmosphere.util.on(window, "beforeunload", function (event) {
-        atmosphere.util.debug(new Date() + " Atmosphere: " + "beforeunload event");
+    	atmosphere.util.debug(new Date() + " Atmosphere: " + "unload event");
         atmosphere.unsubscribe();
     });
 
