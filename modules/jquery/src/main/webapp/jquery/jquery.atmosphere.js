@@ -41,6 +41,15 @@
         jQuery.atmosphere.unsubscribe();
     });
 
+    jQuery(window).bind("beforeunload.atmosphere", function () {
+        jQuery.atmosphere.debug(new Date() + " Atmosphere: " + "beforeunload event");
+        if(jQuery.atmosphere.util.browser.mozilla){
+            // Fix for https://github.com/Atmosphere/atmosphere-javascript/issues/143
+            jQuery.atmosphere.util.debug(new Date() + " Atmosphere: " + "beforeunload event: Firefox detected. Calling unsubscribe.");
+            jQuery.atmosphere.unsubscribe();
+        }
+    });
+
     jQuery(window).bind("offline", function () {
         jQuery.atmosphere.offline = true;
         var requestsClone = [].concat(jQuery.atmosphere.requests);
