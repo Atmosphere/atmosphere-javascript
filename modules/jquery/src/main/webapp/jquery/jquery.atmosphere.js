@@ -237,7 +237,6 @@
                 ackInterval: 0,
                 closeAsync: false,
                 reconnectOnServerError: true,
-                reconnectOnWindowLocationChange: false,
                 onError: function (response) {
                 },
                 onClose: function (response) {
@@ -1436,7 +1435,7 @@
                     } else if (!webSocketOpened) {
                         _reconnectWithFallbackTransport("Websocket failed. Downgrading to Comet and resending");
 
-                    } else if (_request.reconnect && _response.transport === 'websocket' && (_request.reconnectOnWindowLocationChange || message.code !== 1001)) {
+                    } else if (_request.reconnect && _response.transport === 'websocket') {
                         _clearState();
                         if (_requestCount++ < _request.maxReconnectOnClose) {
                             _open('re-connecting', _request.transport, _request);
