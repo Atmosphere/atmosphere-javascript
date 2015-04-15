@@ -5,7 +5,7 @@ Follow us on [Twitter](http://www.twitter.com/atmo_framework) or get the latest 
 
 Atmosphere transparently supports WebSockets, Server Sent Events (SSE), Long-Polling, HTTP Streaming (Forever frame) and JSONP.
 
-* [Node.js client](https://github.com/flowersinthesand/atmosphere.js-node)
+* [Node.js client](https://github.com/Atmosphere/atmosphere.js-node)
 * [Browser client](https://raw.github.com/Atmosphere/atmosphere-javascript/master/modules/javascript/src/main/webapp/javascript/atmosphere.js)
 * [Browser client as a jQuery plugin](https://raw.github.com/Atmosphere/atmosphere-javascript/master/modules/jquery/src/main/webapp/jquery/jquery.atmosphere.js)
 
