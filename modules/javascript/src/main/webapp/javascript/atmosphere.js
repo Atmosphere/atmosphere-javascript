@@ -3393,11 +3393,6 @@
 
     atmosphere.util.on(window, "beforeunload", function (event) {
         atmosphere.util.debug(new Date() + " Atmosphere: " + "beforeunload event");
-        if(atmosphere.util.browser.mozilla){
-            // Fix for https://github.com/Atmosphere/atmosphere-javascript/issues/143
-            atmosphere.util.debug(new Date() + " Atmosphere: " + "beforeunload event: Firefox detected. Calling unsubscribe.");
-            atmosphere.unsubscribe();
-        }
     });
 
     // Pressing ESC key in Firefox kills the connection
