@@ -338,7 +338,7 @@
              * @type {string}
              * @private
              */
-            var _heartbeatPadding = ' ';
+            var _heartbeatPadding = 'X';
 
             /**
              * {boolean} If request is currently aborted.
