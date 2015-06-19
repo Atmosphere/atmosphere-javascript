@@ -27,6 +27,9 @@
     if (typeof define === "function" && define.amd) {
         // AMD
         define(factory);
+    } else if(typeof exports !== 'undefined') {
+        // CommonJS
+        module.exports = factory();
     } else {
         // Browser globals, Window
         root.atmosphere = factory();
@@ -3387,7 +3390,7 @@
     })();
 
     atmosphere.util.on(window, "unload", function (event) {
-      atmosphere.util.debug(new Date() + " Atmosphere: " + "unload event");
+        atmosphere.util.debug(new Date() + " Atmosphere: " + "unload event");
         atmosphere.unsubscribe();
     });
 
