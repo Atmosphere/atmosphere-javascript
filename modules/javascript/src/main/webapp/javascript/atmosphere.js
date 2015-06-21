@@ -458,9 +458,8 @@
              * @private
              */
             function _close() {
-                if (_canLog('debug')) {
-                    atmosphere.util.debug("Closing");
-                }
+                _debug("Closing (AtmosphereRequest._close() called)");
+
                 _abortingConnection = true;
                 if (_request.reconnectId) {
                     clearTimeout(_request.reconnectId);
@@ -491,7 +490,7 @@
                 if (_request.heartbeatTimer) {
                     clearTimeout(_request.heartbeatTimer);
                 }
-                
+
                 // https://github.com/Atmosphere/atmosphere/issues/1860#issuecomment-74707226
                 if(_request.reconnectId) {
                     clearTimeout(_request.reconnectId);
@@ -512,6 +511,7 @@
                 }
                 if (_websocket != null) {
                     if (_websocket.canSendMessage) {
+                        _debug("invoking .close() on WebSocket object");
                         _websocket.close();
                     }
                     _websocket = null;
@@ -1358,8 +1358,7 @@
 
                 var location = _buildWebSocketUrl(_request.url);
                 if (_canLog('debug')) {
-                    atmosphere.util.debug("Invoking executeWebSocket");
-                    atmosphere.util.debug("Using URL: " + location);
+                    atmosphere.util.debug("Invoking executeWebSocket, using URL: " + location);
                 }
 
                 if (webSocketOpened && !_request.reconnect) {
@@ -1504,8 +1503,7 @@
                     }
 
                     if (_canLog('warn')) {
-                        atmosphere.util.warn("Websocket closed, reason: " + reason);
-                        atmosphere.util.warn("Websocket closed, wasClean: " + message.wasClean);
+                        atmosphere.util.warn("Websocket closed, reason: " + reason + ' - wasClean: ' + message.wasClean);
                     }
 
                     if (_response.closedByClientTimeout || offline) {
@@ -1523,7 +1521,7 @@
                     if (_abortingConnection) {
                         atmosphere.util.log(_request.logLevel, ["Websocket closed normally"]);
                     } else if (!webSocketOpened) {
-                        _reconnectWithFallbackTransport("Websocket failed. Downgrading to Comet and resending");
+                        _reconnectWithFallbackTransport("Websocket failed on first connection attempt. Downgrading to " + _request.fallbackTransport + " and resending");
 
                     } else if (_request.reconnect && _response.transport === 'websocket' ) {
                         _clearState();
@@ -1931,6 +1929,7 @@
                     ajaxRequest.onreadystatechange = function () {
                         _debug("ajaxRequest.onreadystatechange, new state: " + ajaxRequest.readyState);
                         if (_abortingConnection) {
+                            _debug("onreadystatechange has been ignored due to _abortingConnection flag");
                             return;
                         }
 
@@ -2676,7 +2675,7 @@
                     };
                     _clearState();
 
-                    _reconnectWithFallbackTransport("Websocket failed. Downgrading to Comet and resending " + message);
+                    _reconnectWithFallbackTransport("Websocket failed. Downgrading to " + _request.fallbackTransport + " and resending " + message);
                     _pushAjaxMessage(message);
                 }
             }
@@ -2738,7 +2737,8 @@
                             f.onmessage(response);
                         break;
                     case "error":
-                        _debug("Firing onError");
+                        var dbgReasonPhrase = (typeof(response.reasonPhrase) != 'undefined') ? response.reasonPhrase : 'n/a';
+                        _debug("Firing onError, reasonPhrase: " + dbgReasonPhrase);
                         if (typeof (f.onError) !== 'undefined')
                             f.onError(response);
 
@@ -2785,7 +2785,7 @@
                         var closed = typeof (_request.closed) !== 'undefined' ? _request.closed : false;
 
                         if (!closed) {
-                            _debug("Firing onClose");
+                            _debug("Firing onClose (" + response.state + " case)");
                             if (typeof (f.onClose) !== 'undefined') {
                                 f.onClose(response);
                             }
@@ -2794,7 +2794,7 @@
                                 f.onclose(response);
                             }
                         } else {
-                            _debug("Closed but not firing onClose");
+                            _debug("Request already closed, not firing onClose (" + response.state + " case)");
                         }
                         _request.closed = true;
                         break;
@@ -3040,7 +3040,7 @@
         },
 
         isBinary: function (data) {
-            // True if data is an instance of Blob, ArrayBuffer or ArrayBufferView 
+            // True if data is an instance of Blob, ArrayBuffer or ArrayBufferView
             return /^\[object\s(?:Blob|ArrayBuffer|.+Array)\]$/.test(Object.prototype.toString.call(data));
         },
 
@@ -3410,6 +3410,7 @@
     });
 
     atmosphere.util.on(window, "offline", function () {
+        atmosphere.util.debug(new Date() + " Atmosphere: offline event");
         offline = true;
         if (requests.length > 0) {
             var requestsClone = [].concat(requests);
@@ -3426,6 +3427,7 @@
     });
 
     atmosphere.util.on(window, "online", function () {
+        atmosphere.util.debug(new Date() + " Atmosphere: online event");
         if (requests.length > 0) {
             for (var i = 0; i < requests.length; i++) {
                 requests[i].init();
