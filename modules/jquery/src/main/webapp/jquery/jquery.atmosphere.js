@@ -85,7 +85,7 @@
     };
 
     jQuery.atmosphere = {
-        version: "2.2.11-jquery",
+        version: "2.2.12-jquery",
         uuid: 0,
         offline: false,
         requests: [],
@@ -338,7 +338,7 @@
              * @type {string}
              * @private
              */
-            var _heartbeatPadding = ' ';
+            var _heartbeatPadding = 'X';
 
             /**
              * {boolean} If request is currently aborted.
