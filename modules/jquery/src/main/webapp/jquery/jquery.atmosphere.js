@@ -47,7 +47,7 @@
         // ATMOSPHERE-JAVASCRIPT-143: Delay reconnect to avoid reconnect attempts before an actual unload (we don't know if an unload will happen, yet)
         jQuery.atmosphere._beforeUnloadState = true;
         setTimeout(function () {
-            jQuery.atmosphere.util.debug(new Date() + " Atmosphere: " + "beforeunload event timeout reached. Reset _beforeUnloadState flag");
+            jQuery.atmosphere.debug(new Date() + " Atmosphere: " + "beforeunload event timeout reached. Reset _beforeUnloadState flag");
             jQuery.atmosphere._beforeUnloadState = false;
         }, 5000);
     });
@@ -1806,7 +1806,7 @@
                 var reconnectF = function (force){
                     if(jQuery.atmosphere._beforeUnloadState){
                         // ATMOSPHERE-JAVASCRIPT-143: Delay reconnect to avoid reconnect attempts before an actual unload (we don't know if an unload will happen, yet)
-                        jQuery.atmosphere.util.debug(new Date() + " Atmosphere: reconnectF: execution delayed due to _beforeUnloadState flag");
+                        jQuery.atmosphere.debug(new Date() + " Atmosphere: reconnectF: execution delayed due to _beforeUnloadState flag");
                         setTimeout(function () {
                             reconnectFExec(force);
                         }, 5000);
