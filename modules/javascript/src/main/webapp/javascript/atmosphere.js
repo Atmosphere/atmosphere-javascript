@@ -346,6 +346,14 @@
             /** Key for connection sharing */
             var _sharingKey;
 
+            /**
+             * {boolean} If window beforeUnload event has been called.
+             * Flag will be reset after 5000 ms
+             *
+             * @private
+             */
+            var _beforeUnloadState = false;
+
             // Automatic call to subscribe
             _subscribe(options);
 
@@ -1868,7 +1876,7 @@
                     }
                 }
 
-                var reconnectF = function (force) {
+                var reconnectFExec = function (force) {
                     rq.lastIndex = 0;
                     if (force || (rq.reconnect && _requestCount++ < rq.maxReconnectOnClose)) {
                         _response.ffTryingReconnect = true;
@@ -1876,6 +1884,18 @@
                         _reconnect(ajaxRequest, rq, request.reconnectInterval);
                     } else {
                         _onError(0, "maxReconnectOnClose reached");
+                    }
+                };
+
+                var reconnectF = function (force){
+                    if(atmosphere._beforeUnloadState){
+                        // ATMOSPHERE-JAVASCRIPT-143: Delay reconnect to avoid reconnect attempts before an actual unload (we don't know if an unload will happen, yet)
+                        atmosphere.util.debug(new Date() + " Atmosphere: reconnectF: execution delayed due to _beforeUnloadState flag");
+                        setTimeout(function () {
+                            reconnectFExec(force);
+                        }, 5000);
+                    }else {
+                        reconnectFExec(force);
                     }
                 };
 
@@ -3396,6 +3416,13 @@
 
     atmosphere.util.on(window, "beforeunload", function (event) {
         atmosphere.util.debug(new Date() + " Atmosphere: " + "beforeunload event");
+
+        // ATMOSPHERE-JAVASCRIPT-143: Delay reconnect to avoid reconnect attempts before an actual unload (we don't know if an unload will happen, yet)
+        atmosphere._beforeUnloadState = true;
+        setTimeout(function () {
+            atmosphere.util.debug(new Date() + " Atmosphere: " + "beforeunload event timeout reached. Reset _beforeUnloadState flag");
+            atmosphere._beforeUnloadState = false;
+        }, 5000);
     });
 
     // Pressing ESC key in Firefox kills the connection
