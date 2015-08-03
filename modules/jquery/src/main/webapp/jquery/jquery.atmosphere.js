@@ -1794,10 +1794,12 @@
 
                 var reconnectFExec = function (force) {
                     rq.lastIndex = 0;
-                    if (force || (rq.reconnect && _requestCount++ < rq.maxReconnectOnClose)) {
+                    _requestCount++; // Increase also when forcing reconnect as _open checks _requestCount
+                    if (force || (rq.reconnect && _requestCount <= rq.maxReconnectOnClose)) {
+                       var delay = force ? 0 : request.reconnectInterval; // Reconnect immediately if the server resumed the connection (timeout)
                         _response.ffTryingReconnect = true;
                         _open('re-connecting', request.transport, request);
-                        _reconnect(ajaxRequest, rq, request.reconnectInterval);
+                        _reconnect(ajaxRequest, rq, delay);
                     } else {
                         _onError(0, "maxReconnectOnClose reached");
                     }
@@ -2098,7 +2100,7 @@
                 }
             }
 
-            function _reconnect(ajaxRequest, request, reconnectInterval) {
+            function _reconnect(ajaxRequest, request, delay) {
 
                 if (_response.closedByClientTimeout) {
                     return;
@@ -2119,10 +2121,10 @@
                         delete request.reconnectId;
                     }
 
-                    if (reconnectInterval > 0) {
+                    if (delay > 0) {
                         setTimeout(function () {
                             _request.reconnectId = _executeRequest(request);
-                        }, reconnectInterval);
+                        }, delay);
                     } else {
                         _executeRequest(request);
                     }
