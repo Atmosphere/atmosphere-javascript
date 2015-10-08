@@ -57,11 +57,13 @@
         var requestsClone = [].concat(jQuery.atmosphere.requests);
         for (var i = 0; i < requestsClone.length; i++) {
             var rq = requestsClone[i];
-            rq.close();
-            clearTimeout(rq.response.request.id);
+            if(rq.handleOnlineOffline) {
+                rq.close();
+                clearTimeout(rq.response.request.id);
 
-            if (rq.heartbeatTimer) {
-                clearTimeout(rq.heartbeatTimer);
+                if (rq.heartbeatTimer) {
+                    clearTimeout(rq.heartbeatTimer);
+                }
             }
         }
     });
@@ -70,8 +72,10 @@
         jQuery.atmosphere.offline = false;
         if (jQuery.atmosphere.requests.length > 0) {
             for (var i = 0; i < jQuery.atmosphere.requests.length; i++) {
-                jQuery.atmosphere.requests[i].init();
-                jQuery.atmosphere.requests[i].execute();
+                if(requests[i].handleOnlineOffline) {
+                    jQuery.atmosphere.requests[i].init();
+                    jQuery.atmosphere.requests[i].execute();
+                }
             }
         }
     });
@@ -239,6 +243,7 @@
                 ackInterval: 0,
                 closeAsync: false,
                 reconnectOnServerError: true,
+                handleOnlineOffline: true,
                 onError: function (response) {
                 },
                 onClose: function (response) {

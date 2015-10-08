@@ -195,6 +195,7 @@
                 ackInterval: 0,
                 closeAsync: false,
                 reconnectOnServerError: true,
+                handleOnlineOffline: true,
                 onError: function (response) {
                 },
                 onClose: function (response) {
@@ -3445,11 +3446,13 @@
             var requestsClone = [].concat(requests);
             for (var i = 0; i < requestsClone.length; i++) {
                 var rq = requestsClone[i];
-                rq.close();
-                clearTimeout(rq.response.request.id);
+                if(rq.handleOnlineOffline) {
+                    rq.close();
+                    clearTimeout(rq.response.request.id);
 
-                if (rq.heartbeatTimer) {
-                    clearTimeout(rq.heartbeatTimer);
+                    if (rq.heartbeatTimer) {
+                        clearTimeout(rq.heartbeatTimer);
+                    }
                 }
             }
         }
@@ -3459,8 +3462,10 @@
         atmosphere.util.debug(new Date() + " Atmosphere: online event");
         if (requests.length > 0) {
             for (var i = 0; i < requests.length; i++) {
-                requests[i].init();
-                requests[i].execute();
+                if(requests[i].handleOnlineOffline) {
+                    requests[i].init();
+                    requests[i].execute();
+                }
             }
         }
         offline = false;
