@@ -3072,6 +3072,10 @@
         },
 
         getAbsoluteURL: function (url) {
+            if (typeof (document.createElement) === 'undefined') {
+                // assuming the url to be already absolute when DOM is not supported
+                return url;
+            }
             var div = document.createElement("div");
 
             // Uses an innerHTML property to obtain an absolute URL
