@@ -1466,7 +1466,7 @@
                                 _executeWebSocket(true);
                             }
                         } else {
-                            jQuery.atmosphere.log(_request.logLevel, ["Websocket reconnect maximum try reached " + _request.requestCount]);
+                            jQuery.atmosphere.log(_request.logLevel, ["Websocket reconnect maximum try reached " + _requestCount]);
                             if (_canLog('warn')) {
                                 jQuery.atmosphere.warn("Websocket error, reason: " + message.reason);
                             }
