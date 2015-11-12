@@ -1708,6 +1708,15 @@
                             response.messages = [];
                             return true;
                         }
+                    } else {
+                    	/* 
+                    	 * Keep any remaining data even if the message does not contain a valid message.
+                    	 * In case of long message size (for example "10") the partial message could be 1. 
+                    	 */
+                        response.partialMessage = message;
+                        response.responseBody = "";
+                        response.messages = [];
+                        return true;
                     }
                 }
                 response.responseBody = message;
