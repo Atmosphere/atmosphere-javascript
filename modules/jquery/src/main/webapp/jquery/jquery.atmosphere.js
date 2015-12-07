@@ -70,12 +70,11 @@
 
     jQuery(window).bind("online", function () {
         jQuery.atmosphere.offline = false;
-        if (jQuery.atmosphere.requests.length > 0) {
-            for (var i = 0; i < jQuery.atmosphere.requests.length; i++) {
-                if(requests[i].handleOnlineOffline) {
-                    jQuery.atmosphere.requests[i].init();
-                    jQuery.atmosphere.requests[i].execute();
-                }
+        var requests = jQuery.atmosphere.requests;
+        for (var i = 0; i < requests.length; i++) {
+            if(requests[i].handleOnlineOffline) {
+                requests[i].init();
+                requests[i].execute();
             }
         }
     });
