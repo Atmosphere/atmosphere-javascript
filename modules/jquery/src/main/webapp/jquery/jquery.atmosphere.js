@@ -72,7 +72,7 @@
         jQuery.atmosphere.offline = false;
         if (jQuery.atmosphere.requests.length > 0) {
             for (var i = 0; i < jQuery.atmosphere.requests.length; i++) {
-                if(requests[i].handleOnlineOffline) {
+                if(jQuery.atmosphere.requests[i].handleOnlineOffline) {
                     jQuery.atmosphere.requests[i].init();
                     jQuery.atmosphere.requests[i].execute();
                 }
