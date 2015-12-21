@@ -57,7 +57,7 @@
         var requestsClone = [].concat(jQuery.atmosphere.requests);
         for (var i = 0; i < requestsClone.length; i++) {
             var rq = requestsClone[i];
-            if(rq.handleOnlineOffline) {
+            if(rq.request.handleOnlineOffline) {
                 rq.close();
                 clearTimeout(rq.response.request.id);
 
@@ -72,7 +72,7 @@
         jQuery.atmosphere.offline = false;
         if (jQuery.atmosphere.requests.length > 0) {
             for (var i = 0; i < jQuery.atmosphere.requests.length; i++) {
-                if(jQuery.atmosphere.requests[i].handleOnlineOffline) {
+                if(jQuery.atmosphere.requests[i].request.handleOnlineOffline) {
                     jQuery.atmosphere.requests[i].init();
                     jQuery.atmosphere.requests[i].execute();
                 }
@@ -1433,7 +1433,13 @@
                         jQuery.atmosphere.warn("Websocket closed, wasClean: " + message.wasClean);
                     }
 
-                    if (_response.closedByClientTimeout || jQuery.atmosphere.offline) {
+                    if (_response.closedByClientTimeout || (_request.handleOnlineOffline && jQuery.atmosphere.offline)) {
+                        // IFF online/offline events are handled and we happen to be offline, we stop all reconnect attempts and
+                        // resume them in the "online" event (if we get here in that case, something else went wrong as the
+                        // offline handler should stop any reconnect attempt).
+                        //
+                        // On the other hand, if we DO NOT handle online/offline events, we continue as before with reconnecting
+                        // even if we are offline. Failing to do so would stop all reconnect attemps forever.
                         if (_request.reconnectId) {
                             clearTimeout(_request.reconnectId);
                             delete _request.reconnectId;
