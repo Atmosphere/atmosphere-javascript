@@ -1117,7 +1117,7 @@
                     return _request.webSocketImpl;
                 } else {
                     if (window.WebSocket) {
-                        return new WebSocket(location);
+                        return new WebSocket(location, _request.headers['Sec-WebSocket-Protocol']);
                     } else {
                         return new MozWebSocket(location);
                     }
