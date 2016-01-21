@@ -187,7 +187,7 @@
                 readResponsesHeaders: false,
                 maxReconnectOnClose: 5,
                 enableProtocol: true,
-                enableProtocolForDisconnect: true,
+                disableDisconnect: false,
                 pollingInterval: 0,
                 heartbeat: {
                     client: null,
@@ -428,7 +428,7 @@
              * @private
              */
             function _disconnect() {
-                if (_request.enableProtocol && _request.enableProtocolForDisconnect && !_request.firstMessage) {
+                if (_request.enableProtocol && !_request.disableDisconnect && !_request.firstMessage) {
                     var query = "X-Atmosphere-Transport=close&X-Atmosphere-tracking-id=" + _request.uuid;
 
                     atmosphere.util.each(_request.headers, function (name, value) {
