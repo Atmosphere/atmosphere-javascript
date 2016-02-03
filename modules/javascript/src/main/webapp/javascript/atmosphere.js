@@ -1292,7 +1292,7 @@
                     _debug("sse.onmessage");
                     _timeout(_request);
 
-                    if (!_request.enableXDR && message.origin && message.origin !== window.location.protocol + "//" + window.location.host) {
+                    if (!_request.enableXDR && window.location.host && message.origin && message.origin !== window.location.protocol + "//" + window.location.host) {
                         atmosphere.util.log(_request.logLevel, ["Origin was not " + window.location.protocol + "//" + window.location.host]);
                         return;
                     }
