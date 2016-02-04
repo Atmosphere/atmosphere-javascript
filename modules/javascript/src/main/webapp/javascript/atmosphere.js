@@ -1516,7 +1516,13 @@
                         atmosphere.util.warn("Websocket closed, reason: " + reason + ' - wasClean: ' + message.wasClean);
                     }
 
-                    if (_response.closedByClientTimeout || offline) {
+                    if (_response.closedByClientTimeout || (_request.handleOnlineOffline && offline)) {
+                        // IFF online/offline events are handled and we happen to be offline, we stop all reconnect attempts and
+                        // resume them in the "online" event (if we get here in that case, something else went wrong as the
+                        // offline handler should stop any reconnect attempt).
+                        //
+                        // On the other hand, if we DO NOT handle online/offline events, we continue as before with reconnecting
+                        // even if we are offline. Failing to do so would stop all reconnect attemps forever.
                         if (_request.reconnectId) {
                             clearTimeout(_request.reconnectId);
                             delete _request.reconnectId;
@@ -3452,7 +3458,7 @@
             var requestsClone = [].concat(requests);
             for (var i = 0; i < requestsClone.length; i++) {
                 var rq = requestsClone[i];
-                if(rq.handleOnlineOffline) {
+                if(rq.request.handleOnlineOffline) {
                     rq.close();
                     clearTimeout(rq.response.request.id);
 
@@ -3468,7 +3474,7 @@
         atmosphere.util.debug(new Date() + " Atmosphere: online event");
         if (requests.length > 0) {
             for (var i = 0; i < requests.length; i++) {
-                if(requests[i].handleOnlineOffline) {
+                if(requests[i].request.handleOnlineOffline) {
                     requests[i].init();
                     requests[i].execute();
                 }
