@@ -12,15 +12,17 @@ Atmosphere transparently supports WebSockets, Server Sent Events (SSE), Long-Pol
 Note: In version 2.2.x, there are two versions of the scripts a jquery plugin version jquery.atmosphere.js and a plain javascript version atmosphere.js. As keeping both versions requires overhead and also confuses the users which to choose, in 2.3.x, only the plain javascript version will be supported. If you are currently using the 2.2.x jquery version, please consider migrating to the plain javascript version.
 
 ## Install
-You can get atmosphere.js and jquery.atmosphere.js. If you use a script tag whose src attribute is set to one of the below one, browser may not load it because the content type served by raw.github.com is text/plain. About Node.js client, see [here](https://github.com/flowersinthesand/atmosphere.js-node)
 
-* [atmosphere v2.3.1](https://raw.github.com/Atmosphere/atmosphere-javascript/javascript-project-2.3.1/modules/javascript/src/main/webapp/javascript/atmosphere.js)
+### manually
+You can get atmosphere.js in several ways. If you use a script tag whose src attribute is set to the below one, browser may not load it because the content type served by raw.github.com is text/plain.
 
-Also they are available in the following ways, but there may be delays between a release and its availability. We don't manage these ways officially but they are managed by open source community so you can contribute.
+* [atmosphere v2.3.2](https://raw.github.com/Atmosphere/atmosphere-javascript/javascript-project-2.3.2/modules/javascript/src/main/webapp/javascript/atmosphere.js)
+
+Also it is available from the following places, but there may be delays between a release and its availability. We don't manage these ways officially but they are managed by open source community so you can contribute.
 * CDNJS CDN - [atmosphere](http://cdnjs.com/libraries/atmosphere/)
 * WebJars - [atmosphere](http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22org.webjars%22%20AND%20a%3A%22atmosphere-javascript%22)
 
-### Maven
+### maven
 
 ```xml
 <dependency>
@@ -30,7 +32,13 @@ Also they are available in the following ways, but there may be delays between a
 </dependency>
 ```
 
-### Bower
+### npm
+
+```shell
+npm install atmosphere.js
+```
+
+### bower
 
 ```shell
 bower install atmosphere
