@@ -519,7 +519,7 @@
                     _activeRequest = null;
                 }
                 if (_websocket != null) {
-                    if (_websocket.canSendMessage) {
+                    if (_websocket.readyState === 0 || _websocket.readyState === 1) {
                         _debug("invoking .close() on WebSocket object");
                         _websocket.close();
                     }
