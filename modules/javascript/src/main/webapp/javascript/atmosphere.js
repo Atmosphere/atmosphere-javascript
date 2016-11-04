@@ -675,7 +675,7 @@
                         var storage = window.localStorage,
                             get = function (key) {
                                 var item = storage.getItem(name + "-" + key);
-                                return atmosphere.util.parseJSON(item === null ? [] : item);
+                                return item === null ? [] : atmosphere.util.parseJSON(item);
                             },
                             set = function (key, value) {
                                 storage.setItem(name + "-" + key, atmosphere.util.stringifyJSON(value));
