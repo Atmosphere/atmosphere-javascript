@@ -1688,8 +1688,11 @@
                         while (messageStart !== -1) {
                             var str = message.substring(0, messageStart);
                             var messageLength = +str;
-                            if (isNaN(messageLength))
+                            if (isNaN(messageLength)) {
+                                // Discard partial message, otherwise it would never recover from this condition
+                                response.partialMessage = '';
                                 throw new Error('message length "' + str + '" is not a number');
+                            }
                             messageStart += request.messageDelimiter.length;
                             if (messageStart + messageLength > message.length) {
                                 // message not complete, so there is no trailing messageDelimiter
