@@ -45,7 +45,7 @@ bower install atmosphere
 ```
 
 ## Docs
-Full API documentation can be read [here](https://github.com/Atmosphere/atmosphere/wiki/atmosphere.js-atmosphere.js-API) and a lot of samples [here](https://github.com/Atmosphere/atmosphere-samples)
+Full API documentation can be read [here](https://github.com/Atmosphere/atmosphere/wiki/atmosphere.js-API) and a lot of samples [here](https://github.com/Atmosphere/atmosphere-samples)
 
 * 2.3.0+ => Tested with Atmosphere Runtime 2.2.7+, 2.3.x, 2.4.x , may have some regression with lower version
 * 2.2.12+ => Tested with Atmosphere Runtime 2.2.7+, 2.3.x, 2.4.x , may have some regression with lower version
