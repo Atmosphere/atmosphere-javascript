@@ -1742,6 +1742,7 @@
 
                 var reconnectInterval = _request.connectTimeout === -1 ? 0 : _request.connectTimeout;
                 if (_request.reconnect && _request.transport !== 'none' || _request.transport == null) {
+                	_request.transport = _request.fallbackTransport;
                     _request.method = _request.fallbackMethod;
                     _response.transport = _request.fallbackTransport;
                     _response.state = '';
