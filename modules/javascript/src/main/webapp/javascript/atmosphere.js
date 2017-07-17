@@ -1475,6 +1475,10 @@
                     if (_request.heartbeatTimer) {
                         clearTimeout(_request.heartbeatTimer);
                     }
+                    
+                    if (_request.fallbackTransport !== 'websocket') {
+                        _reconnectWithFallbackTransport("Websocket connection failed. Downgrading to " + _request.fallbackTransport + " and resending");
+                    }
                 };
 
                 _websocket.onclose = function (message) {
