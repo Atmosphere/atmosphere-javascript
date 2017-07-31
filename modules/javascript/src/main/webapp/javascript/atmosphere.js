@@ -196,6 +196,8 @@
                 closeAsync: false,
                 reconnectOnServerError: true,
                 handleOnlineOffline: true,
+                maxWebsocketErrorRetries: 1,
+                curWebsocketErrorRetries: 0,
                 onError: function (response) {
                 },
                 onClose: function (response) {
@@ -485,6 +487,7 @@
                 _response.responseBody = "";
                 _response.status = 408;
                 _response.partialMessage = "";
+                _request.curWebsocketErrorRetries = 0;
                 _invokeCallback();
                 _disconnect();
                 _clearState();
@@ -1476,8 +1479,8 @@
                         clearTimeout(_request.heartbeatTimer);
                     }
                     
-                    if (_request.fallbackTransport !== 'websocket') {
-                        _reconnectWithFallbackTransport("Websocket connection failed. Downgrading to " + _request.fallbackTransport + " and resending");
+                    if (++_request.curWebsocketErrorRetries < _request.maxWebsocketErrorRetries && _request.fallbackTransport !== 'websocket') {
+                        _reconnectWithFallbackTransport("Failed to connect via Websocket. Downgrading to " + _request.fallbackTransport + " and resending");
                     }
                 };
 
