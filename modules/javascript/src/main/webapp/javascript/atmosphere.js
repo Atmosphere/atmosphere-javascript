@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Async-IO.org
+ * Copyright 2017 Async-IO.org
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -47,7 +47,7 @@
         hasOwn = Object.prototype.hasOwnProperty;
 
     atmosphere = {
-        version: "2.3.3-javascript",
+        version: "2.3.5-javascript",
         onError: function (response) {
         },
         onClose: function (response) {
