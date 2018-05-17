@@ -3104,7 +3104,13 @@
 
             // encodeURI and decodeURI are needed to normalize URL between IE and non-IE,
             // since IE doesn't encode the href property value and return it - http://jsfiddle.net/Yq9M8/1/
-            return atmosphere.util.fixedEncodeURI(decodeURI(div.firstChild.href));
+
+            var ua = window.navigator.userAgent;
+            if(ua.indexOf('MSIE ')>0 || ua.indexOf('Trident/') > 0 || ua.indexOf('Edge/') > 0){
+                return atmosphere.util.fixedEncodeURI(decodeURI(div.firstChild.href));
+            }
+            return div.firstChild.href;
+
         },
 		
         fixedEncodeURI: function (str) {
