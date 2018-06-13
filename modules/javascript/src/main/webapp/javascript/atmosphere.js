@@ -1287,7 +1287,7 @@
 
                     if (_request.method === 'POST') {
                         _response.state = "messageReceived";
-                        _sse.send(_request.data);
+                        _push(_request.data);
                     }
                 };
 
