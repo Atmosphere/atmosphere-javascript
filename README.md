@@ -22,6 +22,9 @@ Also it is available from the following places, but there may be delays between 
 * CDNJS CDN - [atmosphere](http://cdnjs.com/libraries/atmosphere/)
 * WebJars - [atmosphere](http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22org.webjars%22%20AND%20a%3A%22atmosphere-javascript%22)
 
+If you need to support Inetrnet Explorer 7, Firefox 3.0, Safari 3 and Opera 10  and lower versions, a `JSON.stringify` / `JSON.parse` polyfill is henceforth required like:
+https://github.com/bestiejs/json3
+
 ### maven
 
 ```xml
