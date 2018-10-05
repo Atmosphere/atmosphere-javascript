@@ -1479,7 +1479,7 @@
                         clearTimeout(_request.heartbeatTimer);
                     }
                     
-                    if (++_request.curWebsocketErrorRetries < _request.maxWebsocketErrorRetries && _request.fallbackTransport !== 'websocket') {
+                    if (_request.curWebsocketErrorRetries++ < _request.maxWebsocketErrorRetries && _request.fallbackTransport !== 'websocket') {
                         _reconnectWithFallbackTransport("Failed to connect via Websocket. Downgrading to " + _request.fallbackTransport + " and resending");
                     }
                 };
