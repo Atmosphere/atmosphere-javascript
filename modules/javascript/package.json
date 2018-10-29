@@ -1,6 +1,6 @@
 {
   "name": "atmosphere.js",
-  "version": "2.3.3-SNAPSHOT",
+  "version": "2.3.8",
   "description": "",
   "main": "src/main/webapp/javascript/atmosphere.js",
   "registry": "npm",
