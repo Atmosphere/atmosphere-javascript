@@ -9,7 +9,7 @@
     <groupId>org.atmosphere</groupId>
     <artifactId>javascript-project</artifactId>
     <name>javascript-project</name>
-    <version>2.3.9-SNAPSHOT</version>
+    <version>2.3.8-SNAPSHOT</version>
     <packaging>pom</packaging>
     <description>
         Javascript clients for Atmosphere
