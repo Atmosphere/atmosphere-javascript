@@ -1543,7 +1543,7 @@
 
                     if (_abortingConnection) {
                         atmosphere.util.log(_request.logLevel, ["Websocket closed normally"]);
-                    } else if (!webSocketOpened && _request.fallbackTransport !== 'websocket') {
+                    } else if (!webSocketOpened && _response.transport === 'websocket' && _request.fallbackTransport !== 'websocket') {
                         _reconnectWithFallbackTransport("Websocket failed on first connection attempt. Downgrading to " + _request.fallbackTransport + " and resending");
 
                     } else if (_request.reconnect && _response.transport === 'websocket' ) {
