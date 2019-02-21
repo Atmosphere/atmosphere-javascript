@@ -3113,8 +3113,8 @@
         },
 		
         fixedEncodeURI: function (str) {
-			return encodeURI(str).replace(/%5B/g, '[').replace(/%5D/g, ']');
-		},
+            return encodeURI(str).replace(/%5B/g, '[').replace(/%5D/g, ']');
+        },
 
         prepareURL: function (url) {
             // Attaches a time stamp to prevent caching
