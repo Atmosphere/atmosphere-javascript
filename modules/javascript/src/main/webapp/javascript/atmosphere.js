@@ -1478,8 +1478,10 @@
                     if (_request.heartbeatTimer) {
                         clearTimeout(_request.heartbeatTimer);
                     }
-                    
-                    if (_request.curWebsocketErrorRetries++ < _request.maxWebsocketErrorRetries && _request.fallbackTransport !== 'websocket') {
+
+                    if (_request.curWebsocketErrorRetries++ < _request.maxWebsocketErrorRetries) {
+                        _reconnect(_websocket, _request, _request.pollingInterval);
+                    } else if (_request.fallbackTransport !== 'websocket') {
                         _reconnectWithFallbackTransport("Failed to connect via Websocket. Downgrading to " + _request.fallbackTransport + " and resending");
                     }
                 };
@@ -1749,7 +1751,7 @@
 
                 var reconnectInterval = _request.connectTimeout === -1 ? 0 : _request.connectTimeout;
                 if (_request.reconnect && _request.transport !== 'none' || _request.transport == null) {
-                	_request.transport = _request.fallbackTransport;
+                    _request.transport = _request.fallbackTransport;
                     _request.method = _request.fallbackMethod;
                     _response.transport = _request.fallbackTransport;
                     _response.state = '';
@@ -3111,7 +3113,7 @@
             }
             return div.firstChild.href;
         },
-		
+
         fixedEncodeURI: function (str) {
             return encodeURI(str).replace(/%5B/g, '[').replace(/%5D/g, ']');
         },
@@ -3309,7 +3311,7 @@
                 }
             }
         },
- 
+
         checkCORSSupport: function () {
             if (atmosphere.util.browser.msie && !window.XDomainRequest && +atmosphere.util.browser.version.split(".")[0] < 11) {
                 return true;
