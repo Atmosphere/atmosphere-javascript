@@ -2891,9 +2891,15 @@
                         _localSocketF(_response.responseBody);
                     }
 
-                    if ((_response.responseBody.length === 0 ||
-                        (isString && _heartbeatPadding === _response.responseBody)) && _response.state === "messageReceived") {
-                        continue;
+                    if (_response.state === "messageReceived") {
+                        if (_response.responseBody.length === 0) {
+                            continue;
+                        }
+                        else if (isString && _heartbeatPadding === _response.responseBody) {
+                            // reset the internal reconnect counter, when we received also heartbeat message from server
+                            _requestCount = 0;
+                            continue;
+                        }
                     }
 
                     _invokeFunction(_response);
