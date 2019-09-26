@@ -3,7 +3,7 @@
     <parent>
         <groupId>org.sonatype.oss</groupId>
         <artifactId>oss-parent</artifactId>
-        <version>5</version>
+        <version>9</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.atmosphere</groupId>
@@ -19,7 +19,7 @@
         <connection>scm:git:git@github.com:Atmosphere/atmosphere-javascript.git</connection>
         <developerConnection>scm:git:git@github.com:Atmosphere/atmosphere-javascript.git</developerConnection>
         <url>http://github.com/Atmosphere/atmosphere-javascript</url>
-      <tag>javascript-project-2.2.4-SNAPSHOT</tag>
+      <tag>HEAD</tag>
   </scm>
     <prerequisites>
         <maven>2.2.0</maven>
@@ -105,29 +105,6 @@
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-javadoc-plugin</artifactId>
-                <version>2.7</version>
-                <configuration>
-                    <aggregate>true</aggregate>
-                    <source>1.6</source>
-                    <encoding>UTF-8</encoding>
-                    <maxmemory>1g</maxmemory>
-                    <links>
-                        <link>http://java.sun.com/javase/6/docs/api/</link>
-                    </links>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>attach-javadocs</id>
-                        <phase>verify</phase>
-                        <goals>
-                            <goal>jar</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jxr-plugin</artifactId>
                 <version>2.3</version>
                 <configuration>
@@ -181,6 +158,5 @@
         <surefire.redirectTestOutputToFile>false</surefire.redirectTestOutputToFile>
     </properties>
 </project>
-
 
 
