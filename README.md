@@ -31,7 +31,7 @@ https://github.com/bestiejs/json3
 <dependency>
     <groupId>org.atmosphere.client</groupId>
     <artifactId>javascript</artifactId>
-    <version>2.3.8</version>
+    <version>3.0.0</version>
 </dependency>
 ```
 
