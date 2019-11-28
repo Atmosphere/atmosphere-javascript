@@ -181,7 +181,6 @@
                 reconnectInterval: 0,
                 dropHeaders: true,
                 uuid: 0,
-                async: true,
                 shared: false,
                 readResponsesHeaders: false,
                 maxReconnectOnClose: 5,
@@ -193,7 +192,6 @@
                     server: null
                 },
                 ackInterval: 0,
-                closeAsync: false,
                 reconnectOnServerError: true,
                 handleOnlineOffline: true,
                 maxWebsocketErrorRetries: 1,
@@ -458,7 +456,6 @@
                     if (_request.enableXDR) {
                         closeR.enableXDR = _request.enableXDR
                     }
-                    closeR.async = _request.closeAsync;
                     _pushOnClose("", closeR);
                 }
             }
@@ -1109,7 +1106,6 @@
 
                             script = document.createElement("script");
                             script.src = url + "&jsonpTransport=" + callback;
-                            //script.async = rq.async;
                             script.clean = function () {
                                 script.clean = script.onerror = script.onload = script.onreadystatechange = null;
                                 if (script.parentNode) {
@@ -2173,7 +2169,7 @@
                 url = atmosphere.util.prepareURL(url);
 
                 if (create) {
-                    ajaxRequest.open(request.method, url, request.async);
+                    ajaxRequest.open(request.method, url, true);
                     if (request.connectTimeout > 0) {
                         request.id = setTimeout(function () {
                             if (request.requestCount === 0) {
@@ -2673,7 +2669,6 @@
                     logLevel: 'info',
                     requestCount: 0,
                     withCredentials: _request.withCredentials,
-                    async: _request.async,
                     transport: 'polling',
                     isOpen: true,
                     attachHeadersAsQueryString: true,
