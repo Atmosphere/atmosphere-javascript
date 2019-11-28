@@ -9,7 +9,7 @@
     <groupId>org.atmosphere</groupId>
     <artifactId>javascript-project</artifactId>
     <name>javascript-project</name>
-    <version>3.0.0-SNAPSHOT</version>
+    <version>3.0.0</version>
     <packaging>pom</packaging>
     <description>
         Javascript clients for Atmosphere
@@ -19,7 +19,7 @@
         <connection>scm:git:git@github.com:Atmosphere/atmosphere-javascript.git</connection>
         <developerConnection>scm:git:git@github.com:Atmosphere/atmosphere-javascript.git</developerConnection>
         <url>http://github.com/Atmosphere/atmosphere-javascript</url>
-      <tag>HEAD</tag>
+      <tag>javascript-project-3.0.0</tag>
   </scm>
     <prerequisites>
         <maven>2.2.0</maven>
