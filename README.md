@@ -16,7 +16,7 @@ Note: In version 2.2.x, there are two versions of the scripts a jquery plugin ve
 ### manually
 You can get atmosphere.js in several ways. If you use a script tag whose src attribute is set to the below one, browser may not load it because the content type served by raw.github.com is text/plain.
 
-* [atmosphere v2.3.8](https://raw.github.com/Atmosphere/atmosphere-javascript/javascript-project-2.3.8/modules/javascript/src/main/webapp/javascript/atmosphere.js)
+* [atmosphere v3.0.0](https://raw.github.com/Atmosphere/atmosphere-javascript/javascript-project-2.3.8/modules/javascript/src/main/webapp/javascript/atmosphere.js)
 
 Also it is available from the following places, but there may be delays between a release and its availability. We don't manage these ways officially but they are managed by open source community so you can contribute.
 * CDNJS CDN - [atmosphere](http://cdnjs.com/libraries/atmosphere/)
