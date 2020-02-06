@@ -1387,7 +1387,7 @@
                         if (!webSocketOpened) {
                             var _message = {
                                 code: 1002,
-                                reason: "",
+                                reason: "Connection timeout after " + _request.connectTimeout + "ms.",
                                 wasClean: false
                             };
                             _websocket.onclose(_message);
