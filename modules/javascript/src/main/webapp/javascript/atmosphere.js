@@ -1403,6 +1403,12 @@
                 }
 
                 _websocket.onopen = function (message) {
+                    if (_websocket == null) {
+                        this.close();
+                        _close();
+                        return;
+                    }
+
                     _debug("websocket.onopen");
                     _timeout(_request);
                     offline = false;
@@ -1435,6 +1441,12 @@
                 };
 
                 _websocket.onmessage = function (message) {
+                    if (_websocket == null) {
+                        this.close();
+                        _close();
+                        return;
+                    }
+
                     _debug("websocket.onmessage");
                     _timeout(_request);
 
