@@ -7,7 +7,6 @@ Atmosphere transparently supports WebSockets, Server Sent Events (SSE), Long-Pol
 
 * [npm/Node.js client](https://github.com/Atmosphere/atmosphere.js-node)
 * [Browser client](https://raw.github.com/Atmosphere/atmosphere-javascript/master/modules/javascript/src/main/webapp/javascript/atmosphere.js)
-* [Browser client as a jQuery plugin (deprecated for 2.3.x)](https://raw.github.com/Atmosphere/atmosphere-javascript/javascript-2.2.x/modules/jquery/src/main/webapp/jquery/jquery.atmosphere.js)
 
 Note: In version 2.2.x, there are two versions of the scripts a jquery plugin version jquery.atmosphere.js and a plain javascript version atmosphere.js. As keeping both versions requires overhead and also confuses the users which to choose, in 2.3.x, only the plain javascript version will be supported. If you are currently using the 2.2.x jquery version, please consider migrating to the plain javascript version.
 
@@ -16,7 +15,7 @@ Note: In version 2.2.x, there are two versions of the scripts a jquery plugin ve
 ### manually
 You can get atmosphere.js in several ways. If you use a script tag whose src attribute is set to the below one, browser may not load it because the content type served by raw.github.com is text/plain.
 
-* [atmosphere v3.0.2](https://raw.github.com/Atmosphere/atmosphere-javascript/javascript-project-3.0.2/modules/javascript/src/main/webapp/javascript/atmosphere.js)
+* [atmosphere v3.0.3](https://raw.github.com/Atmosphere/atmosphere-javascript/javascript-project-3.0.3/modules/javascript/src/main/webapp/javascript/atmosphere.js)
 
 Also it is available from the following places, but there may be delays between a release and its availability. We don't manage these ways officially but they are managed by open source community so you can contribute.
 * CDNJS CDN - [atmosphere](http://cdnjs.com/libraries/atmosphere/)
@@ -31,7 +30,7 @@ https://github.com/bestiejs/json3
 <dependency>
     <groupId>org.atmosphere.client</groupId>
     <artifactId>javascript</artifactId>
-    <version>3.0.2</version>
+    <version>3.0.3</version>
 </dependency>
 ```
 
