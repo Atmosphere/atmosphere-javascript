@@ -1390,12 +1390,13 @@
                                 reason: "Connection timeout after " + _request.connectTimeout + "ms.",
                                 wasClean: false
                             };
-                            _websocket.onclose(_message);
+                            var socket = _websocket;
                             // Close it anyway
                             try {
                                 _clearState();
                             } catch (e) {
                             }
+                            socket.onclose(_message);
                             return;
                         }
 
