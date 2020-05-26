@@ -1410,10 +1410,11 @@
                     }, _request.connectTimeout);
                 }
 
-                _websocket.onopen = function (message) {
+                _websocket.onopen = function () {
                     if (_websocket == null) {
                         this.close();
-                        _close();
+                        if (_request.transport == "websocket")
+                            _close();
                         return;
                     }
 
@@ -1424,6 +1425,8 @@
                     if (_canLog('debug')) {
                         atmosphere.util.debug("Websocket successfully opened");
                     }
+
+                    var reopening = webSocketOpened;
 
                     _websocket.canSendMessage = true;
 
@@ -1440,12 +1443,13 @@
                         _response.state = "messageReceived";
                         _websocket.send(_request.data);
                     }
-                }
+                };
 
                 _websocket.onmessage = function (message) {
                     if (_websocket == null) {
                         this.close();
-                        _close();
+                        if (_request.transport == "websocket")
+                            _close();
                         return;
                     }
 
@@ -1481,7 +1485,7 @@
                     }
                 };
 
-                _websocket.onerror = function (message) {
+                _websocket.onerror = function () {
                     _debug("websocket.onerror");
                     clearTimeout(_request.id);
 
