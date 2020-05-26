@@ -47,7 +47,7 @@
         hasOwn = Object.prototype.hasOwnProperty;
 
     atmosphere = {
-        version: "3.0.3-javascript",
+        version: "3.0.4-javascript",
         onError: function (response) {
         },
         onClose: function (response) {
@@ -1078,7 +1078,14 @@
 
                             if (rq.reconnect && _requestCount++ < rq.maxReconnectOnClose) {
                                 _open('re-connecting', rq.transport, rq);
-                                _reconnect(_jqxhr, rq, request.reconnectInterval);
+
+
+                                if (_requestCount === rq.maxReconnectOnClose) {
+
+                                } else {
+                                    _reconnect(_jqxhr, rq, request.reconnectInterval);
+                                }
+
                                 rq.openId = setTimeout(function () {
                                     _triggerOpen(rq);
                                 }, rq.reconnectInterval + 1000);
