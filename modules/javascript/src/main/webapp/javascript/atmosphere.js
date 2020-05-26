@@ -1425,11 +1425,7 @@
                         atmosphere.util.debug("Websocket successfully opened");
                     }
 
-                    var reopening = webSocketOpened;
-
-                    if (_websocket != null) {
-                        _websocket.canSendMessage = true;
-                    }
+                    _websocket.canSendMessage = true;
 
                     if (!_request.enableProtocol) {
                         webSocketOpened = true;
@@ -1440,13 +1436,11 @@
                         }
                     }
 
-                    if (_websocket != null) {
-                        if (_request.method === 'POST') {
-                            _response.state = "messageReceived";
-                            _websocket.send(_request.data);
-                        }
+                    if (_request.method === 'POST') {
+                        _response.state = "messageReceived";
+                        _websocket.send(_request.data);
                     }
-                };
+                }
 
                 _websocket.onmessage = function (message) {
                     if (_websocket == null) {
