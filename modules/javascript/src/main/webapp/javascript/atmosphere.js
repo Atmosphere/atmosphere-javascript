@@ -913,7 +913,7 @@
                             container = document.createElement("div");
                             container.id = neim;
                             container.style.display = "none";
-                            container.innerHTML = '<iframe name="' + neim + '" />';
+                            container.innerHTML = '<iframe name="' + neim + '"></iframe>';
                             document.body.appendChild(container);
                         }
 
@@ -3121,7 +3121,7 @@
             var div = document.createElement("div");
 
             // Uses an innerHTML property to obtain an absolute URL
-            div.innerHTML = '<a href="' + url + '"/>';
+            div.innerHTML = '<a href="' + url + '"></a>';
 
             // encodeURI and decodeURI are needed to normalize URL between IE and non-IE,
             // since IE doesn't encode the href property value and return it - http://jsfiddle.net/Yq9M8/1/
