@@ -15,10 +15,10 @@ Note: In version 2.2.x, there are two versions of the scripts a jquery plugin ve
 ### manually
 You can get atmosphere.js in several ways. If you use a script tag whose src attribute is set to the below one, browser may not load it because the content type served by raw.github.com is text/plain.
 
-* [atmosphere v3.0.4](https://raw.github.com/Atmosphere/atmosphere-javascript/javascript-project-3.0.4/modules/javascript/src/main/webapp/javascript/atmosphere.js)
+* [atmosphere v3.0.5](https://raw.github.com/Atmosphere/atmosphere-javascript/javascript-project-3.0.5/modules/javascript/src/main/webapp/javascript/atmosphere.js)
 
 Also it is available from the following places, but there may be delays between a release and its availability. We don't manage these ways officially but they are managed by open source community so you can contribute.
-* CDNJS CDN - [atmosphere](http://cdnjs.com/libraries/atmosphere/)
+* NPM - [atmosphere.js](https://www.npmjs.com/package/atmosphere.js)
 * WebJars - [atmosphere](http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22org.webjars%22%20AND%20a%3A%22atmosphere-javascript%22)
 
 If you need to support Inetrnet Explorer 7, Firefox 3.0, Safari 3 and Opera 10  and lower versions, a `JSON.stringify` / `JSON.parse` polyfill is henceforth required like:
@@ -30,7 +30,7 @@ https://github.com/bestiejs/json3
 <dependency>
     <groupId>org.atmosphere.client</groupId>
     <artifactId>javascript</artifactId>
-    <version>3.0.4</version>
+    <version>3.0.5</version>
 </dependency>
 ```
 
