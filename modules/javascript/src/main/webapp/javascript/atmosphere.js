@@ -1494,7 +1494,7 @@
                     }
 
                     if (_request.curWebsocketErrorRetries++ < _request.maxWebsocketErrorRetries) {
-                        _reconnect(_websocket, _request, _request.pollingInterval);
+                        _reconnectWebSocket();
                     } else if (_request.fallbackTransport !== 'websocket') {
                         _reconnectWithFallbackTransport("Failed to connect via Websocket. Downgrading to " + _request.fallbackTransport + " and resending");
                     }
@@ -1561,29 +1561,8 @@
                         atmosphere.util.log(_request.logLevel, ["Websocket closed normally"]);
                     } else if (!webSocketOpened && _response.transport === 'websocket' && _request.fallbackTransport !== 'websocket') {
                         _reconnectWithFallbackTransport("Websocket failed on first connection attempt. Downgrading to " + _request.fallbackTransport + " and resending");
-
                     } else if (_request.reconnect && _response.transport === 'websocket' ) {
-                        _clearState();
-                        if (_requestCount++ < _request.maxReconnectOnClose) {
-                            _open('re-connecting', _request.transport, _request);
-                            if (_request.reconnectInterval > 0) {
-                                _request.reconnectId = setTimeout(function () {
-                                    _response.responseBody = "";
-                                    _response.messages = [];
-                                    _executeWebSocket(true);
-                                }, _request.reconnectInterval);
-                            } else {
-                                _response.responseBody = "";
-                                _response.messages = [];
-                                _executeWebSocket(true);
-                            }
-                        } else {
-                            atmosphere.util.log(_request.logLevel, ["Websocket reconnect maximum try reached " + _requestCount]);
-                            if (_canLog('warn')) {
-                                atmosphere.util.warn("Websocket error, reason: " + message.reason);
-                            }
-                            _onError(0, "maxReconnectOnClose reached");
-                        }
+                        _reconnectWebSocket();
                     }
                 };
 
@@ -1746,6 +1725,30 @@
                 response.responseBody = message;
                 response.messages = [message];
                 return false;
+            }
+
+            function _reconnectWebSocket(){
+                _clearState();
+                if (_requestCount++ < _request.maxReconnectOnClose) {
+                    _open('re-connecting', _request.transport, _request);
+                    if (_request.reconnectInterval > 0) {
+                        _request.reconnectId = setTimeout(function () {
+                            _response.responseBody = "";
+                            _response.messages = [];
+                            _executeWebSocket(true);
+                        }, _request.reconnectInterval);
+                    } else {
+                        _response.responseBody = "";
+                        _response.messages = [];
+                        _executeWebSocket(true);
+                    }
+                } else {
+                    atmosphere.util.log(_request.logLevel, ["Websocket reconnect maximum try reached " + _requestCount]);
+                    if (_canLog('warn')) {
+                        atmosphere.util.warn("Websocket error, reason: " + message.reason);
+                    }
+                    _onError(0, "maxReconnectOnClose reached");
+                }
             }
 
             /**
