@@ -1492,12 +1492,7 @@
                     if (_request.heartbeatTimer) {
                         clearTimeout(_request.heartbeatTimer);
                     }
-
-                    if (_request.curWebsocketErrorRetries++ < _request.maxWebsocketErrorRetries) {
-                        _reconnectWebSocket();
-                    } else if (_request.fallbackTransport !== 'websocket') {
-                        _reconnectWithFallbackTransport("Failed to connect via Websocket. Downgrading to " + _request.fallbackTransport + " and resending");
-                    }
+                    _response.error = true;
                 };
 
                 _websocket.onclose = function (message) {
@@ -1559,6 +1554,12 @@
 
                     if (_abortingConnection) {
                         atmosphere.util.log(_request.logLevel, ["Websocket closed normally"]);
+                    } else if (_response.error) {
+                        _response.error = false;
+                        if (_request.curWebsocketErrorRetries < _request.maxWebsocketErrorRetries) {
+                            _request.curWebsocketErrorRetries = _request.curWebsocketErrorRetries + 1;
+                            _reconnectWebSocket();
+                        }
                     } else if (!webSocketOpened && _response.transport === 'websocket' && _request.fallbackTransport !== 'websocket') {
                         _reconnectWithFallbackTransport("Websocket failed on first connection attempt. Downgrading to " + _request.fallbackTransport + " and resending");
                     } else if (_request.reconnect && _response.transport === 'websocket') {
