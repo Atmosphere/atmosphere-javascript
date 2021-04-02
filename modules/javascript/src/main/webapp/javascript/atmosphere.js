@@ -47,7 +47,7 @@
         hasOwn = Object.prototype.hasOwnProperty;
 
     atmosphere = {
-        version: "3.0.6-javascript",
+        version: "3.1.0-javascript",
         onError: function (response) {
         },
         onClose: function (response) {
@@ -196,6 +196,7 @@
                 handleOnlineOffline: true,
                 maxWebsocketErrorRetries: 1,
                 curWebsocketErrorRetries: 0,
+                unloadBackwardCompat: false,
                 onError: function (response) {
                 },
                 onClose: function (response) {
@@ -457,6 +458,7 @@
                         closeR.enableXDR = _request.enableXDR
                     }
                     _pushOnClose("", closeR);
+
                 }
             }
 
@@ -2588,14 +2590,19 @@
                 if (!rq) {
                     rq = _getPushRequest(message);
                 }
+
                 rq.transport = "polling";
                 rq.method = "GET";
                 rq.withCredentials = false;
-                rq.reconnect = false;
+                rq.reconnect = false;                  
                 rq.force = true;
                 rq.suspend = false;
                 rq.timeout = 1000;
-                _executeRequest(rq);
+                if (rq.unloadBackwardCompat) {
+                    _executeRequest(rq);
+                } else {
+                    navigator.sendBeacon(rq.url, rq.data);
+                }
             }
 
             function _pushLocal(message) {
