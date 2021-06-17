@@ -47,7 +47,7 @@
         hasOwn = Object.prototype.hasOwnProperty;
 
     atmosphere = {
-        version: "3.1.0-javascript",
+        version: "3.1.1-javascript",
         onError: function (response) {
         },
         onClose: function (response) {
