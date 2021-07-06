@@ -8,14 +8,12 @@ Atmosphere transparently supports WebSockets, Server Sent Events (SSE), Long-Pol
 * [npm/Node.js client](https://github.com/Atmosphere/atmosphere.js-node)
 * [Browser client](https://raw.github.com/Atmosphere/atmosphere-javascript/master/modules/javascript/src/main/webapp/javascript/atmosphere.js)
 
-Note: In version 2.2.x, there are two versions of the scripts a jquery plugin version jquery.atmosphere.js and a plain javascript version atmosphere.js. As keeping both versions requires overhead and also confuses the users which to choose, in 2.3.x, only the plain javascript version will be supported. If you are currently using the 2.2.x jquery version, please consider migrating to the plain javascript version.
-
 ## Install
 
 ### manually
 You can get atmosphere.js in several ways. If you use a script tag whose src attribute is set to the below one, browser may not load it because the content type served by raw.github.com is text/plain.
 
-* [atmosphere v3.1.0](https://raw.github.com/Atmosphere/atmosphere-javascript/javascript-project-3.1.0/modules/javascript/src/main/webapp/javascript/atmosphere.js)
+* [atmosphere v3.1.1](https://raw.github.com/Atmosphere/atmosphere-javascript/javascript-project-3.1.1/modules/javascript/src/main/webapp/javascript/atmosphere.js)
 
 Also it is available from the following places, but there may be delays between a release and its availability. We don't manage these ways officially but they are managed by open source community so you can contribute.
 * NPM - [atmosphere.js](https://www.npmjs.com/package/atmosphere.js)
@@ -30,7 +28,7 @@ https://github.com/bestiejs/json3
 <dependency>
     <groupId>org.atmosphere.client</groupId>
     <artifactId>javascript</artifactId>
-    <version>3.0.6</version>
+    <version>3.1.1</version>
 </dependency>
 ```
 
@@ -54,4 +52,4 @@ It is recommended to always use the version that matches Atmosphere's runtime.
 Latest version may work with lower version, but not officially tested.
 
 ### Changelogs
-* 2.3 release: [2.3.2](https://goo.gl/uqo3Pc) [2.3.1](https://goo.gl/Xs6gV6) [2.3.0](https://goo.gl/Ey4K7M)
+* 3.1.x releases [3.1.0](https://github.com/Atmosphere/atmosphere-javascript/issues?q=is%3Aissue+is%3Aclosed+label%3A3.1.0)
