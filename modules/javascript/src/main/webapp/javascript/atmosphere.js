@@ -196,7 +196,7 @@
                 handleOnlineOffline: true,
                 maxWebsocketErrorRetries: 1,
                 curWebsocketErrorRetries: 0,
-                unloadBackwardCompat: false,
+                unloadBackwardCompat: !navigator.sendBeacon,
                 onError: function (response) {
                 },
                 onClose: function (response) {
@@ -2595,7 +2595,7 @@
                 rq.force = true;
                 rq.suspend = false;
                 rq.timeout = 1000;
-                if (rq.unloadBackwardCompat) {
+                if (_request.unloadBackwardCompat) {
                     _executeRequest(rq);
                 } else {
                     navigator.sendBeacon(rq.url, rq.data);
