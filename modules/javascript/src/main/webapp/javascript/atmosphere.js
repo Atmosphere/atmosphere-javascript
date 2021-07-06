@@ -1556,13 +1556,12 @@
 
                     if (_abortingConnection) {
                         atmosphere.util.log(_request.logLevel, ["Websocket closed normally"]);
-                    } else if (_response.error) {
+                    } else if (_response.error && _request.curWebsocketErrorRetries < _request.maxWebsocketErrorRetries && _requestCount + 1 < _request.maxReconnectOnClose) {
                         _response.error = false;
-                        if (_request.curWebsocketErrorRetries < _request.maxWebsocketErrorRetries) {
-                            _request.curWebsocketErrorRetries = _request.curWebsocketErrorRetries + 1;
-                            _reconnectWebSocket();
-                        }
-                    } else if (!webSocketOpened && _response.transport === 'websocket' && _request.fallbackTransport !== 'websocket') {
+                        _request.curWebsocketErrorRetries++;
+                        _reconnectWebSocket();
+                    } else if ((_response.error || !webSocketOpened) && _response.transport === 'websocket' && _request.fallbackTransport !== 'websocket') {
+                        _response.error = false;
                         _reconnectWithFallbackTransport("Websocket failed on first connection attempt. Downgrading to " + _request.fallbackTransport + " and resending");
                     } else if (_request.reconnect && _response.transport === 'websocket') {
                         _reconnectWebSocket();
