@@ -1766,17 +1766,16 @@
                     atmosphere.util.onTransportFailure(errorMessage, _request);
                 }
 
-                var reconnectInterval = _request.connectTimeout === -1 ? 0 : _request.connectTimeout;
                 if (_request.reconnect && _request.transport !== 'none' || _request.transport == null) {
                     _request.transport = _request.fallbackTransport;
                     _request.method = _request.fallbackMethod;
                     _response.transport = _request.fallbackTransport;
                     _response.state = '';
                     _request.fallbackTransport = 'none';
-                    if (reconnectInterval > 0) {
+                    if (_request.reconnectInterval > 0) {
                         _request.reconnectId = setTimeout(function () {
                             _execute();
-                        }, reconnectInterval);
+                        }, _request.reconnectInterval);
                     } else {
                         _execute();
                     }
