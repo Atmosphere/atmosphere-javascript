@@ -1032,7 +1032,7 @@
                 if (_requestCount > 0 && state === 're-connecting') {
                     request.isReopen = true;
                     _tryingToReconnect(_response);
-                } else if (_response.error == null) {
+                } else if (!_response.error) {
                     _response.request = request;
                     var prevState = _response.state;
                     _response.state = state;
@@ -1991,7 +1991,7 @@
                             return;
                         }
 
-                        _response.error = null;
+                        _response.error = false;
                         var skipCallbackInvocation = false;
                         var update = false;
 
@@ -2495,7 +2495,7 @@
                                         _timeout(_request);
 
                                         _response.status = 200;
-                                        _response.error = null;
+                                        _response.error = false;
 
                                         // Empties response every time that it is handled
                                         res.innerText = "";
