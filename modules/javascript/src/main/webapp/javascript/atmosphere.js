@@ -2023,6 +2023,9 @@
                             }
 
                             if (status >= 300 || status === 0) {
+                                if (!rq.isOpen && _canLog('warn')) {
+                                   atmosphere.util.warn(rq.transport + " connection failed with status: " + status + " " + (ajaxRequest.statusText || "Unable to connect"));
+                                }
                                 disconnected();
                                 return;
                             }
