@@ -1348,7 +1348,11 @@
                         if (_requestCount++ < _request.maxReconnectOnClose) {
                             _open('re-connecting', _request.transport, _request);
                             if (_request.reconnectInterval > 0) {
+                                // Prevent the online event to open a second connection while waiting for reconnect
+                                var handleOnlineOffline = _request.handleOnlineOffline;
+                                _request.handleOnlineOffline = false;
                                 _request.reconnectId = setTimeout(function () {
+                                    _request.handleOnlineOffline = handleOnlineOffline;
                                     _executeSSE(true);
                                 }, _request.reconnectInterval);
                             } else {
@@ -1556,15 +1560,17 @@
 
                     if (_abortingConnection) {
                         atmosphere.util.log(_request.logLevel, ["Websocket closed normally"]);
-                    } else if (_response.error && _request.curWebsocketErrorRetries < _request.maxWebsocketErrorRetries && _requestCount + 1 < _request.maxReconnectOnClose) {
-                        _response.error = false;
-                        _request.curWebsocketErrorRetries++;
-                        _reconnectWebSocket();
-                    } else if ((_response.error || !webSocketOpened) && _response.transport === 'websocket' && _request.fallbackTransport !== 'websocket') {
-                        _response.error = false;
-                        _reconnectWithFallbackTransport("Websocket failed on first connection attempt. Downgrading to " + _request.fallbackTransport + " and resending");
-                    } else if (_request.reconnect && _response.transport === 'websocket') {
-                        _reconnectWebSocket();
+                    } else if (_response.transport === 'websocket') {
+                        if (_response.error && _request.curWebsocketErrorRetries < _request.maxWebsocketErrorRetries && _requestCount + 1 < _request.maxReconnectOnClose) {
+                            _response.error = false;
+                            _request.curWebsocketErrorRetries++;
+                            _reconnectWebSocket();
+                        } else if ((_response.error || !webSocketOpened) && _request.fallbackTransport !== 'websocket') {
+                            _response.error = false;
+                            _reconnectWithFallbackTransport("Websocket failed on first connection attempt. Downgrading to " + _request.fallbackTransport + " and resending");
+                        } else if (_request.reconnect) {
+                            _reconnectWebSocket();
+                        }
                     }
                 };
 
@@ -1734,7 +1740,11 @@
                 if (_requestCount++ < _request.maxReconnectOnClose) {
                     _open('re-connecting', _request.transport, _request);
                     if (_request.reconnectInterval > 0) {
+                        // Prevent the online event to open a second connection while waiting for reconnect
+                        var handleOnlineOffline = _request.handleOnlineOffline;
+                        _request.handleOnlineOffline = false;
                         _request.reconnectId = setTimeout(function () {
+                            _request.handleOnlineOffline = handleOnlineOffline;
                             _response.responseBody = "";
                             _response.messages = [];
                             _executeWebSocket(true);
@@ -1772,7 +1782,11 @@
                     _response.state = '';
                     _request.fallbackTransport = 'none';
                     if (_request.reconnectInterval > 0) {
+                        // Prevent the online event to open a second connection while waiting for reconnect
+                        var handleOnlineOffline = _request.handleOnlineOffline;
+                        _request.handleOnlineOffline = false;
                         _request.reconnectId = setTimeout(function () {
+                            _request.handleOnlineOffline = handleOnlineOffline;
                             _execute();
                         }, _request.reconnectInterval);
                     } else {
@@ -2256,7 +2270,11 @@
 
                     if (delay > 0) {
                         // For whatever reason, never cancel a reconnect timeout as it is mandatory to reconnect.
+                        // Prevent the online event to open a second connection while waiting for reconnect
+                        var handleOnlineOffline = _request.handleOnlineOffline;
+                        _request.handleOnlineOffline = false;
                         _request.reconnectId = setTimeout(function () {
+                            _request.handleOnlineOffline = handleOnlineOffline;
                             _executeRequest(request);
                         }, delay);
                     } else {
