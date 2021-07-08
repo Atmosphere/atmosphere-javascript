@@ -1425,7 +1425,8 @@
                     }
 
                     _debug("websocket.onopen");
-                    _timeout(_request);
+                    if (!_request.enableProtocol || _request.connectTimeout <= 0)
+                        _timeout(_request);
                     offline = false;
 
                     if (_canLog('debug')) {
@@ -1503,6 +1504,8 @@
 
                 _websocket.onclose = function (message) {
                     _debug("websocket.onclose");
+                    if (_response.transport !== 'websocket')
+                        return;
                     clearTimeout(_request.id);
                     if (_response.state === 'closed')
                         return;
@@ -1560,17 +1563,15 @@
 
                     if (_abortingConnection) {
                         atmosphere.util.log(_request.logLevel, ["Websocket closed normally"]);
-                    } else if (_response.transport === 'websocket') {
-                        if (_response.error && _request.curWebsocketErrorRetries < _request.maxWebsocketErrorRetries && _requestCount + 1 < _request.maxReconnectOnClose) {
-                            _response.error = false;
-                            _request.curWebsocketErrorRetries++;
-                            _reconnectWebSocket();
-                        } else if ((_response.error || !webSocketOpened) && _request.fallbackTransport !== 'websocket') {
-                            _response.error = false;
-                            _reconnectWithFallbackTransport("Websocket failed on first connection attempt. Downgrading to " + _request.fallbackTransport + " and resending");
-                        } else if (_request.reconnect) {
-                            _reconnectWebSocket();
-                        }
+                    } else if (_response.error && _request.curWebsocketErrorRetries < _request.maxWebsocketErrorRetries && _requestCount + 1 < _request.maxReconnectOnClose) {
+                        _response.error = false;
+                        _request.curWebsocketErrorRetries++;
+                        _reconnectWebSocket();
+                    } else if ((_response.error || !webSocketOpened) && _request.fallbackTransport !== 'websocket') {
+                        _response.error = false;
+                        _reconnectWithFallbackTransport("Websocket failed on first connection attempt. Downgrading to " + _request.fallbackTransport + " and resending");
+                    } else if (_request.reconnect) {
+                        _reconnectWebSocket();
                     }
                 };
 
@@ -1768,6 +1769,8 @@
              */
             function _reconnectWithFallbackTransport(errorMessage) {
                 atmosphere.util.log(_request.logLevel, [errorMessage]);
+
+                _clearState();
 
                 if (typeof (_request.onTransportFailure) !== 'undefined') {
                     _request.onTransportFailure(errorMessage, _request);
@@ -2045,7 +2048,7 @@
                             }
 
                             // Firefox incorrectly send statechange 0->2 when a reconnect attempt fails. The above checks ensure that onopen is not called for these
-                            if ((!rq.enableProtocol || !request.firstMessage) && ajaxRequest.readyState === 2) {
+                            if ((!rq.enableProtocol || !request.firstMessage) && (ajaxRequest.readyState === 2 || ajaxRequest.readyState > 2 && !rq.isOpen)) {
                                 // Firefox incorrectly send statechange 0->2 when a reconnect attempt fails. The above checks ensure that onopen is not called for these
                                 // In that case, ajaxRequest.onerror will be called just after onreadystatechange is called, so we delay the trigger until we are
                                 // guarantee the connection is well established.
