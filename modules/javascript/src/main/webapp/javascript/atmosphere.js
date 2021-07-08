@@ -1425,7 +1425,7 @@
                     }
 
                     _debug("websocket.onopen");
-                    if (_request.connectTimeout <= 0)
+                    if (!_request.enableProtocol || _request.connectTimeout <= 0)
                         _timeout(_request);
                     offline = false;
 
