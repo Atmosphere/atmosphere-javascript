@@ -458,7 +458,6 @@
                         closeR.enableXDR = _request.enableXDR
                     }
                     _pushOnClose("", closeR);
-
                 }
             }
 
@@ -1080,14 +1079,7 @@
 
                             if (rq.reconnect && _requestCount++ < rq.maxReconnectOnClose) {
                                 _open('re-connecting', rq.transport, rq);
-
-
-                                if (_requestCount === rq.maxReconnectOnClose) {
-
-                                } else {
-                                    _reconnect(_jqxhr, rq, request.reconnectInterval);
-                                }
-
+                                _reconnect(_jqxhr, rq, request.reconnectInterval);
                                 rq.openId = setTimeout(function () {
                                     _triggerOpen(rq);
                                 }, rq.reconnectInterval + 1000);
@@ -1270,7 +1262,7 @@
                     }, _request.connectTimeout);
                 }
 
-                _sse.onopen = function (event) {
+                _sse.onopen = function () {
                     _debug("sse.onopen");
                     _timeout(_request);
                     if (_canLog('debug')) {
@@ -1325,7 +1317,7 @@
                     }
                 };
 
-                _sse.onerror = function (message) {
+                _sse.onerror = function () {
                     _debug("sse.onerror");
                     clearTimeout(_request.id);
 
@@ -1410,7 +1402,6 @@
                             } catch (e) {
                             }
                             socket.onclose(_message);
-                            return;
                         }
 
                     }, _request.connectTimeout);
@@ -1499,6 +1490,7 @@
                     if (_request.heartbeatTimer) {
                         clearTimeout(_request.heartbeatTimer);
                     }
+
                     _response.error = true;
                 };
 
@@ -2609,11 +2601,10 @@
                 if (!rq) {
                     rq = _getPushRequest(message);
                 }
-
                 rq.transport = "polling";
                 rq.method = "GET";
                 rq.withCredentials = false;
-                rq.reconnect = false;                  
+                rq.reconnect = false;
                 rq.force = true;
                 rq.suspend = false;
                 rq.timeout = 1000;
@@ -2760,7 +2751,7 @@
                     _websocket.send(data);
 
                 } catch (e) {
-                    _websocket.onclose = function (message) {
+                    _websocket.onclose = function () {
                     };
                     _clearState();
 
@@ -3011,7 +3002,7 @@
                 _intraPush(message);
             };
 
-            this.enableProtocol = function (message) {
+            this.enableProtocol = function () {
                 return _request.enableProtocol;
             };
 
