@@ -1559,7 +1559,7 @@
                         _response.error = false;
                         _request.curWebsocketErrorRetries++;
                         _reconnectWebSocket();
-                    } else if ((_response.error || !webSocketOpened) && _request.fallbackTransport !== 'websocket') {
+                    } else if ((_response.error || !webSocketOpened || _request.maxWebsocketErrorRetries === 0) && _request.fallbackTransport !== 'websocket') {
                         _response.error = false;
                         _reconnectWithFallbackTransport("Websocket failed on first connection attempt. Downgrading to " + _request.fallbackTransport + " and resending");
                     } else if (_request.reconnect) {
