@@ -13,7 +13,7 @@ Atmosphere transparently supports WebSockets, Server Sent Events (SSE), Long-Pol
 ### manually
 You can get atmosphere.js in several ways. If you use a script tag whose src attribute is set to the below one, browser may not load it because the content type served by raw.github.com is text/plain.
 
-* [atmosphere v3.1.2](https://raw.github.com/Atmosphere/atmosphere-javascript/javascript-project-3.1.2/modules/javascript/src/main/webapp/javascript/atmosphere.js)
+* [atmosphere v3.1.3](https://raw.github.com/Atmosphere/atmosphere-javascript/javascript-project-3.1.3/modules/javascript/src/main/webapp/javascript/atmosphere.js)
 
 Also it is available from the following places, but there may be delays between a release and its availability. We don't manage these ways officially but they are managed by open source community so you can contribute.
 * NPM - [atmosphere.js](https://www.npmjs.com/package/atmosphere.js)
@@ -28,7 +28,7 @@ https://github.com/bestiejs/json3
 <dependency>
     <groupId>org.atmosphere.client</groupId>
     <artifactId>javascript</artifactId>
-    <version>3.1.2</version>
+    <version>3.1.3</version>
 </dependency>
 ```
 
