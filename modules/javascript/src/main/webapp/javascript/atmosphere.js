@@ -356,6 +356,13 @@
              */
             var _beforeUnloadState = false;
 
+            /**
+             * {number} Holds the timeout ID for the beforeUnload flag reset.
+             * 
+             * @private
+             */
+            var _beforeUnloadTimeoutId;
+
             // Automatic call to subscribe
             _subscribe(options);
 
@@ -3418,10 +3425,15 @@
         },
         beforeUnload: function () {
             atmosphere.util.debug(new Date() + " Atmosphere: " + "beforeunload event");
+            
+            // If another unload attempt was made within the 5000ms timeout
+            if (atmosphere._beforeUnloadTimeoutId != null) {
+                clearTimeout(atmosphere._beforeUnloadTimeoutId);
+            }
 
             // ATMOSPHERE-JAVASCRIPT-143: Delay reconnect to avoid reconnect attempts before an actual unload (we don't know if an unload will happen, yet)
             atmosphere._beforeUnloadState = true;
-            setTimeout(function () {
+            atmosphere._beforeUnloadTimeoutId = setTimeout(function () {
                 atmosphere.util.debug(new Date() + " Atmosphere: " + "beforeunload event timeout reached. Reset _beforeUnloadState flag");
                 atmosphere._beforeUnloadState = false;
             }, 5000);
