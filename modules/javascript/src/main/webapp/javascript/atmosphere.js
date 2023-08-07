@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2022 Async-IO.org
+ * Copyright 2011-2023 Async-IO.org
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -47,7 +47,7 @@
         hasOwn = Object.prototype.hasOwnProperty;
 
     atmosphere = {
-        version: "3.1.4-javascript",
+        version: "3.1.5-javascript",
         onError: function (response) {
         },
         onClose: function (response) {
@@ -970,7 +970,7 @@
                     if (command.target === "p") {
                         switch (command.type) {
                             case "send":
-                                _push(data);
+                                _push(data, _request);
                                 break;
                             case "localSend":
                                 _localMessage(data);
@@ -1291,7 +1291,7 @@
 
                     if (_request.method === 'POST') {
                         _response.state = "messageReceived";
-                        _push(_request.data);
+                        _push(_request.data, _request);
                     }
                 };
 
@@ -1492,6 +1492,8 @@
 
                 _websocket.onerror = function () {
                     _debug("websocket.onerror");
+                    if (_response.transport !== 'websocket')
+                        return;
                     clearTimeout(_request.id);
 
                     if (_request.heartbeatTimer) {
@@ -1631,7 +1633,7 @@
 
                     if (request.ackInterval !== 0) {
                         setTimeout(function () {
-                            _push("...ACK...");
+                            _push("...ACK...", request);
                         }, request.ackInterval);
                     }
                 } else if (request.enableProtocol && request.firstMessage && atmosphere.util.browser.msie && +atmosphere.util.browser.version.split(".")[0] < 10) {
@@ -1884,7 +1886,7 @@
                         if (_canLog('debug')) {
                             atmosphere.util.debug("Sending heartbeat");
                         }
-                        _push(_heartbeatPadding);
+                        _push(_heartbeatPadding, _request);
                         rq.heartbeatTimer = setTimeout(_pushHeartbeat, _heartbeatInterval);
                     };
                     rq.heartbeatTimer = setTimeout(_pushHeartbeat, _heartbeatInterval);
@@ -2048,7 +2050,6 @@
 
                             // Firefox incorrectly send statechange 0->2 when a reconnect attempt fails. The above checks ensure that onopen is not called for these
                             if ((!rq.enableProtocol || !request.firstMessage) && (ajaxRequest.readyState === 2 || ajaxRequest.readyState > 2 && !rq.isOpen)) {
-                                // Firefox incorrectly send statechange 0->2 when a reconnect attempt fails. The above checks ensure that onopen is not called for these
                                 // In that case, ajaxRequest.onerror will be called just after onreadystatechange is called, so we delay the trigger until we are
                                 // guarantee the connection is well established.
                                 if (atmosphere.util.browser.mozilla && _response.ffTryingReconnect) {
@@ -2586,11 +2587,13 @@
              * @param {Object, string} Message to send.
              * @private
              */
-            function _push(message) {
+            function _push(message, _request) {
 
                 if (_localStorageService != null) {
                     _pushLocal(message);
-                } else if (_activeRequest != null || _sse != null) {
+                } else if (_activeRequest != null || _sse != null
+                	// Avoid errors when sending message during long-polling reconnection
+                	|| _request && _request.isOpen && _request.reconnect && _request.transport === "long-polling") {
                     _pushAjaxMessage(message);
                 } else if (_ieStream != null) {
                     _pushIE(message);
@@ -2779,7 +2782,6 @@
             }
 
             function _prepareCallback(messageBody, state, errorCode, transport) {
-
                 _response.responseBody = messageBody;
                 _response.transport = transport;
                 _response.status = errorCode;
@@ -2939,6 +2941,9 @@
                             _requestCount = 0;
                             continue;
                         }
+                    } else if (_response.state === "re-opening") {
+                         // reset the internal reconnect counter when the connection is reopened
+                         _requestCount = 0;
                     }
 
                     _invokeFunction(_response);
@@ -2994,10 +2999,10 @@
                 if (dispatchUrl != null) {
                     var originalDispatchUrl = _request.dispatchUrl;
                     _request.dispatchUrl = dispatchUrl;
-                    _push(message);
+                    _push(message, _request);
                     _request.dispatchUrl = originalDispatchUrl;
                 } else {
-                    _push(message);
+                    _push(message, _request);
                 }
             };
 
@@ -3425,7 +3430,7 @@
         },
         beforeUnload: function () {
             atmosphere.util.debug(new Date() + " Atmosphere: " + "beforeunload event");
-            
+
             // If another unload attempt was made within the 5000ms timeout
             if (atmosphere._beforeUnloadTimeoutId != null) {
                 clearTimeout(atmosphere._beforeUnloadTimeoutId);
