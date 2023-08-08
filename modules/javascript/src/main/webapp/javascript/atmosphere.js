@@ -38,15 +38,20 @@
 
     "use strict";
 
-    var atmosphere = {},
-        guid,
-        offline = false,
+    var offline = false,
         requests = [],
         callbacks = [],
-        uuid = 0,
-        hasOwn = Object.prototype.hasOwnProperty;
+        uuid = 0;
 
-    atmosphere = {
+    /**
+     * {boolean} If window beforeUnload event has been called.
+     * Flag will be reset after 5000 ms
+     *
+     * @private
+     */
+    var _beforeUnloadState = false;
+
+    var atmosphere = {
         version: "3.1.5-javascript",
         onError: function (response) {
         },
@@ -158,6 +163,7 @@
                 suspend: true,
                 maxRequest: -1,
                 reconnect: true,
+                mrequest: undefined,
                 maxStreamingLength: 10000000,
                 lastIndex: 0,
                 logLevel: 'info',
@@ -165,6 +171,7 @@
                 fallbackMethod: 'GET',
                 fallbackTransport: 'streaming',
                 transport: 'long-polling',
+                webSocketUrl: undefined,
                 webSocketImpl: null,
                 webSocketBinaryType: null,
                 dispatchUrl: null,
@@ -197,6 +204,16 @@
                 maxWebsocketErrorRetries: 1,
                 curWebsocketErrorRetries: 0,
                 unloadBackwardCompat: !navigator.sendBeacon,
+                id: undefined,
+                openId: undefined,
+                reconnectId: undefined,
+                firstMessage: undefined,
+                isOpen: undefined,
+                isReopen: undefined,
+                closed: undefined,
+                ctime: undefined,
+                heartbeatTimer: undefined,
+                force: undefined,
                 onError: function (response) {
                 },
                 onClose: function (response) {
@@ -233,7 +250,7 @@
                 reasonPhrase: "OK",
                 responseBody: '',
                 messages: [],
-                headers: [],
+                headers: {},
                 state: "messageReceived",
                 transport: "polling",
                 error: null,
@@ -347,14 +364,6 @@
 
             /** Key for connection sharing */
             var _sharingKey;
-
-            /**
-             * {boolean} If window beforeUnload event has been called.
-             * Flag will be reset after 5000 ms
-             *
-             * @private
-             */
-            var _beforeUnloadState = false;
 
             /**
              * {number} Holds the timeout ID for the beforeUnload flag reset.
@@ -1377,7 +1386,7 @@
 
                 _response.transport = "websocket";
 
-                var location = _buildWebSocketUrl(_request.url);
+                var location = _buildWebSocketUrl();
                 if (_canLog('debug')) {
                     atmosphere.util.debug("Invoking executeWebSocket, using URL: " + location);
                 }
@@ -1775,8 +1784,6 @@
 
                 if (typeof (_request.onTransportFailure) !== 'undefined') {
                     _request.onTransportFailure(errorMessage, _request);
-                } else if (typeof (atmosphere.util.onTransportFailure) !== 'undefined') {
-                    atmosphere.util.onTransportFailure(errorMessage, _request);
                 }
 
                 if (_request.reconnect && _request.transport !== 'none' || _request.transport == null) {
@@ -1944,7 +1951,7 @@
                 };
 
                 var reconnectF = function (force) {
-                    if (atmosphere._beforeUnloadState) {
+                    if (_beforeUnloadState) {
                         // ATMOSPHERE-JAVASCRIPT-143: Delay reconnect to avoid reconnect attempts before an actual unload (we don't know if an unload will happen, yet)
                         atmosphere.util.debug(new Date() + " Atmosphere: reconnectF: execution delayed due to _beforeUnloadState flag");
                         setTimeout(function () {
@@ -1987,7 +1994,7 @@
                             _response.error = true;
                             _response.ffTryingReconnect = true;
                             try {
-                                _response.status = XMLHttpRequest.status;
+                                _response.status = ajaxRequest.status;
                             } catch (e) {
                                 _response.status = 500;
                             }
@@ -2263,7 +2270,7 @@
                         status = ajaxRequest.status > 1000 ? 0 : ajaxRequest.status;
                     }
                     _response.status = status === 0 ? 204 : status;
-                    _response.reason = status === 0 ? "Server resumed the connection or down." : "OK";
+                    _response.reasonPhrase = status === 0 ? "Server resumed the connection or down." : "OK";
 
                     clearTimeout(request.id);
                     if (request.reconnectId) {
@@ -2525,7 +2532,7 @@
                                         res.innerText = "";
                                         var skipCallbackInvocation = _trackMessageSize(text, rq, _response);
                                         if (skipCallbackInvocation) {
-                                            return "";
+                                            return false;
                                         }
 
                                         _prepareCallback(_response.responseBody, "messageReceived", 200, rq.transport);
@@ -2772,12 +2779,8 @@
 
             function _localMessage(message) {
                 var m = JSON.parse(message);
-                if (m.id !== guid) {
-                    if (typeof (_request.onLocalMessage) !== 'undefined') {
-                        _request.onLocalMessage(m.event);
-                    } else if (typeof (atmosphere.util.onLocalMessage) !== 'undefined') {
-                        atmosphere.util.onLocalMessage(m.event);
-                    }
+                if (m.id !== guid && typeof (_request.onLocalMessage) !== 'undefined') {
+                    _request.onLocalMessage(m.event);
                 }
             }
 
@@ -3219,7 +3222,7 @@
             return s.join("&").replace(/%20/g, "+");
         },
 
-        storage: function () {
+        storage: (function () {
             try {
                 return !!(window.localStorage && window.StorageEvent);
             } catch (e) {
@@ -3227,7 +3230,7 @@
                 //https://bugzilla.mozilla.org/show_bug.cgi?id=748620
                 return false;
             }
-        },
+        })(),
 
         iterate: function (fn, interval) {
             var timeoutId;
@@ -3251,46 +3254,24 @@
             };
         },
 
-        each: function (obj, callback, args) {
+        each: function (obj, callback) {
             if (!obj) return;
             var value, i = 0, length = obj.length, isArray = atmosphere.util.isArray(obj);
 
-            if (args) {
-                if (isArray) {
-                    for (; i < length; i++) {
-                        value = callback.apply(obj[i], args);
+            if (isArray) {
+                for (; i < length; i++) {
+                    value = callback.call(obj[i], i, obj[i]);
 
-                        if (value === false) {
-                            break;
-                        }
-                    }
-                } else {
-                    for (i in obj) {
-                        value = callback.apply(obj[i], args);
-
-                        if (value === false) {
-                            break;
-                        }
+                    if (value === false) {
+                        break;
                     }
                 }
-
-                // A special, fast, case for the most common use of each
             } else {
-                if (isArray) {
-                    for (; i < length; i++) {
-                        value = callback.call(obj[i], i, obj[i]);
+                for (i in obj) {
+                    value = callback.call(obj[i], i, obj[i]);
 
-                        if (value === false) {
-                            break;
-                        }
-                    }
-                } else {
-                    for (i in obj) {
-                        value = callback.call(obj[i], i, obj[i]);
-
-                        if (value === false) {
-                            break;
-                        }
+                    if (value === false) {
+                        break;
                     }
                 }
             }
@@ -3389,8 +3370,6 @@
         }
     };
 
-    guid = atmosphere.util.now();
-
     // Browser sniffing
     (function () {
         var ua = navigator.userAgent.toLowerCase(),
@@ -3437,10 +3416,10 @@
             }
 
             // ATMOSPHERE-JAVASCRIPT-143: Delay reconnect to avoid reconnect attempts before an actual unload (we don't know if an unload will happen, yet)
-            atmosphere._beforeUnloadState = true;
+            _beforeUnloadState = true;
             atmosphere._beforeUnloadTimeoutId = setTimeout(function () {
                 atmosphere.util.debug(new Date() + " Atmosphere: " + "beforeunload event timeout reached. Reset _beforeUnloadState flag");
-                atmosphere._beforeUnloadState = false;
+                _beforeUnloadState = false;
             }, 5000);
         },
         offline: function () {
