@@ -95,7 +95,7 @@
              * @param {Object} e the event object
              */
             request.onMessage = function (e) {
-                _adapter.onmessage({data: e.responseBody});
+                _adapter.onmessage({ data: e.responseBody });
             };
 
             /**
@@ -105,7 +105,7 @@
              * @param {Object} e the event object
              */
             request.onMessagePublished = function (e) {
-                _adapter.onmessage({data: e.responseBody});
+                _adapter.onmessage({ data: e.responseBody });
             };
 
             /**
@@ -656,10 +656,7 @@
                 }
                 _response.closedByClientTimeout = false;
 
-                if (_request.transport !== 'websocket' && _request.transport !== 'sse') {
-                    _executeRequest(_request);
-
-                } else if (_request.transport === 'websocket') {
+                if (_request.transport === 'websocket') {
                     if (!_supportWebsocket()) {
                         _reconnectWithFallbackTransport("Websocket is not supported, using request.fallbackTransport (" + _request.fallbackTransport
                             + ")");
@@ -673,6 +670,8 @@
                     } else {
                         _executeSSE(false);
                     }
+                } else {
+                    _executeRequest(_request);
                 }
             }
 
@@ -1099,6 +1098,8 @@
                                 rq.openId = setTimeout(function () {
                                     _triggerOpen(rq);
                                 }, rq.reconnectInterval + 1000);
+                            } else if (_request.reconnect && _request.fallbackTransport !== 'none') {
+                                _reconnectWithFallbackTransport("JSONP maxReconnectOnClose reached. Downgrading to " + _request.fallbackTransport);
                             } else {
                                 _onError(0, "maxReconnectOnClose reached");
                             }
@@ -1352,7 +1353,7 @@
                         atmosphere.util.log(_request.logLevel, ["SSE closed normally"]);
                     } else if (!sseOpened) {
                         _reconnectWithFallbackTransport("SSE failed. Downgrading to fallback transport and resending");
-                    } else if (_request.reconnect && (_response.transport === 'sse')) {
+                    } else if (_request.reconnect && _response.transport === 'sse') {
                         if (_requestCount++ < _request.maxReconnectOnClose) {
                             _open('re-connecting', _request.transport, _request);
                             if (_request.reconnectInterval > 0) {
@@ -1370,7 +1371,11 @@
                             _response.messages = [];
                         } else {
                             atmosphere.util.log(_request.logLevel, ["SSE reconnect maximum try reached " + _requestCount]);
-                            _onError(0, "maxReconnectOnClose reached");
+                            if (_request.reconnect && _request.fallbackTransport !== 'none') {
+                                _reconnectWithFallbackTransport("SSE maxReconnectOnClose reached. Downgrading to " + _request.fallbackTransport);
+                            } else {
+                                _onError(0, "maxReconnectOnClose reached");
+                            }
                         }
                     }
                 };
@@ -1616,8 +1621,8 @@
 
                     if (messages.length <= pos + 2) {
                         atmosphere.util.log('error', ["Protocol data not sent by the server. " +
-                        "If you enable protocol on client side, be sure to install JavascriptProtocol interceptor on server side." +
-                        "Also note that atmosphere-runtime 2.2+ should be used."]);
+                            "If you enable protocol on client side, be sure to install JavascriptProtocol interceptor on server side." +
+                            "Also note that atmosphere-runtime 2.2+ should be used."]);
                     }
 
                     _heartbeatInterval = parseInt(atmosphere.util.trim(messages[pos + 1]), 10);
@@ -1767,7 +1772,11 @@
                     }
                 } else {
                     atmosphere.util.log(_request.logLevel, ["Websocket reconnect maximum try reached " + _requestCount]);
-                    _onError(0, "maxReconnectOnClose reached");
+                    if (_request.reconnect && _request.fallbackTransport !== 'none') {
+                        _reconnectWithFallbackTransport("Websocket maxReconnectOnClose reached. Downgrading to " + _request.fallbackTransport);
+                    } else {
+                        _onError(0, "maxReconnectOnClose reached");
+                    }
                 }
             }
 
@@ -1945,6 +1954,8 @@
                         _response.ffTryingReconnect = true;
                         _open('re-connecting', request.transport, request);
                         _reconnect(ajaxRequest, rq, delay);
+                    } else if (_request.reconnect && _request.fallbackTransport !== 'none') {
+                        _reconnectWithFallbackTransport("maxReconnectOnClose reached. Downgrading to " + _request.fallbackTransport);
                     } else {
                         _onError(0, "maxReconnectOnClose reached");
                     }
@@ -2049,7 +2060,7 @@
 
                             if (status >= 300 || status === 0) {
                                 if (!rq.isOpen && _canLog('warn')) {
-                                   atmosphere.util.warn(rq.transport + " connection failed with status: " + status + " " + (ajaxRequest.statusText || "Unable to connect"));
+                                    atmosphere.util.warn(rq.transport + " connection failed with status: " + status + " " + (ajaxRequest.statusText || "Unable to connect"));
                                 }
                                 disconnected();
                                 return;
@@ -2362,6 +2373,8 @@
                                 _open('re-connecting', request.transport, request);
                                 _ieXDR(rq);
                             }
+                        } else if (_request.reconnect && _request.fallbackTransport !== 'none') {
+                            _reconnectWithFallbackTransport("maxReconnectOnClose reached. Downgrading to " + _request.fallbackTransport);
                         } else {
                             _onError(0, "maxReconnectOnClose reached");
                         }
@@ -2566,6 +2579,8 @@
                                     } else {
                                         _ieStreaming(rq);
                                     }
+                                } else if (_request.reconnect && _request.fallbackTransport !== 'none') {
+                                    _reconnectWithFallbackTransport("maxReconnectOnClose reached. Downgrading to " + _request.fallbackTransport);
                                 } else {
                                     _onError(0, "maxReconnectOnClose reached");
                                 }
@@ -2599,8 +2614,8 @@
                 if (_localStorageService != null) {
                     _pushLocal(message);
                 } else if (_activeRequest != null || _sse != null
-                	// Avoid errors when sending message during long-polling reconnection
-                	|| _request && _request.isOpen && _request.reconnect && _request.transport === "long-polling") {
+                    // Avoid errors when sending message during long-polling reconnection
+                    || _request && _request.isOpen && _request.reconnect && _request.transport === "long-polling") {
                     _pushAjaxMessage(message);
                 } else if (_ieStream != null) {
                     _pushIE(message);
@@ -2944,9 +2959,9 @@
                             _requestCount = 0;
                             continue;
                         }
-                    } else if (_response.state === "re-opening") {
-                         // reset the internal reconnect counter when the connection is reopened
-                         _requestCount = 0;
+                    } else if (_response.state === "opening" || _response.state === "re-opening") {
+                        // reset the internal reconnect counter when the connection is opened/reopened
+                        _requestCount = 0;
                     }
 
                     _invokeFunction(_response);
