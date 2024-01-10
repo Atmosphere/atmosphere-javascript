@@ -32,12 +32,6 @@ Also it is available from the following places, but there may be delays between 
 npm install atmosphere.js
 ```
 
-### bower
-
-```shell
-bower install atmosphere
-```
-
 ## Docs
 Full API documentation can be read [here](https://github.com/Atmosphere/atmosphere/wiki/atmosphere.js-API) and a lot of samples [here](https://github.com/Atmosphere/atmosphere-samples)
 
