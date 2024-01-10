@@ -52,7 +52,7 @@
     var _beforeUnloadState = false;
 
     var atmosphere = {
-        version: "3.1.5-javascript",
+        version: "4.0.0",
         onError: function (response) {
         },
         onClose: function (response) {
