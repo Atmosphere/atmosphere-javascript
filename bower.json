@@ -1,0 +1,21 @@
+{
+  "name": "atmosphere-javascript-fork",
+  "version": "5.0",
+  "authors": [
+    "Julian Yerfino <yerfinojul@gmail.com>"
+  ],
+  "description": "atmosphere-javascript-fork",
+  "keywords": [
+  ],
+  "license": "MIT",
+  "private": false,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+  }
+}
