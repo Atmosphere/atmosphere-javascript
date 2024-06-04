@@ -2624,7 +2624,7 @@
                 } else if (_websocket != null) {
                     _pushWebSocket(message);
                 // Avoid errors when sending message during websocket reconnection
-                } else if (_request && _request.isOpen && _request.reconnect && _request.transport === "websocket") {
+                } else if (_request && _request.isOpen && _request.reconnect && _request.isReopen && _request.transport === "websocket") {
                     _debug("Waiting for the websocket reconnection to send the message...");
                     var reopenHandler = _request.onReopen;
                     _request.onReopen = function() {
