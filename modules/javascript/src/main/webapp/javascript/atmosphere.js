@@ -2623,6 +2623,17 @@
                     _pushJsonp(message);
                 } else if (_websocket != null) {
                     _pushWebSocket(message);
+                // Avoid errors when sending message during websocket reconnection
+                } else if (_request && _request.isOpen && _request.reconnect && _request.isReopen && _request.transport === "websocket") {
+                    _debug("Waiting for the websocket reconnection to send the message...");
+                    var reopenHandler = _request.onReopen;
+                    _request.onReopen = function() {
+                        _request.onReopen = reopenHandler;
+                        if (typeof (reopenHandler) !== 'undefined') {
+                            reopenHandler.apply(this, arguments);
+                        }
+                        _push(message, _request);
+                    }
                 } else {
                     _onError(0, "No suspended connection available");
                     atmosphere.util.error("No suspended connection available. Make sure atmosphere.subscribe has been called and request.onOpen invoked before trying to push data");
