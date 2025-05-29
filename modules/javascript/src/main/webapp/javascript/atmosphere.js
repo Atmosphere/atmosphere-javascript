@@ -52,7 +52,7 @@
     var _beforeUnloadState = false;
 
     var atmosphere = {
-        version: "4.0.1",
+        version: "4.0.2",
         onError: function (response) {
         },
         onClose: function (response) {
@@ -204,6 +204,7 @@
                 maxWebsocketErrorRetries: 1,
                 curWebsocketErrorRetries: 0,
                 unloadBackwardCompat: !navigator.sendBeacon,
+                useBeforeUnloadForCleanup: true,
                 id: undefined,
                 openId: undefined,
                 reconnectId: undefined,
@@ -3431,7 +3432,13 @@
     atmosphere.callbacks = {
         unload: function () {
             atmosphere.util.debug(new Date() + " Atmosphere: " + "unload event");
-            atmosphere.unsubscribe();
+            // Check if we should use the old unload behavior or if beforeunload hasn't handled cleanup
+            var shouldCleanupInUnload = requests.length > 0 && 
+                (requests[0].request.useBeforeUnloadForCleanup === false || !_beforeUnloadState);
+            
+            if (shouldCleanupInUnload) {
+                atmosphere.unsubscribe();
+            }
         },
         beforeUnload: function () {
             atmosphere.util.debug(new Date() + " Atmosphere: " + "beforeunload event");
@@ -3443,6 +3450,17 @@
 
             // ATMOSPHERE-JAVASCRIPT-143: Delay reconnect to avoid reconnect attempts before an actual unload (we don't know if an unload will happen, yet)
             _beforeUnloadState = true;
+            
+            // Check if we should cleanup in beforeunload (default behavior for better bfcache compatibility)
+            var shouldCleanupInBeforeUnload = requests.length > 0 && 
+                requests[0].request.useBeforeUnloadForCleanup !== false;
+            
+            if (shouldCleanupInBeforeUnload) {
+                // Primary cleanup now happens here instead of in unload event
+                // This ensures compatibility with Chrome's bfcache and follows modern best practices
+                atmosphere.unsubscribe();
+            }
+            
             atmosphere._beforeUnloadTimeoutId = setTimeout(function () {
                 atmosphere.util.debug(new Date() + " Atmosphere: " + "beforeunload event timeout reached. Reset _beforeUnloadState flag");
                 _beforeUnloadState = false;
