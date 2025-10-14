@@ -205,6 +205,7 @@
                 curWebsocketErrorRetries: 0,
                 unloadBackwardCompat: !navigator.sendBeacon,
                 useBeforeUnloadForCleanup: true,
+                usePageHide: true,
                 id: undefined,
                 openId: undefined,
                 reconnectId: undefined,
@@ -3466,6 +3467,15 @@
                 _beforeUnloadState = false;
             }, 5000);
         },
+        pageHide: function (event) {
+            atmosphere.util.debug(new Date() + " Atmosphere: pagehide event");
+
+            // Only cleanup if page is being persisted to bfcache or actually unloading
+            // event.persisted indicates if page is entering bfcache
+            if (requests.length > 0) {
+                atmosphere.unsubscribe();
+            }
+        },
         offline: function () {
             atmosphere.util.debug(new Date() + " Atmosphere: offline event");
             offline = true;
@@ -3499,15 +3509,30 @@
     };
 
     atmosphere.bindEvents = function () {
-        atmosphere.util.on(window, "unload", atmosphere.callbacks.unload);
-        atmosphere.util.on(window, "beforeunload", atmosphere.callbacks.beforeUnload);
+        var request = requests.length > 0 ? requests[0].request : {};
+
+        // Use pagehide as the default modern approach (doesn't block bfcache)
+        if (request.usePageHide !== false && 'onpagehide' in window) {
+            atmosphere.util.on(window, "pagehide", atmosphere.callbacks.pageHide);
+        }
+        // Fallback to beforeunload if pagehide is disabled or not supported
+        else if (request.useBeforeUnloadForCleanup !== false) {
+            atmosphere.util.on(window, "beforeunload", atmosphere.callbacks.beforeUnload);
+        }
+        // Legacy unload event only if both modern options are disabled
+        else {
+            atmosphere.util.on(window, "unload", atmosphere.callbacks.unload);
+        }
+
         atmosphere.util.on(window, "offline", atmosphere.callbacks.offline);
         atmosphere.util.on(window, "online", atmosphere.callbacks.online);
     };
 
     atmosphere.unbindEvents = function () {
-        atmosphere.util.off(window, "unload", atmosphere.callbacks.unload);
+        // Unbind all possible unload-related events to ensure proper cleanup
+        atmosphere.util.off(window, "pagehide", atmosphere.callbacks.pageHide);
         atmosphere.util.off(window, "beforeunload", atmosphere.callbacks.beforeUnload);
+        atmosphere.util.off(window, "unload", atmosphere.callbacks.unload);
         atmosphere.util.off(window, "offline", atmosphere.callbacks.offline);
         atmosphere.util.off(window, "online", atmosphere.callbacks.online);
     };
