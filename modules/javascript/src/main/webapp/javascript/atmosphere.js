@@ -51,6 +51,14 @@
      */
     var _beforeUnloadState = false;
 
+    /**
+     * {boolean} If page is being hidden/unloaded (pagehide event).
+     * Used to ensure reliable disconnect methods are used.
+     *
+     * @private
+     */
+    var _pageHideState = false;
+
     var atmosphere = {
         version: "4.0.2",
         onError: function (response) {
@@ -2653,10 +2661,53 @@
                 rq.force = true;
                 rq.suspend = false;
                 rq.timeout = 1000;
+
+                // Use reliable methods during page unload
                 if (_request.unloadBackwardCompat) {
+                    atmosphere.util.debug("Using XHR for disconnect (backward compat)");
                     _executeRequest(rq);
+                } else if (navigator.sendBeacon) {
+                    atmosphere.util.debug("Using sendBeacon for reliable disconnect");
+                    var sent = navigator.sendBeacon(rq.url, rq.data);
+                    if (!sent && _pageHideState && typeof fetch === 'function') {
+                        // Fallback to fetch with keepalive if sendBeacon fails during pagehide
+                        atmosphere.util.debug("sendBeacon failed, falling back to fetch keepalive");
+                        try {
+                            fetch(rq.url, {
+                                method: rq.method,
+                                body: rq.data,
+                                keepalive: true,
+                                headers: {
+                                    'Content-Type': rq.contentType || 'text/plain'
+                                }
+                            })['catch'](function(e) {
+                                atmosphere.util.debug("fetch keepalive failed: " + e);
+                            });
+                        } catch (e) {
+                            atmosphere.util.debug("fetch keepalive error: " + e);
+                        }
+                    }
+                } else if (_pageHideState && typeof fetch === 'function') {
+                    // Use fetch with keepalive if sendBeacon not available during pagehide
+                    atmosphere.util.debug("Using fetch keepalive for reliable disconnect");
+                    try {
+                        fetch(rq.url, {
+                            method: rq.method,
+                            body: rq.data,
+                            keepalive: true,
+                            headers: {
+                                'Content-Type': rq.contentType || 'text/plain'
+                            }
+                        })['catch'](function(e) {
+                            atmosphere.util.debug("fetch keepalive failed: " + e);
+                        });
+                    } catch (e) {
+                        atmosphere.util.debug("fetch keepalive error: " + e);
+                    }
                 } else {
-                    navigator.sendBeacon(rq.url, rq.data);
+                    // Last resort fallback
+                    atmosphere.util.debug("Using XHR for disconnect (no reliable methods available)");
+                    _executeRequest(rq);
                 }
             }
 
@@ -3469,8 +3520,10 @@
         },
         pageHide: function (event) {
             atmosphere.util.debug(new Date() + " Atmosphere: pagehide event");
+            _pageHideState = true;
 
-            // Only cleanup if page is being persisted to bfcache or actually unloading
+            // Disconnect during pagehide to ensure proper cleanup
+            // Relies on sendBeacon or fetch keepalive for reliable delivery during page unload
             // event.persisted indicates if page is entering bfcache
             if (requests.length > 0) {
                 atmosphere.unsubscribe();
