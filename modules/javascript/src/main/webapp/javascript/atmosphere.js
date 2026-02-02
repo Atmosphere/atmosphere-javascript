@@ -3559,6 +3559,7 @@
             if (requests.length > 0) {
                 for (var i = 0; i < requests.length; i++) {
                     if (requests[i].request.handleOnlineOffline) {
+						requests[i].response.error = false;
                         requests[i].init();
                         requests[i].execute();
                     }
