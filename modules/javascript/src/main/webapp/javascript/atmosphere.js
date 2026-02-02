@@ -3127,6 +3127,13 @@
         rq.execute();
 
         requests[requests.length] = rq;
+
+        // bind event only on first subscription
+        if (requests.length === 1) {
+            atmosphere.unbindEvents();
+            atmosphere.bindEvents();
+        }
+
         return rq;
     };
 
@@ -3589,8 +3596,6 @@
         atmosphere.util.off(window, "offline", atmosphere.callbacks.offline);
         atmosphere.util.off(window, "online", atmosphere.callbacks.online);
     };
-
-    atmosphere.bindEvents();
 
     return atmosphere;
 }));
