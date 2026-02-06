@@ -2624,8 +2624,9 @@
                 if (_localStorageService != null) {
                     _pushLocal(message);
                 } else if (_activeRequest != null || _sse != null
-                    // Avoid errors when sending message during long-polling reconnection
-                    || _request && _request.isOpen && _request.reconnect && _request.transport === "long-polling") {
+                    // Avoid errors when sending message during long-polling/sse reconnection
+                    || _request && _request.isOpen && _request.reconnect && _request.isReopen 
+                        && (_request.transport === "long-polling" || _request.transport === "sse")) {
                     _pushAjaxMessage(message);
                 } else if (_ieStream != null) {
                     _pushIE(message);
