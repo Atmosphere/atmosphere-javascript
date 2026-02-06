@@ -1568,6 +1568,8 @@
                         atmosphere.util.warn("Websocket closed, reason: " + reason + ' - wasClean: ' + message.wasClean);
                     }
 
+                    _invokeClose(webSocketOpened);
+
                     if (_response.closedByClientTimeout || (_request.handleOnlineOffline && offline)) {
                         // IFF online/offline events are handled and we happen to be offline, we stop all reconnect attempts and
                         // resume them in the "online" event (if we get here in that case, something else went wrong as the
@@ -1581,8 +1583,6 @@
                         }
                         return;
                     }
-
-                    _invokeClose(webSocketOpened);
 
                     _response.state = 'closed';
 
