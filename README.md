@@ -1,3 +1,11 @@
+> **⚠️ This repository is legacy and no longer actively maintained.**
+>
+> The JavaScript client has been rewritten as [`atmosphere.js`](https://github.com/Atmosphere/atmosphere/tree/main/atmosphere.js) 5.0 in TypeScript, with React, Vue, and Svelte bindings.
+>
+> **→ [github.com/Atmosphere/atmosphere](https://github.com/Atmosphere/atmosphere)**
+
+---
+
 ## Welcome to Atmosphere: The Asynchronous WebSocket/Comet Framework
 Atmosphere transparently supports WebSockets, Server Sent Events (SSE), Long-Polling, HTTP Streaming (Forever frame) and JSONP.
 
