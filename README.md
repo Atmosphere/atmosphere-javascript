@@ -21,7 +21,7 @@ Atmosphere transparently supports WebSockets, Server Sent Events (SSE), Long-Pol
 <dependency>
     <groupId>org.atmosphere.client</groupId>
     <artifactId>javascript</artifactId>
-    <version>4.0.0</version>
+    <version>4.0.2</version>
 </dependency>
 ```
 
