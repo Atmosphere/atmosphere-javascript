@@ -28,6 +28,49 @@
            </execution>
          </executions>
        </plugin>
+       <!-- Maven Central requires -sources and -javadoc jars for every non-pom artifact -->
+       <plugin>
+         <groupId>org.codehaus.mojo</groupId>
+         <artifactId>build-helper-maven-plugin</artifactId>
+         <version>3.3.0</version>
+         <executions>
+           <execution>
+             <id>add-source</id>
+             <phase>prepare-package</phase>
+             <goals>
+               <goal>add-source</goal>
+             </goals>
+             <configuration>
+               <sources>
+                 <source>src/main/webapp</source>
+               </sources>
+             </configuration>
+           </execution>
+         </executions>
+       </plugin>
+       <plugin>
+         <!-- No Java sources: the javadoc jar is the placeholder Central allows, carrying the README -->
+         <groupId>org.apache.maven.plugins</groupId>
+         <artifactId>maven-jar-plugin</artifactId>
+         <version>3.4.2</version>
+         <executions>
+           <execution>
+             <id>javadoc-placeholder</id>
+             <phase>package</phase>
+             <goals>
+               <goal>jar</goal>
+             </goals>
+             <configuration>
+               <classifier>javadoc</classifier>
+               <classesDirectory>${project.basedir}/../..</classesDirectory>
+               <includes>
+                 <include>README.md</include>
+                 <include>LICENSE</include>
+               </includes>
+             </configuration>
+           </execution>
+         </executions>
+       </plugin>
      </plugins>
     </build>
 </project>
