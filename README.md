@@ -28,7 +28,9 @@ Atmosphere transparently supports WebSockets, Server Sent Events (SSE), Long-Pol
 ### npm
 
 ```shell
-npm install atmosphere.js
+npm install atmosphere.js@4
 ```
+
+Plain `npm install atmosphere.js` installs atmosphere.js 5.x, the TypeScript client.
 
 Best way to start with Atmosphere is to use chatGPT and ask for an example!
