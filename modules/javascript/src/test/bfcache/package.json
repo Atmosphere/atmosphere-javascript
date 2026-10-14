@@ -1,0 +1,14 @@
+{
+  "name": "atmosphere-javascript-bfcache-test",
+  "private": true,
+  "description": "Back/forward cache tests for the legacy atmosphere.js client against a running Atmosphere server",
+  "license": "Apache-2.0",
+  "scripts": {
+    "test": "node bfcache.js && node offline.js",
+    "test:bfcache": "node bfcache.js",
+    "test:offline": "node offline.js"
+  },
+  "devDependencies": {
+    "playwright": "1.59.1"
+  }
+}

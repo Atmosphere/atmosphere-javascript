@@ -1,0 +1,18 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>bfcache control</title>
+</head>
+<body>
+<p>Control page without atmosphere.js</p>
+<script>
+    window.__pageshows = 0;
+    window.__persisted = null;
+    addEventListener('pageshow', function (e) {
+        window.__pageshows++;
+        window.__persisted = e.persisted;
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,110 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>bfcache client</title>
+</head>
+<body>
+<p>atmosphere.js back/forward cache test client</p>
+<script>
+    window.__log = [];
+    window.__msgs = [];
+    window.__opens = 0;
+    window.__pageshows = 0;
+    window.__persisted = null;
+    addEventListener('pageshow', function (e) {
+        window.__pageshows++;
+        window.__persisted = e.persisted;
+        __log.push('pageshow:' + e.persisted);
+    });
+    addEventListener('pagehide', function (e) {
+        __log.push('pagehide:' + e.persisted);
+    });
+
+    var params = new URLSearchParams(location.search);
+
+    // lateClose=true: hold the close event of a WebSocket closed by pagehide until pageshow has run,
+    // the order in which the browser delivers it when the page is frozen before the close completes
+    if (params.get('lateClose') === 'true') {
+        var NativeWebSocket = window.WebSocket;
+        var hidden = false;
+        var held = [];
+        addEventListener('pagehide', function (e) {
+            hidden = hidden || e.persisted;
+        }, true);
+        addEventListener('pageshow', function (e) {
+            if (e.persisted) {
+                hidden = false;
+                setTimeout(function () {
+                    held.splice(0).forEach(function (deliver) {
+                        deliver();
+                    });
+                }, 0);
+            }
+        });
+        window.WebSocket = function (url) {
+            var socket = new NativeWebSocket(url);
+            var onclose = null;
+            Object.defineProperty(socket, 'onclose', {
+                get: function () {
+                    return onclose;
+                },
+                set: function (fn) {
+                    onclose = fn;
+                }
+            });
+            socket.addEventListener('close', function (event) {
+                var deliver = function () {
+                    if (onclose) {
+                        onclose.call(socket, event);
+                    }
+                };
+                if (hidden) {
+                    __log.push('close held until pageshow');
+                    held.push(deliver);
+                } else {
+                    deliver();
+                }
+            });
+            return socket;
+        };
+    }
+
+    var js = params.get('js') || '/atmosphere.js';
+    // Same-origin scripts only
+    if (js.charAt(0) !== '/' || js.charAt(1) === '/') {
+        throw new Error('js must be a same-origin path');
+    }
+    var script = document.createElement('script');
+    script.src = js;
+    script.onload = function () {
+        window.__socket = atmosphere.subscribe({
+            url: location.origin + (params.get('path') || '/atmosphere/chat'),
+            transport: params.get('transport') || 'websocket',
+            fallbackTransport: 'long-polling',
+            contentType: 'application/json',
+            reconnectInterval: 1000,
+            logLevel: params.get('logLevel') || 'info',
+            onOpen: function (response) {
+                __opens++;
+                __log.push('open:' + response.transport);
+            },
+            onReopen: function () {
+                __opens++;
+                __log.push('reopen');
+            },
+            onClose: function (response) {
+                __log.push('close:' + response.state);
+            },
+            onMessage: function (response) {
+                __msgs.push(response.responseBody);
+            },
+            onError: function (response) {
+                __log.push('error:' + response.status);
+            }
+        });
+    };
+    document.head.appendChild(script);
+</script>
+</body>
+</html>
