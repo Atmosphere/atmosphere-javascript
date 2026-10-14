@@ -1414,6 +1414,7 @@
                 }
 
                 _websocket = _getWebSocket(location);
+                var openedWebSocket = _websocket;
                 if (_request.webSocketBinaryType != null) {
                     _websocket.binaryType = _request.webSocketBinaryType;
                 }
@@ -1529,6 +1530,12 @@
 
                 _websocket.onclose = function (message) {
                     _debug("websocket.onclose");
+                    // A socket closed before the page entered bfcache delivers its close event after the
+                    // page is restored, once a new socket has replaced it: leave the new connection alone
+                    if (_websocket != null && _websocket !== openedWebSocket) {
+                        _debug("websocket.onclose ignored, the socket has been replaced");
+                        return;
+                    }
                     if (_response.transport !== 'websocket')
                         return;
                     clearTimeout(_request.id);
@@ -3534,7 +3541,39 @@
             // Relies on sendBeacon or fetch keepalive for reliable delivery during page unload
             // event.persisted indicates if page is entering bfcache
             if (requests.length > 0) {
-                atmosphere.unsubscribe();
+                if (event && event.persisted) {
+                    // The page may be restored from bfcache: close the connections but keep
+                    // the requests and callbacks so pageShow can reopen them
+                    var requestsClone = [].concat(requests);
+                    for (var i = 0; i < requestsClone.length; i++) {
+                        var rq = requestsClone[i];
+                        rq.close();
+                        clearTimeout(rq.response.request.id);
+
+                        if (rq.heartbeatTimer) {
+                            clearTimeout(rq.heartbeatTimer);
+                        }
+                    }
+                } else {
+                    atmosphere.unsubscribe();
+                }
+            }
+        },
+        pageShow: function (event) {
+            // event.persisted is false on the initial load, true when the page is restored from bfcache
+            if (!event || !event.persisted || !_pageHideState) {
+                return;
+            }
+            atmosphere.util.debug(new Date() + " Atmosphere: pageshow event, page restored from bfcache");
+            _pageHideState = false;
+
+            for (var i = 0; i < requests.length; i++) {
+                // While offline, the online event reopens these requests
+                if (offline && requests[i].request.handleOnlineOffline) {
+                    continue;
+                }
+                requests[i].init();
+                requests[i].execute();
             }
         },
         offline: function () {
@@ -3575,6 +3614,7 @@
         // Use pagehide as the default modern approach (doesn't block bfcache)
         if (request.usePageHide !== false && 'onpagehide' in window) {
             atmosphere.util.on(window, "pagehide", atmosphere.callbacks.pageHide);
+            atmosphere.util.on(window, "pageshow", atmosphere.callbacks.pageShow);
         }
         // Fallback to beforeunload if pagehide is disabled or not supported
         else if (request.useBeforeUnloadForCleanup !== false) {
@@ -3592,6 +3632,7 @@
     atmosphere.unbindEvents = function () {
         // Unbind all possible unload-related events to ensure proper cleanup
         atmosphere.util.off(window, "pagehide", atmosphere.callbacks.pageHide);
+        atmosphere.util.off(window, "pageshow", atmosphere.callbacks.pageShow);
         atmosphere.util.off(window, "beforeunload", atmosphere.callbacks.beforeUnload);
         atmosphere.util.off(window, "unload", atmosphere.callbacks.unload);
         atmosphere.util.off(window, "offline", atmosphere.callbacks.offline);
