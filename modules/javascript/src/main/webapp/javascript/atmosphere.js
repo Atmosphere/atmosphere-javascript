@@ -60,7 +60,7 @@
     var _pageHideState = false;
 
     var atmosphere = {
-        version: "4.0.2",
+        version: "4.0.3",
         onError: function (response) {
         },
         onClose: function (response) {
